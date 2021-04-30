@@ -1,8 +1,359 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>近期说明</title>
+    <url>/2021/04/10/top%EF%BC%9A%E8%AF%B4%E6%98%8E/</url>
+    <content><![CDATA[<p>&ensp;&ensp;介绍一些近期博客较大的变化（增删改查）以及其它说明。</p>
+<span id="more"></span>
+
+<h3 id="2021年5月1日"><a href="#2021年5月1日" class="headerlink" title="2021年5月1日"></a>2021年5月1日</h3><hr>
+<p>    增添了大量有关链表算法题的文章，都是自己以前写的，今天整理出来了。其它的内容，趁着五一假期，会陆续发布。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>MySql8.0窗口函数</title>
+    <url>/2021/04/21/%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9AMySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/</url>
+    <content><![CDATA[<h3 id="一、基本概念"><a href="#一、基本概念" class="headerlink" title="一、基本概念"></a>一、基本概念</h3><p>&ensp;&ensp;&ensp;&ensp;MySQL从<strong>8.0</strong>开始支持窗口函数，这个功能在大多商业数据库和部分开源数据库中早已支持，有的也叫分析函数。</p>
+ <span id="more"></span>
+
+<p>概念：</p>
+<p>&ensp;&ensp;&ensp;&ensp;<strong>窗口</strong>的概念可以理解为记录集合；<strong>窗口函数</strong>也就是在满足某种条件的记录集合上执行的特殊函数，对于每条记录都要在此窗口内执行函数，有的函数随着记录不同，窗口大小都是固定的，这种是静态窗口；有的函数则是不同的记录对应着不同的窗口，这种动态变化的窗口叫滑动窗口。</p>
+<p>窗口函数与聚合函数：</p>
+<ol>
+<li>聚合函数是将多条记录聚合为一条；</li>
+<li>窗口函数是每条记录都会执行，有几条记录执行完还是几条；</li>
+<li>聚合函数也可以用于窗口函数。</li>
+</ol>
+<h3 id="二、基本格式"><a href="#二、基本格式" class="headerlink" title="二、基本格式"></a>二、基本格式</h3><p>基本语法：&lt;窗口函数&gt; over (子句)</p>
+<ul>
+<li><p>&lt;窗口函数&gt;的位置可以放专用窗口函数（rank()，percent_rank()，dense_rank()等），或者放聚合函数（sum()，avg()，max()等）。</p>
+</li>
+<li><p>窗口函数是对where或group by子句处理后的结果进行操作，故其原则上只写于SELECT子句中。</p>
+</li>
+<li><p>over 用来指定函数执行的窗口范围，<strong>若子句为空</strong>，则意味着窗口包含满足WHERE条件的所有行，窗口函数基于所有行进行计算。</p>
+</li>
+<li><p>若子句非空，则支持以下4中语法来设置窗口：</p>
+<p>​        <strong>window_name</strong>：给窗口指定一个别名，如果SQL中涉及的窗口较多，采用别名可以看起来更清晰易读。        </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	&#96;姓名&#96;,</span><br><span class="line">	&#96;班级&#96;,</span><br><span class="line">	&#96;人气&#96;,</span><br><span class="line">	rank() over w1 AS rak</span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; window w1 AS ( PARTITION BY &#96;班级&#96; ORDER BY &#96;人气&#96; DESC );</span><br></pre></td></tr></table></figure>
+
+<p>​        结果：</p>
+<img src="/2021/04/21/%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9AMySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/1.png" alt="image-20201217104056497" style="zoom:80%;">
+
+<p>​        <strong>partition子句</strong>：窗口按照那些字段进行分组，窗口函数在不同的分组上分别执行。</p>
+<p>​        <strong>order by子句</strong>：按照哪些字段进行排序，窗口函数将按照排序后的记录顺序进行编号。</p>
+<p>​        frame子句：frame是当前分区的一个子集，子句用来定义子集的规则，通常用来作为滑动窗口使用。（本文暂不介绍）</p>
+<p>​        用于操作示例新建的民工漫班级表：</p>
+<img src="/2021/04/21/%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9AMySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/2.png" alt="民工漫班级" style="zoom: 67%;">
+
+<p>​        </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	RANK() over ( PARTITION BY &#96;班级&#96; ORDER BY &#96;人气&#96; DESC ) AS ranking </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96;;</span><br><span class="line"># PARTITION BY &#96;班级&#96;：按班级分组（使用group by会改变表的行数，一个类别只保留一行；partition by则不会减少表的行数）</span><br><span class="line"># ORDER BY &#96;人气&#96; DESC：对按班级分组后的结果按人气降序排名，名次作为字段 ranking</span><br></pre></td></tr></table></figure>
+
+<p>得到结果：</p>
+<img src="/2021/04/21/%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9AMySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/3.png" alt="image-20201217000959621" style="zoom: 50%;"></li>
+</ul>
+<h3 id="三、mysql窗口函数"><a href="#三、mysql窗口函数" class="headerlink" title="三、mysql窗口函数"></a>三、mysql窗口函数</h3><p><strong>功能划分</strong>：</p>
+<p> 按功能划分可将MySQL支持的窗口函数分为如下几类：</p>
+<ol>
+<li>序号函数：ROW_NUMBER()、RANK()、DENSE_RANK()</li>
+<li>分布函数：PERCENT_RANK()、CUME_DIST()，PERCENT_RANK()</li>
+<li>前后函数：LAG(expr,n)、LEAD(expr,n)</li>
+<li>头尾函数：FIRST_VALUE(expr)、LAST_VALUE(expr)</li>
+<li>其它函数：NTH_VALUE(expr, n)、NTILE(n)</li>
+</ol>
+<p><strong>分别介绍：</strong></p>
+<p><strong>序号函数：ROW_NUMBER()、RANK()、DENSE_RANK()</strong></p>
+<p>&ensp;&ensp;&ensp;&ensp;举个例子，还用上面的民工漫班级表，用三个函数按人气对其排序：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	RANK() over (  ORDER BY &#96;人气&#96; DESC ) AS &#96;rank&#96; ,</span><br><span class="line">	DENSE_RANK() over (  ORDER BY &#96;人气&#96; DESC ) AS &#96;dense_rank&#96; ,</span><br><span class="line">	ROW_NUMBER() over (  ORDER BY &#96;人气&#96; DESC ) AS &#96;row_number&#96; </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96;;</span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;&ensp;结果：没有再用partition by对班级分组</p>
+<img src="/2021/04/21/%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9AMySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/4.png" alt="image-20201217004449218" style="zoom: 67%;">
+
+<p>由此可知：</p>
+<ul>
+<li>RANK()：并列排序，跳过重复序号——1、1、3</li>
+<li>DENSE_RANK()：并列排序，不跳过重复序号——1、1、2</li>
+<li>ROW_NUMBER()：顺序排序——1、2、3；相当于行号。</li>
+</ul>
+<p><strong>分布函数：PERCENT_RANK()、CUME_DIST()</strong></p>
+<p><strong>percent_rank()</strong></p>
+<p>&ensp;&ensp;&ensp;&ensp;用途：和之前的RANK()函数相关，每行按照如下公式进行计算：(rank - 1) / (rows - 1)， 其中，rank为RANK()函数产生的序号，rows为当前窗口的记录总行数 该函数可以用来计算分位数。</p>
+<p>&ensp;&ensp;&ensp;&ensp;继续举例子（想不到实际生活的应用场景）：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	RANK() OVER w AS rankNo,</span><br><span class="line">	PERCENT_RANK() OVER w AS percent_rankNo </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;人气&#96; DESC );</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<img src="/2021/04/21/%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9AMySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/5.png" alt="image-20201217105136040" style="zoom: 50%;">
+
+<p>&ensp;&ensp;&ensp;&ensp;对于路飞，percent_rankNo = (rank - 1) / (rows - 1) =(3 - 1) / (10 - 1) =0.22222222……</p>
+<p><strong>CUME_DIST()</strong></p>
+<p>&ensp;&ensp;&ensp;&ensp;用途：分组内小于、等于当前rank值的行数 / 分组内总行数</p>
+<p>&ensp;&ensp;&ensp;&ensp;举例：查询小于等于当前人气的比例（或者说某人是前百分之几，生活中很常用）</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	CUME_DIST() OVER w AS cdt </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;人气&#96; DESC );</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<img src="/2021/04/21/%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9AMySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/6.png" alt="image-20201217110444956" style="zoom: 67%;">
+
+<p><strong>前后函数：LAG(expr,n)、LEAD(expr,n)</strong></p>
+<p>&ensp;&ensp;&ensp;&ensp;用途：返回位于当前行的前n行（LAG(expr,n)）或后n行（LEAD(expr,n)）的expr的值（以当前行为原点）</p>
+<p>&ensp;&ensp;&ensp;&ensp;例：这个生活中应该挺常用</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	&#96;我的前面一名人气&#96; - &#96;人气&#96; AS &#96;我和前面一名的差距&#96;,</span><br><span class="line">	&#96;人气&#96; - &#96;后面一名人气&#96; AS &#96;我甩开后面一名多少差距&#96; </span><br><span class="line">FROM</span><br><span class="line">	(</span><br><span class="line">	SELECT</span><br><span class="line">		*,</span><br><span class="line">		LAG( &#96;人气&#96;, 1 ) OVER w AS &#96;我的前面一名人气&#96;,# 取前面第一行的人气值</span><br><span class="line">		LEAD( &#96;人气&#96;, 1 ) OVER w AS &#96;后面一名人气&#96; # 取后面第一行的人气值</span><br><span class="line">		</span><br><span class="line">	FROM</span><br><span class="line">		&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;人气&#96; DESC ) </span><br><span class="line">	) t;</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<img src="/2021/04/21/%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9AMySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/7.png" alt="image-20201217113619889" style="zoom: 67%;">
+
+<p>&ensp;&ensp;&ensp;&ensp;蓝染的前1行是路飞，其人气为90，差距为2；后一行是佐助，甩开他1人气。</p>
+<p><strong>头尾函数：FIRST_VALUE(expr),LAST_VALUE(expr)</strong></p>
+<p>&ensp;&ensp;&ensp;&ensp;用途：返回第一个（FIRST_VALUE(expr)）或最后一个（LAST_VALUE(expr)）expr的值</p>
+<p>&ensp;&ensp;&ensp;&ensp;例：截止到当前人气，按人气排名，第一名和最后一名是多少（降序排，最后一名肯定是自己）</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	FIRST_VALUE( &#96;人气&#96; ) OVER w AS &#96;当前第一人气值&#96;,</span><br><span class="line">	LAST_VALUE( &#96;人气&#96; ) OVER w AS &#96;当前倒数第一人气值&#96; </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;人气&#96; DESC );</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<img src="/2021/04/21/%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9AMySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/8.png" alt="image-20201217114336947" style="zoom: 67%;">
+
+<p><strong>其它函数：NTH_VALUE(expr, n)、NTILE(n)</strong></p>
+<p><strong>NTH_VALUE(expr, n)</strong></p>
+<p>&ensp;&ensp;&ensp;&ensp;用途：返回窗口中第N个expr的值，expr可以是表达式，也可以是列名。</p>
+<p>&ensp;&ensp;&ensp;&ensp;例：截至当前人气，显示每个人物的人气中排名第2、第4、第6的人气值</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	NTH_VALUE( &#96;人气&#96;, 2 ) OVER w AS &#96;第二人气值&#96;,</span><br><span class="line">	NTH_VALUE( &#96;人气&#96;, 4 ) OVER w AS &#96;第四人气值&#96;,</span><br><span class="line">	NTH_VALUE( &#96;人气&#96;, 6 ) OVER w AS &#96;第六人气值&#96; </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;人气&#96; DESC );</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<img src="/2021/04/21/%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9AMySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/9.png" alt="image-20201217135748608" style="zoom: 67%;">
+
+<p><strong>NTILE(n)</strong></p>
+<p>&ensp;&ensp;&ensp;&ensp;用途：将分区中的有序数据分为n个等级，记录等级数</p>
+<p>例：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	ROW_NUMBER() OVER w AS &#39;row_number&#39;,</span><br><span class="line">	NTILE( 2 ) OVER w AS &#39;ntile2&#39;,</span><br><span class="line">	NTILE( 4 ) OVER w AS &#39;ntile4&#39; </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;人气&#96; );</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<img src="/2021/04/21/%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9AMySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/10.png" alt="image-20201217170421940" style="zoom:67%;">
+
+<h3 id="四、用聚合函数作为窗口函数"><a href="#四、用聚合函数作为窗口函数" class="headerlink" title="四、用聚合函数作为窗口函数"></a>四、用聚合函数作为窗口函数</h3><p>&ensp;&ensp;&ensp;&ensp;用途：在窗口中每条记录动态地应用聚合函数（SUM()、AVG()、MAX()、MIN()、COUNT()），可以动态计算在指定的窗口内的各种聚合函数值</p>
+<p>例：普通使用：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	sum( &#96;人气&#96; )  AS current_sum,</span><br><span class="line">	avg( &#96;人气&#96; )  AS current_avg,</span><br><span class="line">	count( &#96;人气&#96; )  AS current_count,</span><br><span class="line">	max( &#96;人气&#96; )  AS current_max,</span><br><span class="line">	min( &#96;人气&#96; ) AS current_min </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96;;</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<img src="/2021/04/21/%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9AMySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/11.png" alt="image-20201217172447565" style="zoom: 67%;">
+
+<p>&ensp;&ensp;&ensp;&ensp;按学号排序，作为窗口函数：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	sum( &#96;人气&#96; ) over w AS current_sum,</span><br><span class="line">	avg( &#96;人气&#96; ) over w AS current_avg,</span><br><span class="line">	count( &#96;人气&#96; ) over w AS current_count,</span><br><span class="line">	max( &#96;人气&#96; ) over w AS current_max,</span><br><span class="line">	min( &#96;人气&#96; ) over w AS current_min </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;学号&#96; );</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<img src="/2021/04/21/%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9AMySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/12.png" alt="image-20201217172207911" style="zoom:67%;">
+
+<p>&ensp;&ensp;&ensp;&ensp;以current_sum为例，每一行current_sum的值为上面所有行的<code>人气</code>值之和。</p>
+<p>本文主要参考：</p>
+<p><a href="https://dev.mysql.com/doc/refman/8.0/en/">《MySql8.0参考手册》</a></p>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>MySql</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>窗口函数</tag>
+        <tag>MySql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>前缀和数组与差分数组</title>
+    <url>/2021/04/23/%E6%95%B0%E7%BB%84%EF%BC%9A%E5%89%8D%E7%BC%80%E5%92%8C%E6%95%B0%E7%BB%84%E4%B8%8E%E5%B7%AE%E5%88%86%E6%95%B0%E7%BB%84/</url>
+    <content><![CDATA[<p>&ensp;&ensp;&ensp;&ensp;当我们需要频繁地查询数组某个区间的累加和或频繁地对数组的某个区间的元素进行增减，便需要用到前缀和数组以及差分数组来提高效率</p>
+<span id="more"></span>
+
+<h3 id="一、概念简介"><a href="#一、概念简介" class="headerlink" title="一、概念简介"></a>一、概念简介</h3><p>&ensp;&ensp;&ensp;&ensp;<strong>前缀和数组</strong>：对于一个给定的数组 <code>nums</code>，额外开辟一个前缀和数组进行预处理：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">preSum</span><span class="params">(nums.size() + <span class="number">1</span>)</span></span>;</span><br><span class="line">preSum[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.<span class="built_in">size</span>(); i++)</span><br><span class="line">&#123;</span><br><span class="line">    preSum[i + <span class="number">1</span>] = preSum[i] + nums[i];</span><br><span class="line">&#125;    </span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;&ensp;前缀和数组 <code>preSum</code> 的含义很好理解，<code>preSum[i]</code> 就是 <code>nums[0..i-1]</code> 的和。那么如果我们想求 <code>nums[i...j]</code> 的和，只需要一步操作 <code>preSum[j+1] - preSum[i]</code> 即可，而不需要重新去遍历数组了。</p>
+<p>&ensp;&ensp;&ensp;&ensp;<strong>前缀和主要适用的场景是原始数组不会被修改的情况下，频繁查询某个区间的累加和</strong>。</p>
+<p>&ensp;&ensp;&ensp;&ensp;<strong>差分数组</strong>：对于一个给定的数组<code>nums</code>，额外开辟一个差分数组进行预处理：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">diff</span><span class="params">(nums.size())</span></span>;</span><br><span class="line">diff[<span class="number">0</span>] = diff[<span class="number">0</span>];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; nums.<span class="built_in">size</span>(); ++i)</span><br><span class="line">&#123;</span><br><span class="line">    diff[i] = nums[i] - nums[i - <span class="number">1</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;&ensp;通过这个<code>diff</code>差分数组是可以反推出原始数组<code>nums</code>的，代码逻辑如下：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">nums</span><span class="params">(diff.size())</span></span>;</span><br><span class="line"><span class="comment">// 根据差分数组构造结果数组</span></span><br><span class="line">nums[<span class="number">0</span>] = diff[<span class="number">0</span>];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; diff.<span class="built_in">size</span>(); ++i) </span><br><span class="line">&#123;</span><br><span class="line">    nums[i] = nums[i - <span class="number">1</span>] + diff[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;&ensp;这样构造差分数组<code>diff</code>，就可以快速进行区间增减的操作，如果你想对区间<code>nums[i..j]</code>的元素全部加 3，那么只需要让<code>diff[i] += 3</code>，然后再让<code>diff[j+1] -= 3</code>即可。</p>
+<p>&ensp;&ensp;&ensp;&ensp;<code>diff[i] += 3</code>意味着给<code>nums[i..]</code>所有的元素都加了 3，然后<code>diff[j+1] -= 3</code>又意味着对于<code>nums[j+1..]</code>所有元素再减 3，那综合起来，就是对<code>nums[i..j]</code>中的所有元素都加 3 了。</p>
+<p>&ensp;&ensp;&ensp;&ensp;<strong>差分数组的主要适用场景是频繁对原始数组的某个区间的元素进行增减</strong>。</p>
+<h3 id="二、举个例子"><a href="#二、举个例子" class="headerlink" title="二、举个例子"></a>二、举个例子</h3><p><a href="https://leetcode-cn.com/problems/subarray-sum-equals-k/">560. 和为K的子数组</a></p>
+<p>&ensp;&ensp;&ensp;&ensp;给定一个整数数组和一个整数 <strong>k，</strong>你需要找到该数组中和为 <strong>k</strong> 的连续的子数组的个数。</p>
+<p><strong>示例 1 :</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入:nums &#x3D; [1,1,1], k &#x3D; 2</span><br><span class="line">输出: 2 , [1,1] 与 [1,1] 为两种不同的情况。</span><br></pre></td></tr></table></figure>
+
+<p><strong>说明 :</strong></p>
+<ol>
+<li> 数组的长度为 [1, 20,000]。</li>
+<li> 数组中元素的范围是 [-1000, 1000] ，且整数 <strong>k</strong> 的范围是 [-1e7, 1e7]。</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">subarraySum</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt; nums, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> n = nums.<span class="built_in">size</span>();</span><br><span class="line">  <span class="comment">// 构造前缀和</span></span><br><span class="line">  <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">sum</span><span class="params">(n + <span class="number">1</span>)</span></span>;</span><br><span class="line">  sum[<span class="number">0</span>] = <span class="number">0</span>; </span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">    sum[i + <span class="number">1</span>] = sum[i] + nums[i];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> ans = <span class="number">0</span>;</span><br><span class="line">  <span class="comment">// 穷举所有子数组</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">  &#123;</span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; i; j++)</span><br><span class="line">      &#123;</span><br><span class="line">          <span class="comment">// sum of nums[j..i-1]</span></span><br><span class="line">          <span class="keyword">if</span> (sum[i] - sum[j] == k)</span><br><span class="line">          &#123;</span><br><span class="line">               ans++;</span><br><span class="line">          &#125;             </span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">    </span><br><span class="line">  <span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;&ensp;前缀和进阶，与 unordered_map 结合。</p>
+<p>&ensp;&ensp;&ensp;&ensp;前面的解法有嵌套的 for 循环：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line"> &#123;</span><br><span class="line">     <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; i; j++)</span><br><span class="line">     &#123;</span><br><span class="line">         <span class="comment">// sum of nums[j..i-1]</span></span><br><span class="line">         <span class="keyword">if</span> (sum[i] - sum[j] == k)</span><br><span class="line">         &#123;</span><br><span class="line">              ans++;</span><br><span class="line">         &#125;             </span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;&ensp;第二层 for 循环在计算有几个<code>j</code>能够使得<code>sum[i]</code>和<code>sum[j]</code>的差为 k。毎找到一个这样的<code>j</code>，就把结果加一。</p>
+<p>&ensp;&ensp;&ensp;&ensp;我们可以把 if 语句里的条件判断移项，这样写：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if (sum[j] &#x3D;&#x3D; sum[i] - k)</span><br><span class="line">    ans++;</span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;&ensp;优化的思路是：<strong>我直接记录下有几个<code>sum[j]</code>和<code>sum[i]-k</code>相等，直接更新结果，就避免了内层的 for 循环</strong>。我们可以用哈希表，在记录前缀和的同时记录该前缀和出现的次数。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">subarraySum</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> k)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        unordered_map&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; mp;</span><br><span class="line">        mp[<span class="number">0</span>] = <span class="number">1</span>;			<span class="comment">//前缀和为 0 的子数组个数为 1</span></span><br><span class="line">        <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> pre = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span>&amp; x : nums)</span><br><span class="line">        &#123;</span><br><span class="line">            pre += x;	<span class="comment">//前缀和，直接采用一个变量</span></span><br><span class="line">            <span class="keyword">if</span> (mp.<span class="built_in">find</span>(pre - k) != mp.<span class="built_in">end</span>()) <span class="comment">//pre - k 是目标区间前面数组元素的前缀和</span></span><br><span class="line">            &#123;</span><br><span class="line">                count += mp[pre - k];</span><br><span class="line">            &#125;</span><br><span class="line">            ++mp[pre];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1109-航班预订统计"><a href="#1109-航班预订统计" class="headerlink" title="1109. 航班预订统计"></a><a href="https://leetcode-cn.com/problems/corporate-flight-bookings/">1109. 航班预订统计</a></h4><p>&ensp;&ensp;&ensp;&ensp;这里有 <code>n</code> 个航班，它们分别从 <code>1</code> 到 <code>n</code> 进行编号。</p>
+<p>&ensp;&ensp;&ensp;&ensp;有一份航班预订表 <code>bookings</code> ，表中第 <code>i</code> 条预订记录 <code>bookings[i] = [firsti, lasti, seatsi]</code> 意味着在从 <code>firsti</code> 到 <code>lasti</code> （<strong>包含</strong> <code>firsti</code> 和 <code>lasti</code> ）的 <strong>每个航班</strong> 上预订了 <code>seatsi</code> 个座位。</p>
+<p>&ensp;&ensp;&ensp;&ensp;请你返回一个长度为 <code>n</code> 的数组 <code>answer</code>，其中 <code>answer[i]</code> 是航班 <code>i</code> 上预订的座位总数。</p>
+<p> <strong>示例 1：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：bookings &#x3D; [[1,2,10],[2,3,20],[2,5,25]], n &#x3D; 5</span><br><span class="line">输出：[10,55,45,25,25]</span><br><span class="line">解释：</span><br><span class="line">航班编号        1   2   3   4   5</span><br><span class="line">预订记录 1 ：   10  10</span><br><span class="line">预订记录 2 ：       20  20</span><br><span class="line">预订记录 3 ：       25  25  25  25</span><br><span class="line">总座位数：      10  55  45  25  25</span><br><span class="line">因此，answer &#x3D; [10,55,45,25,25]</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 2：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：bookings &#x3D; [[1,2,10],[2,2,15]], n &#x3D; 2</span><br><span class="line">输出：[10,25]</span><br><span class="line">解释：</span><br><span class="line">航班编号        1   2</span><br><span class="line">预订记录 1 ：   10  10</span><br><span class="line">预订记录 2 ：       15</span><br><span class="line">总座位数：      10  25</span><br><span class="line">因此，answer &#x3D; [10,25]</span><br></pre></td></tr></table></figure>
+
+<p> <strong>提示：</strong></p>
+<ul>
+<li>  <code>1 &lt;= n &lt;= 2 * 104</code></li>
+<li>  <code>1 &lt;= bookings.length &lt;= 2 * 104</code></li>
+<li>  <code>bookings[i].length == 3</code></li>
+<li>  <code>1 &lt;= firsti &lt;= lasti &lt;= n</code></li>
+<li>  <code>1 &lt;= seatsi &lt;= 104</code></li>
+</ul>
+<p>&ensp;&ensp;&ensp;&ensp;直接上差分数组：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">corpFlightBookings</span><span class="params">(vector&lt;vector&lt;<span class="keyword">int</span>&gt;&gt;&amp; bookings, <span class="keyword">int</span> n)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">res</span><span class="params">(n,<span class="number">0</span>)</span></span>;</span><br><span class="line">        <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">diff</span><span class="params">(n+<span class="number">1</span>, <span class="number">0</span>)</span></span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; bookings.<span class="built_in">size</span>(); ++k)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">int</span> i = bookings[k][<span class="number">0</span>] - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">int</span> j = bookings[k][<span class="number">1</span>] - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">int</span> seat = bookings[k][<span class="number">2</span>];</span><br><span class="line">            diff[i] = diff[i] + seat;</span><br><span class="line">            diff[j+<span class="number">1</span>] = diff[j+<span class="number">1</span>] - seat;</span><br><span class="line">        &#125;</span><br><span class="line">        res[<span class="number">0</span>] = diff[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> k = <span class="number">1</span>; k &lt; n; k++)</span><br><span class="line">        &#123;</span><br><span class="line">            res[k] = res[k<span class="number">-1</span>] + diff[k];</span><br><span class="line">        &#125;          </span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>[参考：论那些小而美的算法技巧：差分数组/前缀和](<a href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247487011&idx=1&sn=5e2b00c1c736fd7afbf3ed35edc4aeec&chksm=9bd7f02baca0793d569a9633cc14117e708ccc9eb41b7f0add430ea78f22e4f2443f421c6841&scene=21#wechat_redirect">论那些小而美的算法技巧：差分数组/前缀和 (qq.com)</a>)</p>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>数组</tag>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>缺失的第一个整数</title>
+    <url>/2021/04/21/%E7%AE%97%E6%B3%95%EF%BC%9A%E7%BC%BA%E5%A4%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E6%AD%A3%E6%95%B0/</url>
+    <content><![CDATA[<h3 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h3><p>&ensp;&ensp;&ensp;&ensp;2021年拼多多暑期实习技术面一面时碰到了这道题，面试官直接告诉我这是道 hard 级别的题目，还问我要不要换一道，当时头铁，没想换，结果就是代码各种细节漏洞（拼多多面试平台不能运行代码，很痛苦），最后还是换了一道二叉树的 medium 题。</p>
+ <span id="more"></span>
+
+<p>&ensp;&ensp;&ensp;&ensp;题目描述：(<a href="https://leetcode-cn.com/problems/first-missing-positive/">leetcode: 41</a>)</p>
+<p>&ensp;&ensp;&ensp;&ensp;给你一个未排序的整数数组 <code>nums</code> ，请你找出其中没有出现的最小的正整数要求时间复杂度O(n)，空间复杂度O(1)</p>
+<p><strong>示例 1：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：nums &#x3D; [1,2,0]</span><br><span class="line">输出：3</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 2：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：nums &#x3D; [3,4,-1,1]</span><br><span class="line">输出：2</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 3：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：nums &#x3D; [7,8,9,11,12]</span><br><span class="line">输出：1</span><br></pre></td></tr></table></figure>
+
+<p> <strong>提示：</strong></p>
+<ul>
+<li>  <code>0 &lt;= nums.length &lt;= 300</code></li>
+<li>  <code>-231 &lt;= nums[i] &lt;= 231 - 1</code></li>
+</ul>
+<h3 id="二、题目分析"><a href="#二、题目分析" class="headerlink" title="二、题目分析"></a>二、题目分析</h3><p>&ensp;&ensp;&ensp;&ensp;首先，我们可以确定给定数组的缺失的最小整数的范围：[1, nums.size() + 1]，因此我们可以把数组中的元素<strong>归位</strong>，比如数组中的 1 放在数组第1个位置， 2 放在数组第2个位置……</p>
+<p>&ensp;&ensp;&ensp;&ensp;然后从头遍历该数组，当 <code>nums[i] - 1 != i</code>时，返回 <code>i + 1</code>即可；若遍历完仍然没返回值，则返回<code>nums.size() + 1</code>。</p>
+<p>&ensp;&ensp;&ensp;&ensp;重点是<strong>归位</strong>元素，使数组中的元素 <code>a</code>，归位到 <code>nums[a - 1]</code>（a的范围有限制），还要考虑<code>a</code>的目标位置上的元素不被覆盖。</p>
+<blockquote>
+<p>  所以应该交换 a 和 目标位置的元素，这是原来 a 的位置有了新元素，再归位这个新元素。（不要以为只交换一次，新元素可能 ‘’德不配位’‘ ）</p>
+</blockquote>
+<p>&ensp;&ensp;&ensp;&ensp;例：[3, 4, -1, 1] → [-1, 4, 3, 1] → [-1, 1, 3, 4] → [1, -1, 3, 4]</p>
+<ol>
+<li> 归位 3， -1 换到 nums[0]，-1 不满足范围限制</li>
+<li> 归位 4， 1 换到 nums[1]; 再归位 1，使nums[0] = 1, -1换到nums[1] 处</li>
+<li> 再归位后面的元素</li>
+</ol>
+<p>代码：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">firstMissingPositive</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> length = nums.<span class="built_in">size</span>();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; length; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//范围限制</span></span><br><span class="line">            <span class="keyword">while</span> (nums[i] &gt; <span class="number">0</span> &amp;&amp; </span><br><span class="line">                   nums[i] &lt;= nums.<span class="built_in">size</span>() &amp;&amp; </span><br><span class="line">                   nums[nums[i] - <span class="number">1</span>] != nums[i]) </span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">swap</span>(nums[i], nums[nums[i] - <span class="number">1</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.<span class="built_in">size</span>(); ++i) </span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[i] - <span class="number">1</span> != i) </span><br><span class="line">                <span class="keyword">return</span> i + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> nums.<span class="built_in">size</span>() + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;&ensp;更多博客，敬请期待。</p>
+]]></content>
+      <categories>
+        <category>算法</category>
+        <category>遇到的笔试（面试）题</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>leetcode</tag>
+        <tag>拼多多实习面试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>位运算</title>
+    <url>/2021/04/26/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E5%AD%A6%EF%BC%9A%E4%BD%8D%E8%BF%90%E7%AE%97/</url>
+    <content><![CDATA[<p>&ensp;&ensp;本文介绍一些我在刷题时遇到的有关位运算的算法题。</p>
+<span id="more"></span>
+
+<h3 id="位异或："><a href="#位异或：" class="headerlink" title="位异或："></a><strong>位异或</strong>：</h3><p>&ensp;&ensp;&ensp;&ensp;一个数和它本身做异或运算结果为 0，即 <code>a ^ a = 0</code>；一个数和 0 做异或运算的结果为它本身，即 <code>a ^ 0 = a</code>。</p>
+<p>&ensp;&ensp;&ensp;&ensp;例：</p>
+<p>&ensp;&ensp;&ensp;&ensp;<a href="https://leetcode-cn.com/problems/single-number/">只出现一次的数字</a></p>
+<p>&ensp;&ensp;&ensp;&ensp;给定一个<strong>非空</strong>整数数组，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。</p>
+<p><strong>说明：</strong></p>
+<p>&ensp;&ensp;&ensp;&ensp;你的算法应该具有线性时间复杂度。 你可以不使用额外空间来实现吗？</p>
+<p><strong>示例 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: [2,2,1]</span><br><span class="line">输出: 1</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: [4,1,2,1,2]</span><br><span class="line">输出: 4</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">singleNumber</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> ans = nums[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; nums.<span class="built_in">size</span>(); ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            ans = ans ^ nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="汉明权重"><a href="#汉明权重" class="headerlink" title="汉明权重"></a>汉明权重</h3><p>&ensp;&ensp;位与<code>&amp;</code>，<code>1 &amp; 1 = 1</code>，<code>1 &amp; 0 = 0 &amp; 1 = 0 &amp; 0 = 0</code></p>
+<p>&ensp;&ensp;判断奇偶，n &amp; 1 == 1则为奇数，否则为偶数。</p>
+<p>&ensp;&ensp;&ensp;&ensp;<strong>汉明重量</strong>是一串符号中非零符号的个数。因此它等同于同样长度的全零符号串的<a href="https://baike.baidu.com/item/%E6%B1%89%E6%98%8E%E8%B7%9D%E7%A6%BB">汉明距离</a>。在最为常见的<a href="https://baike.baidu.com/item/%E6%95%B0%E6%8D%AE%E4%BD%8D">数据位</a>符号串中，它是1的个数。</p>
+<p>&ensp;&ensp;&ensp;&ensp;<code>n&amp;(n-1)</code> 这个操作是算法中常见的，作用是消除数字 <code>n</code> 的二进制表示中的最后一个 1。</p>
+<img src="/2021/04/26/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E5%AD%A6%EF%BC%9A%E4%BD%8D%E8%BF%90%E7%AE%97/2021-4-30-bit.png" alt="图片" style="zoom:50%;">
+
+<p>&ensp;&ensp;&ensp;&ensp;其核心逻辑就是，<code>n - 1</code> 一定可以消除最后一个 1，同时把其后的 0 都变成 1，这样再和 <code>n</code> 做一次 <code>&amp;</code> 运算，就可以仅仅把最后一个 1 变成 0 了。</p>
+<p>&ensp;&ensp;&ensp;&ensp;核心代码：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">hammingWeight</span><span class="params">(<span class="keyword">uint32_t</span> n)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> res = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (n != <span class="number">0</span>) </span><br><span class="line">    &#123;</span><br><span class="line">        n = n &amp; (n - <span class="number">1</span>);</span><br><span class="line">        res++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="338-比特位计数"><a href="#338-比特位计数" class="headerlink" title="338. 比特位计数"></a><a href="https://leetcode-cn.com/problems/counting-bits/">338. 比特位计数</a></h4><p>&ensp;&ensp;&ensp;&ensp;给定一个非负整数 <strong>num</strong>。对于 <strong>0 ≤ i ≤ num</strong> 范围中的每个数字 <strong>i</strong> ，计算其二进制数中的 1 的数目并将它们作为数组返回。</p>
+<p><strong>示例 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: 2</span><br><span class="line">输出: [0,1,1]</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: 5</span><br><span class="line">输出: [0,1,1,2,1,2]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">countBits</span><span class="params">(<span class="keyword">int</span> num)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        vector&lt;<span class="keyword">int</span>&gt; ans;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= num; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            ans.<span class="built_in">push_back</span>(<span class="built_in">hammingWeight</span>(i));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">hammingWeight</span><span class="params">(<span class="keyword">int</span> n)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> res = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (n != <span class="number">0</span>) &#123;</span><br><span class="line">            n = n &amp; (n - <span class="number">1</span>);</span><br><span class="line">            res++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>另一解法：</p>
+<p>&ensp;&ensp;&ensp;&ensp;对于所有的数字，只有两类：</p>
+<p>&ensp;&ensp;&ensp;&ensp;奇数：二进制表示中，奇数一定比前面那个偶数多一个 1，因为多的就是最低位的 1。        </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">举例： </span><br><span class="line">    0 &#x3D; 0       1 &#x3D; 1</span><br><span class="line">    2 &#x3D; 10      3 &#x3D; 11</span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;&ensp;偶数：二进制表示中，偶数中 1 的个数一定和除以 2 之后的那个数一样多。因为最低位是 0，除以 2 就是右移一位，也就是把那个 0 抹掉而已，所以 1 的个数是不变的。         </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">举例：</span><br><span class="line">    2 &#x3D; 10       4 &#x3D; 100       8 &#x3D; 1000</span><br><span class="line">    3 &#x3D; 11       6 &#x3D; 110       12 &#x3D; 1100</span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;&ensp;另外，0 的 1 个数为 0，于是就可以根据奇偶性开始遍历计算了。</p>
+<p>&ensp;&ensp;&ensp;&ensp;代码</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">countBits</span><span class="params">(<span class="keyword">int</span> num)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">result</span><span class="params">(num+<span class="number">1</span>)</span></span>;</span><br><span class="line">    result[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= num; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(i % <span class="number">2</span> == <span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            result[i] = result[i<span class="number">-1</span>] + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            result[i] = result[i/<span class="number">2</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;        </span><br></pre></td></tr></table></figure>
+
+<h4 id="461-汉明距离"><a href="#461-汉明距离" class="headerlink" title="461. 汉明距离"></a><a href="https://leetcode-cn.com/problems/hamming-distance/">461. 汉明距离</a></h4><p>两个整数之间的<a href="https://baike.baidu.com/item/%E6%B1%89%E6%98%8E%E8%B7%9D%E7%A6%BB">汉明距离</a>指的是这两个数字对应二进制位不同的位置的数目。</p>
+<p>给出两个整数 <code>x</code> 和 <code>y</code>，计算它们之间的汉明距离。</p>
+<p><strong>注意：</strong><br>0 ≤ <code>x</code>, <code>y</code> &lt; 231.</p>
+<p><strong>示例:</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: x &#x3D; 1, y &#x3D; 4</span><br><span class="line"></span><br><span class="line">输出: 2</span><br><span class="line"></span><br><span class="line">解释:</span><br><span class="line">1   (0 0 0 1)</span><br><span class="line">4   (0 1 0 0)</span><br><span class="line">       ↑   ↑</span><br><span class="line"></span><br><span class="line">上面的箭头指出了对应二进制位不同的位置。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">hammingDistance</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n = x ^ y;</span><br><span class="line">        <span class="keyword">int</span> res = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (n != <span class="number">0</span>) </span><br><span class="line">        &#123;</span><br><span class="line">            n = n &amp; (n - <span class="number">1</span>);</span><br><span class="line">            ++res;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247486704&idx=2&sn=59b011722fe722551de8b56f234a4050&chksm=9bd7f2f8aca07bee47852e7bce72325157897ad0a3d5f383d18bca5379d66716518c2b968ae9&scene=21#wechat_redirect">原创 | 东哥教你几招常用的位运算技巧 (qq.com)</a></p>
+]]></content>
+      <categories>
+        <category>算法</category>
+        <category>数学</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>leetcode</tag>
+        <tag>位运算</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>模幂运算</title>
-    <url>/2021/04/30/%E6%A8%A1%E5%B9%82%E8%BF%90%E7%AE%97/</url>
+    <url>/2021/04/30/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E5%AD%A6%EF%BC%9A%E6%A8%A1%E5%B9%82%E8%BF%90%E7%AE%97/</url>
     <content><![CDATA[<p>&ensp;&ensp;&ensp;&ensp;由于格式原因可能文章显示有问题，a^1234^代表a的1234次幂</p>
 <p>&ensp;&ensp;&ensp;&ensp;a^1234^  =  a^4^  *  (a^123^)^10^</p>
 <p>&ensp;&ensp;&ensp;&ensp;(a * b) % mod = (a % mod)(b % mod) % mod</p>
@@ -71,7 +422,7 @@
   </entry>
   <entry>
     <title>跳跃游戏</title>
-    <url>/2021/04/29/%E8%B7%B3%E8%B7%83%E6%B8%B8%E6%88%8F/</url>
+    <url>/2021/04/29/%E7%AE%97%E6%B3%95%EF%BC%9A%E8%B7%B3%E8%B7%83%E6%B8%B8%E6%88%8F/</url>
     <content><![CDATA[<h3 id="一、介绍"><a href="#一、介绍" class="headerlink" title="一、介绍"></a>一、介绍</h3><p>&ensp;&ensp;&ensp;&ensp;2021年4月14日华为笔试题第四题，好像是一个有关信号塔传播的题，后来在刷Leetcode的时候碰见了原题，也就是《跳跃游戏2》；跳跃游戏1和2只是问法不一样，核心算法相同。</p>
 <span id="more"></span>
 
@@ -114,344 +465,423 @@
       </tags>
   </entry>
   <entry>
-    <title>位运算</title>
-    <url>/2021/04/26/%E4%BD%8D%E8%BF%90%E7%AE%97/</url>
-    <content><![CDATA[<p>&ensp;&ensp;本文介绍一些我在刷题时遇到的有关位运算的算法题。</p>
+    <title>删除链表的倒数第n个节点</title>
+    <url>/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E5%80%92%E6%95%B0%E7%AC%ACn%E4%B8%AA%E8%8A%82%E7%82%B9/</url>
+    <content><![CDATA[<h3 id="一、题目描述"><a href="#一、题目描述" class="headerlink" title="一、题目描述"></a>一、题目描述</h3><p>&ensp;&ensp;&ensp;&ensp;给定一个链表，删除链表的倒数第 n 个节点，并且返回链表的头结点。</p>
 <span id="more"></span>
 
-<h3 id="位异或："><a href="#位异或：" class="headerlink" title="位异或："></a><strong>位异或</strong>：</h3><p>&ensp;&ensp;&ensp;&ensp;一个数和它本身做异或运算结果为 0，即 <code>a ^ a = 0</code>；一个数和 0 做异或运算的结果为它本身，即 <code>a ^ 0 = a</code>。</p>
-<p>&ensp;&ensp;&ensp;&ensp;例：</p>
-<p>&ensp;&ensp;&ensp;&ensp;<a href="https://leetcode-cn.com/problems/single-number/">只出现一次的数字</a></p>
-<p>&ensp;&ensp;&ensp;&ensp;给定一个<strong>非空</strong>整数数组，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。</p>
-<p><strong>说明：</strong></p>
-<p>&ensp;&ensp;&ensp;&ensp;你的算法应该具有线性时间复杂度。 你可以不使用额外空间来实现吗？</p>
-<p><strong>示例 1:</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: [2,2,1]</span><br><span class="line">输出: 1</span><br></pre></td></tr></table></figure>
-
-<p><strong>示例 2:</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: [4,1,2,1,2]</span><br><span class="line">输出: 4</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">singleNumber</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> ans = nums[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; nums.<span class="built_in">size</span>(); ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            ans = ans ^ nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="汉明权重"><a href="#汉明权重" class="headerlink" title="汉明权重"></a>汉明权重</h3><p>&ensp;&ensp;位与<code>&amp;</code>，<code>1 &amp; 1 = 1</code>，<code>1 &amp; 0 = 0 &amp; 1 = 0 &amp; 0 = 0</code></p>
-<p>&ensp;&ensp;判断奇偶，n &amp; 1 == 1则为奇数，否则为偶数。</p>
-<p>&ensp;&ensp;&ensp;&ensp;<strong>汉明重量</strong>是一串符号中非零符号的个数。因此它等同于同样长度的全零符号串的<a href="https://baike.baidu.com/item/%E6%B1%89%E6%98%8E%E8%B7%9D%E7%A6%BB">汉明距离</a>。在最为常见的<a href="https://baike.baidu.com/item/%E6%95%B0%E6%8D%AE%E4%BD%8D">数据位</a>符号串中，它是1的个数。</p>
-<p>&ensp;&ensp;&ensp;&ensp;<code>n&amp;(n-1)</code> 这个操作是算法中常见的，作用是消除数字 <code>n</code> 的二进制表示中的最后一个 1。</p>
-<img src="/2021/04/26/%E4%BD%8D%E8%BF%90%E7%AE%97/2021-4-30-bit.png" alt="图片" style="zoom:50%;">
-
-<p>&ensp;&ensp;&ensp;&ensp;其核心逻辑就是，<code>n - 1</code> 一定可以消除最后一个 1，同时把其后的 0 都变成 1，这样再和 <code>n</code> 做一次 <code>&amp;</code> 运算，就可以仅仅把最后一个 1 变成 0 了。</p>
-<p>&ensp;&ensp;&ensp;&ensp;核心代码：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">hammingWeight</span><span class="params">(<span class="keyword">uint32_t</span> n)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> res = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (n != <span class="number">0</span>) </span><br><span class="line">    &#123;</span><br><span class="line">        n = n &amp; (n - <span class="number">1</span>);</span><br><span class="line">        res++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="338-比特位计数"><a href="#338-比特位计数" class="headerlink" title="338. 比特位计数"></a><a href="https://leetcode-cn.com/problems/counting-bits/">338. 比特位计数</a></h4><p>&ensp;&ensp;&ensp;&ensp;给定一个非负整数 <strong>num</strong>。对于 <strong>0 ≤ i ≤ num</strong> 范围中的每个数字 <strong>i</strong> ，计算其二进制数中的 1 的数目并将它们作为数组返回。</p>
-<p><strong>示例 1:</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: 2</span><br><span class="line">输出: [0,1,1]</span><br></pre></td></tr></table></figure>
-
-<p><strong>示例 2:</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: 5</span><br><span class="line">输出: [0,1,1,2,1,2]</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">countBits</span><span class="params">(<span class="keyword">int</span> num)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        vector&lt;<span class="keyword">int</span>&gt; ans;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= num; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            ans.<span class="built_in">push_back</span>(<span class="built_in">hammingWeight</span>(i));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">hammingWeight</span><span class="params">(<span class="keyword">int</span> n)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> res = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (n != <span class="number">0</span>) &#123;</span><br><span class="line">            n = n &amp; (n - <span class="number">1</span>);</span><br><span class="line">            res++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>另一解法：</p>
-<p>&ensp;&ensp;&ensp;&ensp;对于所有的数字，只有两类：</p>
-<p>&ensp;&ensp;&ensp;&ensp;奇数：二进制表示中，奇数一定比前面那个偶数多一个 1，因为多的就是最低位的 1。        </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">举例： </span><br><span class="line">    0 &#x3D; 0       1 &#x3D; 1</span><br><span class="line">    2 &#x3D; 10      3 &#x3D; 11</span><br></pre></td></tr></table></figure>
-
-<p>&ensp;&ensp;&ensp;&ensp;偶数：二进制表示中，偶数中 1 的个数一定和除以 2 之后的那个数一样多。因为最低位是 0，除以 2 就是右移一位，也就是把那个 0 抹掉而已，所以 1 的个数是不变的。         </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">举例：</span><br><span class="line">    2 &#x3D; 10       4 &#x3D; 100       8 &#x3D; 1000</span><br><span class="line">    3 &#x3D; 11       6 &#x3D; 110       12 &#x3D; 1100</span><br></pre></td></tr></table></figure>
-
-<p>&ensp;&ensp;&ensp;&ensp;另外，0 的 1 个数为 0，于是就可以根据奇偶性开始遍历计算了。</p>
-<p>&ensp;&ensp;&ensp;&ensp;代码</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">countBits</span><span class="params">(<span class="keyword">int</span> num)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">result</span><span class="params">(num+<span class="number">1</span>)</span></span>;</span><br><span class="line">    result[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= num; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(i % <span class="number">2</span> == <span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            result[i] = result[i<span class="number">-1</span>] + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            result[i] = result[i/<span class="number">2</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;        </span><br></pre></td></tr></table></figure>
-
-<h4 id="461-汉明距离"><a href="#461-汉明距离" class="headerlink" title="461. 汉明距离"></a><a href="https://leetcode-cn.com/problems/hamming-distance/">461. 汉明距离</a></h4><p>两个整数之间的<a href="https://baike.baidu.com/item/%E6%B1%89%E6%98%8E%E8%B7%9D%E7%A6%BB">汉明距离</a>指的是这两个数字对应二进制位不同的位置的数目。</p>
-<p>给出两个整数 <code>x</code> 和 <code>y</code>，计算它们之间的汉明距离。</p>
-<p><strong>注意：</strong><br>0 ≤ <code>x</code>, <code>y</code> &lt; 231.</p>
-<p><strong>示例:</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: x &#x3D; 1, y &#x3D; 4</span><br><span class="line"></span><br><span class="line">输出: 2</span><br><span class="line"></span><br><span class="line">解释:</span><br><span class="line">1   (0 0 0 1)</span><br><span class="line">4   (0 1 0 0)</span><br><span class="line">       ↑   ↑</span><br><span class="line"></span><br><span class="line">上面的箭头指出了对应二进制位不同的位置。</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">hammingDistance</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n = x ^ y;</span><br><span class="line">        <span class="keyword">int</span> res = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (n != <span class="number">0</span>) </span><br><span class="line">        &#123;</span><br><span class="line">            n = n &amp; (n - <span class="number">1</span>);</span><br><span class="line">            ++res;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p><a href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247486704&idx=2&sn=59b011722fe722551de8b56f234a4050&chksm=9bd7f2f8aca07bee47852e7bce72325157897ad0a3d5f383d18bca5379d66716518c2b968ae9&scene=21#wechat_redirect">原创 | 东哥教你几招常用的位运算技巧 (qq.com)</a></p>
-]]></content>
+<p>&ensp;&ensp;&ensp;&ensp;示例：<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;给定一个链表: 1-&gt;2-&gt;3-&gt;4-&gt;5, 和 n = 2.<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;当删除了倒数第二个节点后，链表变为 1-&gt;2-&gt;3-&gt;5.<br>&ensp;&ensp;&ensp;&ensp;说明：给定的 n 保证是有效的。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode() : val(0), next(nullptr) &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(nullptr) &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x, ListNode *next) : val(x), next(next) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">removeNthFromEnd</span><span class="params">(ListNode* head, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    	<span class="comment">//to do            </span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="二、解题思路"><a href="#二、解题思路" class="headerlink" title="二、解题思路"></a>二、解题思路</h3><p>&ensp;&ensp;&ensp;&ensp;首先需要知道所给链表的长度</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> length=<span class="number">0</span>;</span><br><span class="line">ListNode *lengthptr=head;</span><br><span class="line">        <span class="keyword">while</span>(lengthptr!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">            length++;</span><br><span class="line">            lengthptr=length1-&gt;next;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>&ensp;&ensp;&ensp;&ensp;然后将中间指针移动到所要删除的节点的前一个节点上，然后执行删除操作。<br>&ensp;&ensp;&ensp;&ensp;根据注释中链表的定义，我们创造了一个新的节点beforhead，它指向head；然后对beforehead后面的链表执行操作，最后返回beforhead-&gt;next，这样便于解决一些特殊情况，比如删除头结点时。</p>
+<h3 id="三、我的代码"><a href="#三、我的代码" class="headerlink" title="三、我的代码"></a>三、我的代码</h3><p>&ensp;&ensp;&ensp;&ensp;直接在力扣上写的。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode() : val(0), next(nullptr) &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(nullptr) &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x, ListNode *next) : val(x), next(next) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">removeNthFromEnd</span><span class="params">(ListNode* head, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> length=<span class="number">0</span>;</span><br><span class="line">        ListNode *beforhead=<span class="keyword">new</span> <span class="built_in">ListNode</span>(<span class="number">0</span>,head);</span><br><span class="line">        ListNode *begin=beforhead;</span><br><span class="line">        ListNode *lengthptr=head;</span><br><span class="line">        <span class="keyword">while</span>(lengthptr!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">            length++;</span><br><span class="line">            lengthptr=length1-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;length-n+<span class="number">1</span>;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            begin=begin-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        begin-&gt;next=begin-&gt;next-&gt;next;</span><br><span class="line">        ListNode *ans=beforhead-&gt;next;</span><br><span class="line">        <span class="keyword">return</span> ans;                    </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>算法</category>
-        <category>数学</category>
+        <category>链表</category>
       </categories>
       <tags>
         <tag>算法</tag>
-        <tag>位运算</tag>
         <tag>leetcode</tag>
+        <tag>链表</tag>
       </tags>
   </entry>
   <entry>
-    <title>前缀和数组与差分数组</title>
-    <url>/2021/04/23/%E5%89%8D%E7%BC%80%E5%92%8C%E6%95%B0%E7%BB%84%E4%B8%8E%E5%B7%AE%E5%88%86%E6%95%B0%E7%BB%84/</url>
-    <content><![CDATA[<p>&ensp;&ensp;&ensp;&ensp;当我们需要频繁地查询数组某个区间的累加和或频繁地对数组的某个区间的元素进行增减，便需要用到前缀和数组以及差分数组来提高效率</p>
+    <title>反转链表</title>
+    <url>/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8/</url>
+    <content><![CDATA[<h3 id="一、题目描述"><a href="#一、题目描述" class="headerlink" title="一、题目描述"></a>一、题目描述</h3><p>&ensp;&ensp;&ensp;&ensp;反转一个单链表。</p>
 <span id="more"></span>
 
-<h3 id="一、概念简介"><a href="#一、概念简介" class="headerlink" title="一、概念简介"></a>一、概念简介</h3><p>&ensp;&ensp;&ensp;&ensp;<strong>前缀和数组</strong>：对于一个给定的数组 <code>nums</code>，额外开辟一个前缀和数组进行预处理：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">preSum</span><span class="params">(nums.size() + <span class="number">1</span>)</span></span>;</span><br><span class="line">preSum[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.<span class="built_in">size</span>(); i++)</span><br><span class="line">&#123;</span><br><span class="line">    preSum[i + <span class="number">1</span>] = preSum[i] + nums[i];</span><br><span class="line">&#125;    </span><br></pre></td></tr></table></figure>
+<p>示例:</p>
+<pre><code>输入: 1-&gt;2-&gt;3-&gt;4-&gt;5-&gt;NULL
+输出: 5-&gt;4-&gt;3-&gt;2-&gt;1-&gt;NULL
+</code></pre>
+<p>进阶:<br>&ensp;&ensp;&ensp;&ensp;你可以迭代或递归地反转链表。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">reverseList</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//to do</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="二、解题思路"><a href="#二、解题思路" class="headerlink" title="二、解题思路"></a>二、解题思路</h3><p>&ensp;&ensp;&ensp;&ensp;当链表为空或者只有一个头结点时，直接返回head即可。<br>&ensp;&ensp;&ensp;&ensp;定义三个指针：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">ListNode* p=head;</span><br><span class="line">ListNode* q=head-&gt;next;</span><br><span class="line">ListNode* tmp;</span><br></pre></td></tr></table></figure>
+<p>&ensp;&ensp;&ensp;&ensp;p是反转链表的头节点，q是老链表的头节点，tmp作为p，q移动时的中间节点。<br><img src="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8/1.png" alt="在这里插入图片描述"><br>&ensp;&ensp;&ensp;&ensp;移动一次</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">tmp=q;</span><br><span class="line">q=q-&gt;next;</span><br><span class="line">tmp-&gt;next=p;</span><br><span class="line">p=tmp;</span><br></pre></td></tr></table></figure>
 
-<p>&ensp;&ensp;&ensp;&ensp;前缀和数组 <code>preSum</code> 的含义很好理解，<code>preSum[i]</code> 就是 <code>nums[0..i-1]</code> 的和。那么如果我们想求 <code>nums[i...j]</code> 的和，只需要一步操作 <code>preSum[j+1] - preSum[i]</code> 即可，而不需要重新去遍历数组了。</p>
-<p>&ensp;&ensp;&ensp;&ensp;<strong>前缀和主要适用的场景是原始数组不会被修改的情况下，频繁查询某个区间的累加和</strong>。</p>
-<p>&ensp;&ensp;&ensp;&ensp;<strong>差分数组</strong>：对于一个给定的数组<code>nums</code>，额外开辟一个差分数组进行预处理：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">diff</span><span class="params">(nums.size())</span></span>;</span><br><span class="line">diff[<span class="number">0</span>] = diff[<span class="number">0</span>];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; nums.<span class="built_in">size</span>(); ++i)</span><br><span class="line">&#123;</span><br><span class="line">    diff[i] = nums[i] - nums[i - <span class="number">1</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>&ensp;&ensp;&ensp;&ensp;通过这个<code>diff</code>差分数组是可以反推出原始数组<code>nums</code>的，代码逻辑如下：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">nums</span><span class="params">(diff.size())</span></span>;</span><br><span class="line"><span class="comment">// 根据差分数组构造结果数组</span></span><br><span class="line">nums[<span class="number">0</span>] = diff[<span class="number">0</span>];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; diff.<span class="built_in">size</span>(); ++i) </span><br><span class="line">&#123;</span><br><span class="line">    nums[i] = nums[i - <span class="number">1</span>] + diff[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>&ensp;&ensp;&ensp;&ensp;这样构造差分数组<code>diff</code>，就可以快速进行区间增减的操作，如果你想对区间<code>nums[i..j]</code>的元素全部加 3，那么只需要让<code>diff[i] += 3</code>，然后再让<code>diff[j+1] -= 3</code>即可。</p>
-<p>&ensp;&ensp;&ensp;&ensp;<code>diff[i] += 3</code>意味着给<code>nums[i..]</code>所有的元素都加了 3，然后<code>diff[j+1] -= 3</code>又意味着对于<code>nums[j+1..]</code>所有元素再减 3，那综合起来，就是对<code>nums[i..j]</code>中的所有元素都加 3 了。</p>
-<p>&ensp;&ensp;&ensp;&ensp;<strong>差分数组的主要适用场景是频繁对原始数组的某个区间的元素进行增减</strong>。</p>
-<h3 id="二、举个例子"><a href="#二、举个例子" class="headerlink" title="二、举个例子"></a>二、举个例子</h3><p><a href="https://leetcode-cn.com/problems/subarray-sum-equals-k/">560. 和为K的子数组</a></p>
-<p>&ensp;&ensp;&ensp;&ensp;给定一个整数数组和一个整数 <strong>k，</strong>你需要找到该数组中和为 <strong>k</strong> 的连续的子数组的个数。</p>
-<p><strong>示例 1 :</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入:nums &#x3D; [1,1,1], k &#x3D; 2</span><br><span class="line">输出: 2 , [1,1] 与 [1,1] 为两种不同的情况。</span><br></pre></td></tr></table></figure>
-
-<p><strong>说明 :</strong></p>
-<ol>
-<li> 数组的长度为 [1, 20,000]。</li>
-<li> 数组中元素的范围是 [-1000, 1000] ，且整数 <strong>k</strong> 的范围是 [-1e7, 1e7]。</li>
-</ol>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">subarraySum</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt; nums, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> n = nums.<span class="built_in">size</span>();</span><br><span class="line">  <span class="comment">// 构造前缀和</span></span><br><span class="line">  <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">sum</span><span class="params">(n + <span class="number">1</span>)</span></span>;</span><br><span class="line">  sum[<span class="number">0</span>] = <span class="number">0</span>; </span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">    sum[i + <span class="number">1</span>] = sum[i] + nums[i];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> ans = <span class="number">0</span>;</span><br><span class="line">  <span class="comment">// 穷举所有子数组</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">  &#123;</span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; i; j++)</span><br><span class="line">      &#123;</span><br><span class="line">          <span class="comment">// sum of nums[j..i-1]</span></span><br><span class="line">          <span class="keyword">if</span> (sum[i] - sum[j] == k)</span><br><span class="line">          &#123;</span><br><span class="line">               ans++;</span><br><span class="line">          &#125;             </span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">    </span><br><span class="line">  <span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>&ensp;&ensp;&ensp;&ensp;前缀和进阶，与 unordered_map 结合。</p>
-<p>&ensp;&ensp;&ensp;&ensp;前面的解法有嵌套的 for 循环：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line"> &#123;</span><br><span class="line">     <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; i; j++)</span><br><span class="line">     &#123;</span><br><span class="line">         <span class="comment">// sum of nums[j..i-1]</span></span><br><span class="line">         <span class="keyword">if</span> (sum[i] - sum[j] == k)</span><br><span class="line">         &#123;</span><br><span class="line">              ans++;</span><br><span class="line">         &#125;             </span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-
-<p>&ensp;&ensp;&ensp;&ensp;第二层 for 循环在计算有几个<code>j</code>能够使得<code>sum[i]</code>和<code>sum[j]</code>的差为 k。毎找到一个这样的<code>j</code>，就把结果加一。</p>
-<p>&ensp;&ensp;&ensp;&ensp;我们可以把 if 语句里的条件判断移项，这样写：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if (sum[j] &#x3D;&#x3D; sum[i] - k)</span><br><span class="line">    ans++;</span><br></pre></td></tr></table></figure>
-
-<p>&ensp;&ensp;&ensp;&ensp;优化的思路是：<strong>我直接记录下有几个<code>sum[j]</code>和<code>sum[i]-k</code>相等，直接更新结果，就避免了内层的 for 循环</strong>。我们可以用哈希表，在记录前缀和的同时记录该前缀和出现的次数。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">subarraySum</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> k)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        unordered_map&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; mp;</span><br><span class="line">        mp[<span class="number">0</span>] = <span class="number">1</span>;			<span class="comment">//前缀和为 0 的子数组个数为 1</span></span><br><span class="line">        <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> pre = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span>&amp; x : nums)</span><br><span class="line">        &#123;</span><br><span class="line">            pre += x;	<span class="comment">//前缀和，直接采用一个变量</span></span><br><span class="line">            <span class="keyword">if</span> (mp.<span class="built_in">find</span>(pre - k) != mp.<span class="built_in">end</span>()) <span class="comment">//pre - k 是目标区间前面数组元素的前缀和</span></span><br><span class="line">            &#123;</span><br><span class="line">                count += mp[pre - k];</span><br><span class="line">            &#125;</span><br><span class="line">            ++mp[pre];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h4 id="1109-航班预订统计"><a href="#1109-航班预订统计" class="headerlink" title="1109. 航班预订统计"></a><a href="https://leetcode-cn.com/problems/corporate-flight-bookings/">1109. 航班预订统计</a></h4><p>&ensp;&ensp;&ensp;&ensp;这里有 <code>n</code> 个航班，它们分别从 <code>1</code> 到 <code>n</code> 进行编号。</p>
-<p>&ensp;&ensp;&ensp;&ensp;有一份航班预订表 <code>bookings</code> ，表中第 <code>i</code> 条预订记录 <code>bookings[i] = [firsti, lasti, seatsi]</code> 意味着在从 <code>firsti</code> 到 <code>lasti</code> （<strong>包含</strong> <code>firsti</code> 和 <code>lasti</code> ）的 <strong>每个航班</strong> 上预订了 <code>seatsi</code> 个座位。</p>
-<p>&ensp;&ensp;&ensp;&ensp;请你返回一个长度为 <code>n</code> 的数组 <code>answer</code>，其中 <code>answer[i]</code> 是航班 <code>i</code> 上预订的座位总数。</p>
-<p> <strong>示例 1：</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：bookings &#x3D; [[1,2,10],[2,3,20],[2,5,25]], n &#x3D; 5</span><br><span class="line">输出：[10,55,45,25,25]</span><br><span class="line">解释：</span><br><span class="line">航班编号        1   2   3   4   5</span><br><span class="line">预订记录 1 ：   10  10</span><br><span class="line">预订记录 2 ：       20  20</span><br><span class="line">预订记录 3 ：       25  25  25  25</span><br><span class="line">总座位数：      10  55  45  25  25</span><br><span class="line">因此，answer &#x3D; [10,55,45,25,25]</span><br></pre></td></tr></table></figure>
-
-<p><strong>示例 2：</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：bookings &#x3D; [[1,2,10],[2,2,15]], n &#x3D; 2</span><br><span class="line">输出：[10,25]</span><br><span class="line">解释：</span><br><span class="line">航班编号        1   2</span><br><span class="line">预订记录 1 ：   10  10</span><br><span class="line">预订记录 2 ：       15</span><br><span class="line">总座位数：      10  25</span><br><span class="line">因此，answer &#x3D; [10,25]</span><br></pre></td></tr></table></figure>
-
-<p> <strong>提示：</strong></p>
+<h3 id="三、我的代码"><a href="#三、我的代码" class="headerlink" title="三、我的代码"></a>三、我的代码</h3><p>&ensp;&ensp;&ensp;&ensp;直接在力扣上写的。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">reverseList</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(head==<span class="literal">nullptr</span>||head-&gt;next==<span class="literal">nullptr</span>)</span><br><span class="line">            <span class="keyword">return</span> head;</span><br><span class="line">        ListNode* p=head;</span><br><span class="line">        ListNode* q=head-&gt;next;</span><br><span class="line">        ListNode* tmp;</span><br><span class="line">        p-&gt;next=<span class="literal">nullptr</span>;</span><br><span class="line">        <span class="keyword">while</span>(q!=<span class="literal">nullptr</span>)&#123;            </span><br><span class="line">            tmp=q;</span><br><span class="line">            q=q-&gt;next;</span><br><span class="line">            tmp-&gt;next=p;</span><br><span class="line">            p=tmp;          </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> p;          </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="25-K-个一组翻转链表"><a href="#25-K-个一组翻转链表" class="headerlink" title="25. K 个一组翻转链表"></a><a href="https://leetcode-cn.com/problems/reverse-nodes-in-k-group/">25. K 个一组翻转链表</a></h3><p>给你一个链表，每 <em>k</em> 个节点一组进行翻转，请你返回翻转后的链表。</p>
+<p><em>k</em> 是一个正整数，它的值小于或等于链表的长度。</p>
+<p>如果节点总数不是 <em>k</em> 的整数倍，那么请将最后剩余的节点保持原有顺序。</p>
+<p><strong>进阶：</strong></p>
 <ul>
-<li>  <code>1 &lt;= n &lt;= 2 * 104</code></li>
-<li>  <code>1 &lt;= bookings.length &lt;= 2 * 104</code></li>
-<li>  <code>bookings[i].length == 3</code></li>
-<li>  <code>1 &lt;= firsti &lt;= lasti &lt;= n</code></li>
-<li>  <code>1 &lt;= seatsi &lt;= 104</code></li>
+<li>  你可以设计一个只使用常数额外空间的算法来解决此问题吗？</li>
+<li>  <strong>你不能只是单纯的改变节点内部的值</strong>，而是需要实际进行节点交换。 </li>
 </ul>
-<p>&ensp;&ensp;&ensp;&ensp;直接上差分数组：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">corpFlightBookings</span><span class="params">(vector&lt;vector&lt;<span class="keyword">int</span>&gt;&gt;&amp; bookings, <span class="keyword">int</span> n)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">res</span><span class="params">(n,<span class="number">0</span>)</span></span>;</span><br><span class="line">        <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">diff</span><span class="params">(n+<span class="number">1</span>, <span class="number">0</span>)</span></span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; bookings.<span class="built_in">size</span>(); ++k)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">int</span> i = bookings[k][<span class="number">0</span>] - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">int</span> j = bookings[k][<span class="number">1</span>] - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">int</span> seat = bookings[k][<span class="number">2</span>];</span><br><span class="line">            diff[i] = diff[i] + seat;</span><br><span class="line">            diff[j+<span class="number">1</span>] = diff[j+<span class="number">1</span>] - seat;</span><br><span class="line">        &#125;</span><br><span class="line">        res[<span class="number">0</span>] = diff[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> k = <span class="number">1</span>; k &lt; n; k++)</span><br><span class="line">        &#123;</span><br><span class="line">            res[k] = res[k<span class="number">-1</span>] + diff[k];</span><br><span class="line">        &#125;          </span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>[参考：论那些小而美的算法技巧：差分数组/前缀和](<a href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247487011&idx=1&sn=5e2b00c1c736fd7afbf3ed35edc4aeec&chksm=9bd7f02baca0793d569a9633cc14117e708ccc9eb41b7f0add430ea78f22e4f2443f421c6841&scene=21#wechat_redirect">论那些小而美的算法技巧：差分数组/前缀和 (qq.com)</a>)</p>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>算法</tag>
-        <tag>leetcode</tag>
-        <tag>数组</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>缺失的第一个整数</title>
-    <url>/2021/04/21/%E7%BC%BA%E5%A4%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E6%AD%A3%E6%95%B0/</url>
-    <content><![CDATA[<h3 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h3><p>&ensp;&ensp;&ensp;&ensp;2021年拼多多暑期实习技术面一面时碰到了这道题，面试官直接告诉我这是道 hard 级别的题目，还问我要不要换一道，当时头铁，没想换，结果就是代码各种细节漏洞（拼多多面试平台不能运行代码，很痛苦），最后还是换了一道二叉树的 medium 题。</p>
- <span id="more"></span>
-
-<p>&ensp;&ensp;&ensp;&ensp;题目描述：(<a href="https://leetcode-cn.com/problems/first-missing-positive/">leetcode: 41</a>)</p>
-<p>&ensp;&ensp;&ensp;&ensp;给你一个未排序的整数数组 <code>nums</code> ，请你找出其中没有出现的最小的正整数要求时间复杂度O(n)，空间复杂度O(1)</p>
 <p><strong>示例 1：</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：nums &#x3D; [1,2,0]</span><br><span class="line">输出：3</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8/2.jpg" alt="img"></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4,5], k &#x3D; 2</span><br><span class="line">输出：[2,1,4,3,5]</span><br></pre></td></tr></table></figure>
 
 <p><strong>示例 2：</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：nums &#x3D; [3,4,-1,1]</span><br><span class="line">输出：2</span><br></pre></td></tr></table></figure>
+<p><img src="/%E5%8F%8D%E8%BD%AC%E9%93%BE%EF%BF%BD.jpg" alt="img"></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4,5], k &#x3D; 3</span><br><span class="line">输出：[3,2,1,4,5]</span><br></pre></td></tr></table></figure>
 
 <p><strong>示例 3：</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：nums &#x3D; [7,8,9,11,12]</span><br><span class="line">输出：1</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4,5], k &#x3D; 1</span><br><span class="line">输出：[1,2,3,4,5]</span><br></pre></td></tr></table></figure>
 
-<p> <strong>提示：</strong></p>
+<p><strong>示例 4：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1], k &#x3D; 1</span><br><span class="line">输出：[1]</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>提示：</strong></p>
 <ul>
-<li>  <code>0 &lt;= nums.length &lt;= 300</code></li>
-<li>  <code>-231 &lt;= nums[i] &lt;= 231 - 1</code></li>
+<li>  列表中节点的数量在范围 <code>sz</code> 内</li>
+<li>  <code>1 &lt;= sz &lt;= 5000</code></li>
+<li>  <code>0 &lt;= Node.val &lt;= 1000</code></li>
+<li>  <code>1 &lt;= k &lt;= sz</code></li>
 </ul>
-<h3 id="二、题目分析"><a href="#二、题目分析" class="headerlink" title="二、题目分析"></a>二、题目分析</h3><p>&ensp;&ensp;&ensp;&ensp;首先，我们可以确定给定数组的缺失的最小整数的范围：[1, nums.size() + 1]，因此我们可以把数组中的元素<strong>归位</strong>，比如数组中的 1 放在数组第1个位置， 2 放在数组第2个位置……</p>
-<p>&ensp;&ensp;&ensp;&ensp;然后从头遍历该数组，当 <code>nums[i] - 1 != i</code>时，返回 <code>i + 1</code>即可；若遍历完仍然没返回值，则返回<code>nums.size() + 1</code>。</p>
-<p>&ensp;&ensp;&ensp;&ensp;重点是<strong>归位</strong>元素，使数组中的元素 <code>a</code>，归位到 <code>nums[a - 1]</code>（a的范围有限制），还要考虑<code>a</code>的目标位置上的元素不被覆盖。</p>
-<blockquote>
-<p>  所以应该交换 a 和 目标位置的元素，这是原来 a 的位置有了新元素，再归位这个新元素。（不要以为只交换一次，新元素可能 ‘’德不配位’‘ ）</p>
-</blockquote>
-<p>&ensp;&ensp;&ensp;&ensp;例：[3, 4, -1, 1] → [-1, 4, 3, 1] → [-1, 1, 3, 4] → [1, -1, 3, 4]</p>
-<ol>
-<li> 归位 3， -1 换到 nums[0]，-1 不满足范围限制</li>
-<li> 归位 4， 1 换到 nums[1]; 再归位 1，使nums[0] = 1, -1换到nums[1] 处</li>
-<li> 再归位后面的元素</li>
-</ol>
-<p>代码：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">firstMissingPositive</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> length = nums.<span class="built_in">size</span>();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; length; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//范围限制</span></span><br><span class="line">            <span class="keyword">while</span> (nums[i] &gt; <span class="number">0</span> &amp;&amp; </span><br><span class="line">                   nums[i] &lt;= nums.<span class="built_in">size</span>() &amp;&amp; </span><br><span class="line">                   nums[nums[i] - <span class="number">1</span>] != nums[i]) </span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">swap</span>(nums[i], nums[nums[i] - <span class="number">1</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.<span class="built_in">size</span>(); ++i) </span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[i] - <span class="number">1</span> != i) </span><br><span class="line">                <span class="keyword">return</span> i + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> nums.<span class="built_in">size</span>() + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>代码</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode() : val(0), next(nullptr) &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(nullptr) &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x, ListNode *next) : val(x), next(next) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">reverse</span><span class="params">(ListNode* a, ListNode* b)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        ListNode* pre = <span class="literal">nullptr</span>;</span><br><span class="line">        ListNode* cur = a;</span><br><span class="line">        ListNode* nxt = a;</span><br><span class="line">        <span class="keyword">while</span>(cur != b)</span><br><span class="line">        &#123;</span><br><span class="line">            nxt = cur-&gt;next;</span><br><span class="line">            cur-&gt;next = pre;</span><br><span class="line">            pre = cur;</span><br><span class="line">            cur = nxt;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> pre;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">ListNode* <span class="title">reverseKGroup</span><span class="params">(ListNode* head, <span class="keyword">int</span> k)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!head)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">        </span><br><span class="line">        ListNode *a = head, *b = head;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; k; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(!b)</span><br><span class="line">                <span class="keyword">return</span> head;</span><br><span class="line">            b = b-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ListNode *newHead = <span class="built_in">reverse</span>(a, b);</span><br><span class="line"></span><br><span class="line">        a-&gt;next = <span class="built_in">reverseKGroup</span>(b, k);</span><br><span class="line">        <span class="keyword">return</span> newHead;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<p>&ensp;&ensp;&ensp;&ensp;更多博客，敬请期待。</p>
 ]]></content>
       <categories>
         <category>算法</category>
-        <category>遇到的笔试（面试）题</category>
+        <category>链表</category>
       </categories>
       <tags>
         <tag>算法</tag>
         <tag>leetcode</tag>
-        <tag>拼多多实习面试</tag>
+        <tag>链表</tag>
+        <tag>反转链表</tag>
       </tags>
   </entry>
   <entry>
-    <title>MySql8.0窗口函数</title>
-    <url>/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/</url>
-    <content><![CDATA[<h3 id="一、基本概念"><a href="#一、基本概念" class="headerlink" title="一、基本概念"></a>一、基本概念</h3><p>&ensp;&ensp;&ensp;&ensp;MySQL从<strong>8.0</strong>开始支持窗口函数，这个功能在大多商业数据库和部分开源数据库中早已支持，有的也叫分析函数。</p>
- <span id="more"></span>
+    <title>合并两个有序链表</title>
+    <url>/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8/</url>
+    <content><![CDATA[<h3 id="一、题目描述"><a href="#一、题目描述" class="headerlink" title="一、题目描述"></a>一、题目描述</h3><p>&ensp;&ensp;&ensp;&ensp;将两个升序链表合并为一个新的 <strong>升序</strong> 链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。 </p>
+<span id="more"></span>
 
-<p>概念：</p>
-<p>&ensp;&ensp;&ensp;&ensp;<strong>窗口</strong>的概念可以理解为记录集合；<strong>窗口函数</strong>也就是在满足某种条件的记录集合上执行的特殊函数，对于每条记录都要在此窗口内执行函数，有的函数随着记录不同，窗口大小都是固定的，这种是静态窗口；有的函数则是不同的记录对应着不同的窗口，这种动态变化的窗口叫滑动窗口。</p>
-<p>窗口函数与聚合函数：</p>
-<ol>
-<li>聚合函数是将多条记录聚合为一条；</li>
-<li>窗口函数是每条记录都会执行，有几条记录执行完还是几条；</li>
-<li>聚合函数也可以用于窗口函数。</li>
+<p><strong>示例：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：1-&gt;2-&gt;4, 1-&gt;3-&gt;4</span><br><span class="line">输出：1-&gt;1-&gt;2-&gt;3-&gt;4-&gt;4</span><br></pre></td></tr></table></figure>
+
+<h3 id="二、解题思路"><a href="#二、解题思路" class="headerlink" title="二、解题思路"></a>二、解题思路</h3><ol>
+<li><p>先判断有无空链表</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(l1==<span class="literal">nullptr</span>)</span><br><span class="line">	<span class="keyword">return</span> l2;</span><br><span class="line"><span class="keyword">if</span>(l2==<span class="literal">nullptr</span>)</span><br><span class="line">	<span class="keyword">return</span> l1;</span><br></pre></td></tr></table></figure></li>
+<li><p>确定合并链表的头结点（整数值小的结点）</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">ListNode* head;</span><br><span class="line">l1-&gt;val&gt;l2-&gt;val ? (head=l2,l2=l2-&gt;next):(head=l1,l1=l1-&gt;next); </span><br></pre></td></tr></table></figure></li>
+<li><p>连接后续结点</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span>(l1!=<span class="literal">nullptr</span>&amp;&amp;l2!=<span class="literal">nullptr</span>)&#123;            </span><br><span class="line">            l1-&gt;val&gt;l2-&gt;val ? (p-&gt;next=l2,l2=l2-&gt;next):(p-&gt;next=l1,l1=l1-&gt;next);            </span><br><span class="line">            p=p-&gt;next;            </span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure></li>
 </ol>
-<h3 id="二、基本格式"><a href="#二、基本格式" class="headerlink" title="二、基本格式"></a>二、基本格式</h3><p>基本语法：&lt;窗口函数&gt; over (子句)</p>
-<ul>
-<li><p>&lt;窗口函数&gt;的位置可以放专用窗口函数（rank()，percent_rank()，dense_rank()等），或者放聚合函数（sum()，avg()，max()等）。</p>
-</li>
-<li><p>窗口函数是对where或group by子句处理后的结果进行操作，故其原则上只写于SELECT子句中。</p>
-</li>
-<li><p>over 用来指定函数执行的窗口范围，<strong>若子句为空</strong>，则意味着窗口包含满足WHERE条件的所有行，窗口函数基于所有行进行计算。</p>
-</li>
-<li><p>若子句非空，则支持以下4中语法来设置窗口：</p>
-<p>​        <strong>window_name</strong>：给窗口指定一个别名，如果SQL中涉及的窗口较多，采用别名可以看起来更清晰易读。        </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	&#96;姓名&#96;,</span><br><span class="line">	&#96;班级&#96;,</span><br><span class="line">	&#96;人气&#96;,</span><br><span class="line">	rank() over w1 AS rak</span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; window w1 AS ( PARTITION BY &#96;班级&#96; ORDER BY &#96;人气&#96; DESC );</span><br></pre></td></tr></table></figure>
+<h3 id="三、我的代码"><a href="#三、我的代码" class="headerlink" title="三、我的代码"></a>三、我的代码</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode() : val(0), next(nullptr) &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(nullptr) &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x, ListNode *next) : val(x), next(next) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">mergeTwoLists</span><span class="params">(ListNode* l1, ListNode* l2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(l1==<span class="literal">nullptr</span>)</span><br><span class="line">            <span class="keyword">return</span> l2;</span><br><span class="line">        <span class="keyword">if</span>(l2==<span class="literal">nullptr</span>)</span><br><span class="line">            <span class="keyword">return</span> l1;</span><br><span class="line">        ListNode* head;</span><br><span class="line">        l1-&gt;val&gt;l2-&gt;val ? (head=l2,l2=l2-&gt;next):(head=l1,l1=l1-&gt;next);        </span><br><span class="line">        ListNode* p=head;</span><br><span class="line">        <span class="keyword">while</span>(l1!=<span class="literal">nullptr</span>&amp;&amp;l2!=<span class="literal">nullptr</span>)&#123;            </span><br><span class="line">            l1-&gt;val&gt;l2-&gt;val ? (p-&gt;next=l2,l2=l2-&gt;next):(p-&gt;next=l1,l1=l1-&gt;next);            </span><br><span class="line">            p=p-&gt;next;            </span><br><span class="line">        &#125;</span><br><span class="line">        p-&gt;next=(l1==<span class="literal">nullptr</span>)? l2:l1;        </span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<p>​        结果：</p>
-<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/1.png" alt="image-20201217104056497" style="zoom:80%;">
-
-<p>​        <strong>partition子句</strong>：窗口按照那些字段进行分组，窗口函数在不同的分组上分别执行。</p>
-<p>​        <strong>order by子句</strong>：按照哪些字段进行排序，窗口函数将按照排序后的记录顺序进行编号。</p>
-<p>​        frame子句：frame是当前分区的一个子集，子句用来定义子集的规则，通常用来作为滑动窗口使用。（本文暂不介绍）</p>
-<p>​        用于操作示例新建的民工漫班级表：</p>
-<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/2.png" alt="民工漫班级" style="zoom: 67%;">
-
-<p>​        </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	RANK() over ( PARTITION BY &#96;班级&#96; ORDER BY &#96;人气&#96; DESC ) AS ranking </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96;;</span><br><span class="line"># PARTITION BY &#96;班级&#96;：按班级分组（使用group by会改变表的行数，一个类别只保留一行；partition by则不会减少表的行数）</span><br><span class="line"># ORDER BY &#96;人气&#96; DESC：对按班级分组后的结果按人气降序排名，名次作为字段 ranking</span><br></pre></td></tr></table></figure>
-
-<p>得到结果：</p>
-<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/3.png" alt="image-20201217000959621" style="zoom: 50%;"></li>
-</ul>
-<h3 id="三、mysql窗口函数"><a href="#三、mysql窗口函数" class="headerlink" title="三、mysql窗口函数"></a>三、mysql窗口函数</h3><p><strong>功能划分</strong>：</p>
-<p> 按功能划分可将MySQL支持的窗口函数分为如下几类：</p>
-<ol>
-<li>序号函数：ROW_NUMBER()、RANK()、DENSE_RANK()</li>
-<li>分布函数：PERCENT_RANK()、CUME_DIST()，PERCENT_RANK()</li>
-<li>前后函数：LAG(expr,n)、LEAD(expr,n)</li>
-<li>头尾函数：FIRST_VALUE(expr)、LAST_VALUE(expr)</li>
-<li>其它函数：NTH_VALUE(expr, n)、NTILE(n)</li>
-</ol>
-<p><strong>分别介绍：</strong></p>
-<p><strong>序号函数：ROW_NUMBER()、RANK()、DENSE_RANK()</strong></p>
-<p>&ensp;&ensp;&ensp;&ensp;举个例子，还用上面的民工漫班级表，用三个函数按人气对其排序：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	RANK() over (  ORDER BY &#96;人气&#96; DESC ) AS &#96;rank&#96; ,</span><br><span class="line">	DENSE_RANK() over (  ORDER BY &#96;人气&#96; DESC ) AS &#96;dense_rank&#96; ,</span><br><span class="line">	ROW_NUMBER() over (  ORDER BY &#96;人气&#96; DESC ) AS &#96;row_number&#96; </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96;;</span><br></pre></td></tr></table></figure>
-
-<p>&ensp;&ensp;&ensp;&ensp;结果：没有再用partition by对班级分组</p>
-<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/4.png" alt="image-20201217004449218" style="zoom: 67%;">
-
-<p>由此可知：</p>
-<ul>
-<li>RANK()：并列排序，跳过重复序号——1、1、3</li>
-<li>DENSE_RANK()：并列排序，不跳过重复序号——1、1、2</li>
-<li>ROW_NUMBER()：顺序排序——1、2、3；相当于行号。</li>
-</ul>
-<p><strong>分布函数：PERCENT_RANK()、CUME_DIST()</strong></p>
-<p><strong>percent_rank()</strong></p>
-<p>&ensp;&ensp;&ensp;&ensp;用途：和之前的RANK()函数相关，每行按照如下公式进行计算：(rank - 1) / (rows - 1)， 其中，rank为RANK()函数产生的序号，rows为当前窗口的记录总行数 该函数可以用来计算分位数。</p>
-<p>&ensp;&ensp;&ensp;&ensp;继续举例子（想不到实际生活的应用场景）：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	RANK() OVER w AS rankNo,</span><br><span class="line">	PERCENT_RANK() OVER w AS percent_rankNo </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;人气&#96; DESC );</span><br></pre></td></tr></table></figure>
-
-<p>结果：</p>
-<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/5.png" alt="image-20201217105136040" style="zoom: 50%;">
-
-<p>&ensp;&ensp;&ensp;&ensp;对于路飞，percent_rankNo = (rank - 1) / (rows - 1) =(3 - 1) / (10 - 1) =0.22222222……</p>
-<p><strong>CUME_DIST()</strong></p>
-<p>&ensp;&ensp;&ensp;&ensp;用途：分组内小于、等于当前rank值的行数 / 分组内总行数</p>
-<p>&ensp;&ensp;&ensp;&ensp;举例：查询小于等于当前人气的比例（或者说某人是前百分之几，生活中很常用）</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	CUME_DIST() OVER w AS cdt </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;人气&#96; DESC );</span><br></pre></td></tr></table></figure>
-
-<p>结果：</p>
-<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/6.png" alt="image-20201217110444956" style="zoom: 67%;">
-
-<p><strong>前后函数：LAG(expr,n)、LEAD(expr,n)</strong></p>
-<p>&ensp;&ensp;&ensp;&ensp;用途：返回位于当前行的前n行（LAG(expr,n)）或后n行（LEAD(expr,n)）的expr的值（以当前行为原点）</p>
-<p>&ensp;&ensp;&ensp;&ensp;例：这个生活中应该挺常用</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	&#96;我的前面一名人气&#96; - &#96;人气&#96; AS &#96;我和前面一名的差距&#96;,</span><br><span class="line">	&#96;人气&#96; - &#96;后面一名人气&#96; AS &#96;我甩开后面一名多少差距&#96; </span><br><span class="line">FROM</span><br><span class="line">	(</span><br><span class="line">	SELECT</span><br><span class="line">		*,</span><br><span class="line">		LAG( &#96;人气&#96;, 1 ) OVER w AS &#96;我的前面一名人气&#96;,# 取前面第一行的人气值</span><br><span class="line">		LEAD( &#96;人气&#96;, 1 ) OVER w AS &#96;后面一名人气&#96; # 取后面第一行的人气值</span><br><span class="line">		</span><br><span class="line">	FROM</span><br><span class="line">		&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;人气&#96; DESC ) </span><br><span class="line">	) t;</span><br></pre></td></tr></table></figure>
-
-<p>结果：</p>
-<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/7.png" alt="image-20201217113619889" style="zoom: 67%;">
-
-<p>&ensp;&ensp;&ensp;&ensp;蓝染的前1行是路飞，其人气为90，差距为2；后一行是佐助，甩开他1人气。</p>
-<p><strong>头尾函数：FIRST_VALUE(expr),LAST_VALUE(expr)</strong></p>
-<p>&ensp;&ensp;&ensp;&ensp;用途：返回第一个（FIRST_VALUE(expr)）或最后一个（LAST_VALUE(expr)）expr的值</p>
-<p>&ensp;&ensp;&ensp;&ensp;例：截止到当前人气，按人气排名，第一名和最后一名是多少（降序排，最后一名肯定是自己）</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	FIRST_VALUE( &#96;人气&#96; ) OVER w AS &#96;当前第一人气值&#96;,</span><br><span class="line">	LAST_VALUE( &#96;人气&#96; ) OVER w AS &#96;当前倒数第一人气值&#96; </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;人气&#96; DESC );</span><br></pre></td></tr></table></figure>
-
-<p>结果：</p>
-<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/8.png" alt="image-20201217114336947" style="zoom: 67%;">
-
-<p><strong>其它函数：NTH_VALUE(expr, n)、NTILE(n)</strong></p>
-<p><strong>NTH_VALUE(expr, n)</strong></p>
-<p>&ensp;&ensp;&ensp;&ensp;用途：返回窗口中第N个expr的值，expr可以是表达式，也可以是列名。</p>
-<p>&ensp;&ensp;&ensp;&ensp;例：截至当前人气，显示每个人物的人气中排名第2、第4、第6的人气值</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	NTH_VALUE( &#96;人气&#96;, 2 ) OVER w AS &#96;第二人气值&#96;,</span><br><span class="line">	NTH_VALUE( &#96;人气&#96;, 4 ) OVER w AS &#96;第四人气值&#96;,</span><br><span class="line">	NTH_VALUE( &#96;人气&#96;, 6 ) OVER w AS &#96;第六人气值&#96; </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;人气&#96; DESC );</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>结果：</p>
-<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/9.png" alt="image-20201217135748608" style="zoom: 67%;">
-
-<p><strong>NTILE(n)</strong></p>
-<p>&ensp;&ensp;&ensp;&ensp;用途：将分区中的有序数据分为n个等级，记录等级数</p>
-<p>例：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	ROW_NUMBER() OVER w AS &#39;row_number&#39;,</span><br><span class="line">	NTILE( 2 ) OVER w AS &#39;ntile2&#39;,</span><br><span class="line">	NTILE( 4 ) OVER w AS &#39;ntile4&#39; </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;人气&#96; );</span><br></pre></td></tr></table></figure>
-
-<p>结果：</p>
-<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/10.png" alt="image-20201217170421940" style="zoom:67%;">
-
-<h3 id="四、用聚合函数作为窗口函数"><a href="#四、用聚合函数作为窗口函数" class="headerlink" title="四、用聚合函数作为窗口函数"></a>四、用聚合函数作为窗口函数</h3><p>&ensp;&ensp;&ensp;&ensp;用途：在窗口中每条记录动态地应用聚合函数（SUM()、AVG()、MAX()、MIN()、COUNT()），可以动态计算在指定的窗口内的各种聚合函数值</p>
-<p>例：普通使用：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	sum( &#96;人气&#96; )  AS current_sum,</span><br><span class="line">	avg( &#96;人气&#96; )  AS current_avg,</span><br><span class="line">	count( &#96;人气&#96; )  AS current_count,</span><br><span class="line">	max( &#96;人气&#96; )  AS current_max,</span><br><span class="line">	min( &#96;人气&#96; ) AS current_min </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96;;</span><br></pre></td></tr></table></figure>
-
-<p>结果：</p>
-<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/11.png" alt="image-20201217172447565" style="zoom: 67%;">
-
-<p>&ensp;&ensp;&ensp;&ensp;按学号排序，作为窗口函数：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	sum( &#96;人气&#96; ) over w AS current_sum,</span><br><span class="line">	avg( &#96;人气&#96; ) over w AS current_avg,</span><br><span class="line">	count( &#96;人气&#96; ) over w AS current_count,</span><br><span class="line">	max( &#96;人气&#96; ) over w AS current_max,</span><br><span class="line">	min( &#96;人气&#96; ) over w AS current_min </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;学号&#96; );</span><br></pre></td></tr></table></figure>
-
-<p>结果：</p>
-<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/12.png" alt="image-20201217172207911" style="zoom:67%;">
-
-<p>&ensp;&ensp;&ensp;&ensp;以current_sum为例，每一行current_sum的值为上面所有行的<code>人气</code>值之和。</p>
-<p>本文主要参考：</p>
-<p><a href="https://dev.mysql.com/doc/refman/8.0/en/">《MySql8.0参考手册》</a></p>
 ]]></content>
       <categories>
-        <category>数据库</category>
-        <category>MySql</category>
+        <category>算法</category>
+        <category>链表</category>
       </categories>
       <tags>
-        <tag>数据库</tag>
-        <tag>窗口函数</tag>
-        <tag>MySql</tag>
+        <tag>算法</tag>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>反转链表</title>
+    <url>/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%9B%9E%E6%96%87%E9%93%BE%E8%A1%A8/</url>
+    <content><![CDATA[<h3 id="一、题目描述"><a href="#一、题目描述" class="headerlink" title="一、题目描述"></a>一、题目描述</h3><p>&ensp;&ensp;&ensp;&ensp;请判断一个链表是否为回文链表。</p>
+<span id="more"></span>
+
+<p>示例 1:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: 1-&gt;2</span><br><span class="line">输出: false</span><br></pre></td></tr></table></figure>
+<p>示例 2:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: 1-&gt;2-&gt;2-&gt;1</span><br><span class="line">输出: true</span><br></pre></td></tr></table></figure>
+<p>进阶：<br>&ensp;&ensp;&ensp;&ensp;你能否用 O(n) 时间复杂度和 O(1) 空间复杂度解决此题？</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">isPalindrome</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="二、解题思路"><a href="#二、解题思路" class="headerlink" title="二、解题思路"></a>二、解题思路</h3><p>&ensp;&ensp;&ensp;&ensp;先判断链表长度</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> length=<span class="number">0</span>;</span><br><span class="line">   ListNode* p=head;</span><br><span class="line">    <span class="keyword">while</span>(p!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">        length++;</span><br><span class="line">        p=p-&gt;next;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>&ensp;&ensp;&ensp;&ensp;创建一个与链表等长的数组，再把每个节点对应的值放入数组中</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a[length];</span><br><span class="line">   <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;length;i++)&#123;</span><br><span class="line">       a[i]=p-&gt;val;</span><br><span class="line">       p=p-&gt;next;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>&ensp;&ensp;&ensp;&ensp;比较数组中对应的值</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;length/<span class="number">2</span>;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(a[i]!=a[length-i<span class="number">-1</span>])</span><br><span class="line">             <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="三、我的代码"><a href="#三、我的代码" class="headerlink" title="三、我的代码"></a>三、我的代码</h3><p>&ensp;&ensp;&ensp;&ensp;直接在力扣上写的。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">isPalindrome</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> length=<span class="number">0</span>;</span><br><span class="line">        ListNode* p=head;</span><br><span class="line">        <span class="keyword">while</span>(p!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">            length++;</span><br><span class="line">            p=p-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(length==<span class="number">0</span>||length==<span class="number">1</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        p=head;</span><br><span class="line">        <span class="keyword">int</span> a[length];</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;length;i++)&#123;</span><br><span class="line">            a[i]=p-&gt;val;</span><br><span class="line">            p=p-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;length/<span class="number">2</span>;i++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(a[i]!=a[length-i<span class="number">-1</span>])</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>算法</category>
+        <category>链表</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%A4%8D%E5%88%B6%E5%B8%A6%E9%9A%8F%E6%9C%BA%E6%8C%87%E9%92%88%E7%9A%84%E9%93%BE%E8%A1%A8/</url>
+    <content><![CDATA[<h1 id="LeetCode138：复制带随机指针的链表"><a href="#LeetCode138：复制带随机指针的链表" class="headerlink" title="LeetCode138：复制带随机指针的链表"></a>LeetCode138：复制带随机指针的链表</h1><h3 id="一、题目描述"><a href="#一、题目描述" class="headerlink" title="一、题目描述"></a>一、题目描述</h3><p>给定一个链表，每个节点包含一个额外增加的随机指针，该指针可以指向链表中的任何节点或空节点。</p>
+<p>要求返回这个链表的深拷贝。 </p>
+<p>我们用一个由 n 个节点组成的链表来表示输入/输出中的链表。每个节点用一个 [val, random_index] 表示：</p>
+<ul>
+<li>val：一个表示 Node.val 的整数。</li>
+<li>random_index：随机指针指向的节点索引（范围从 0 到 n-1）；如果不指向任何节点，则为  null 。</li>
+</ul>
+<p><strong>示例 1：</strong></p>
+<p><img src="/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%A4%8D%E5%88%B6%E5%B8%A6%E9%9A%8F%E6%9C%BA%E6%8C%87%E9%92%88%E7%9A%84%E9%93%BE%E8%A1%A8/1.png" alt="image-20201213164012901"></p>
+<p>输入：head = [[7,null],[13,0],[11,4],[10,2],[1,0]]</p>
+<p>输出：[[7,null],[13,0],[11,4],[10,2],[1,0]]</p>
+<p><strong>示例 2：</strong></p>
+<p><img src="/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%A4%8D%E5%88%B6%E5%B8%A6%E9%9A%8F%E6%9C%BA%E6%8C%87%E9%92%88%E7%9A%84%E9%93%BE%E8%A1%A8/2.png" alt="image-20201213164032257"></p>
+<p>输入：head = [[1,1],[2,1]]</p>
+<p>输出：[[1,1],[2,1]]</p>
+<p><strong>示例 3：</strong></p>
+<p><img src="/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%A4%8D%E5%88%B6%E5%B8%A6%E9%9A%8F%E6%9C%BA%E6%8C%87%E9%92%88%E7%9A%84%E9%93%BE%E8%A1%A8/3.png" alt="image-20201213164059316"></p>
+<p>输入：head = [[3,null],[3,0],[3,null]]</p>
+<p>输出：[[3,null],[3,0],[3,null]]</p>
+<p><strong>示例 4：</strong></p>
+<p>输入：head = []</p>
+<p>输出：[]<br>解释：给定的链表为空（空指针），因此返回 null。</p>
+<p><strong>提示：</strong></p>
+<ul>
+<li>-10000 &lt;= Node.val &lt;= 10000</li>
+<li>Node.random 为空（null）或指向链表中的节点。</li>
+<li>节点数目不超过 1000 。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">// Definition for a Node.</span></span><br><span class="line"><span class="comment">class Node &#123;</span></span><br><span class="line"><span class="comment">public:</span></span><br><span class="line"><span class="comment">    int val;</span></span><br><span class="line"><span class="comment">    Node* next;</span></span><br><span class="line"><span class="comment">    Node* random;</span></span><br><span class="line"><span class="comment">    </span></span><br><span class="line"><span class="comment">    Node(int _val) &#123;</span></span><br><span class="line"><span class="comment">        val = _val;</span></span><br><span class="line"><span class="comment">        next = NULL;</span></span><br><span class="line"><span class="comment">        random = NULL;</span></span><br><span class="line"><span class="comment">    &#125;</span></span><br><span class="line"><span class="comment">&#125;;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">Node* <span class="title">copyRandomList</span><span class="params">(Node* head)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//to do</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="二、解题思路"><a href="#二、解题思路" class="headerlink" title="二、解题思路"></a>二、解题思路</h3><ol>
+<li><p>使用哈希图，先生成与原来链表相同个数的节点</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">unordered_map&lt;Node*,Node*&gt;nodemap;</span><br><span class="line">   nodemap[<span class="literal">nullptr</span>]=<span class="literal">nullptr</span>;</span><br><span class="line">   Node* p=head;</span><br><span class="line">   <span class="keyword">while</span>(p)&#123;</span><br><span class="line">       nodemap[p]=<span class="keyword">new</span> <span class="built_in">Node</span>(p-&gt;val);</span><br><span class="line">       p=p-&gt;next;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>使哈希图中每个节点等于原节点</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">p=head;</span><br><span class="line">  <span class="keyword">while</span>(p!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">      nodemap[p]-&gt;next=nodemap[p-&gt;next];</span><br><span class="line">      p=p-&gt;next;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>再复制random指针</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">p=head;</span><br><span class="line"><span class="keyword">while</span>(p!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">    nodemap[p]-&gt;random=nodemap[p-&gt;random];</span><br><span class="line">    p=p-&gt;next;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="三、我的代码"><a href="#三、我的代码" class="headerlink" title="三、我的代码"></a>三、我的代码</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">// Definition for a Node.</span></span><br><span class="line"><span class="comment">class Node &#123;</span></span><br><span class="line"><span class="comment">public:</span></span><br><span class="line"><span class="comment">    int val;</span></span><br><span class="line"><span class="comment">    Node* next;</span></span><br><span class="line"><span class="comment">    Node* random;</span></span><br><span class="line"><span class="comment">    </span></span><br><span class="line"><span class="comment">    Node(int _val) &#123;</span></span><br><span class="line"><span class="comment">        val = _val;</span></span><br><span class="line"><span class="comment">        next = NULL;</span></span><br><span class="line"><span class="comment">        random = NULL;</span></span><br><span class="line"><span class="comment">    &#125;</span></span><br><span class="line"><span class="comment">&#125;;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">Node* <span class="title">copyRandomList</span><span class="params">(Node* head)</span> </span>&#123;</span><br><span class="line">        unordered_map&lt;Node*,Node*&gt;nodemap;</span><br><span class="line">        nodemap[<span class="literal">nullptr</span>]=<span class="literal">nullptr</span>;</span><br><span class="line">        Node* p=head;</span><br><span class="line">        <span class="keyword">while</span>(p!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">            nodemap[p]=<span class="keyword">new</span> <span class="built_in">Node</span>(p-&gt;val);</span><br><span class="line">            p=p-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        p=head;</span><br><span class="line">        <span class="keyword">while</span>(p!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">            nodemap[p]-&gt;next=nodemap[p-&gt;next];</span><br><span class="line">            p=p-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        p=head;</span><br><span class="line">        <span class="keyword">while</span>(p!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">            nodemap[p]-&gt;random=nodemap[p-&gt;random];</span><br><span class="line">            p=p-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> nodemap[head];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
+  </entry>
+  <entry>
+    <title>奇偶链表</title>
+    <url>/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%A5%87%E5%81%B6%E9%93%BE%E8%A1%A8/</url>
+    <content><![CDATA[<h1 id="LeetCode328：奇偶链表"><a href="#LeetCode328：奇偶链表" class="headerlink" title="LeetCode328：奇偶链表"></a>LeetCode328：奇偶链表</h1><h3 id="一、题目描述"><a href="#一、题目描述" class="headerlink" title="一、题目描述"></a>一、题目描述</h3><p>&ensp;&ensp;&ensp;&ensp;给定一个单链表，把所有的奇数节点和偶数节点分别排在一起。请注意，这里的奇数节点和偶数节点指的是节点编号的奇偶性，而不是节点的值的奇偶性。</p>
+<span id="more"></span>
+
+<p>&ensp;&ensp;&ensp;&ensp;请尝试使用原地算法完成。你的算法的空间复杂度应为 O(1)，时间复杂度应为 O(nodes)，nodes 为节点总数。<br>示例 1:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: 1-&gt;2-&gt;3-&gt;4-&gt;5-&gt;NULL</span><br><span class="line">输出: 1-&gt;3-&gt;5-&gt;2-&gt;4-&gt;NULL</span><br></pre></td></tr></table></figure>
+<p>示例 2:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: 2-&gt;1-&gt;3-&gt;5-&gt;6-&gt;4-&gt;7-&gt;NULL </span><br><span class="line">输出: 2-&gt;3-&gt;6-&gt;7-&gt;1-&gt;5-&gt;4-&gt;NULL</span><br></pre></td></tr></table></figure>
+<p>说明:<br>&ensp;&ensp;&ensp;&ensp;应当保持奇数节点和偶数节点的相对顺序。<br>&ensp;&ensp;&ensp;&ensp;链表的第一个节点视为奇数节点，第二个节点视为偶数节点，以此类推。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode() : val(0), next(nullptr) &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(nullptr) &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x, ListNode *next) : val(x), next(next) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">oddEvenList</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="二、解题思路"><a href="#二、解题思路" class="headerlink" title="二、解题思路"></a>二、解题思路</h3><p>&ensp;&ensp;&ensp;&ensp;看图</p>
+<img src="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%A5%87%E5%81%B6%E9%93%BE%E8%A1%A8/1.png" alt="image-20210430234220085" style="zoom:80%;">
+
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span>(p-&gt;next!=<span class="literal">nullptr</span>&amp;&amp;q-&gt;next!=<span class="literal">nullptr</span>)&#123;        </span><br><span class="line">               p-&gt;next=q-&gt;next;</span><br><span class="line">               p=p-&gt;next;</span><br><span class="line">               q-&gt;next=p-&gt;next;</span><br><span class="line">               q=q-&gt;next;</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="三、我的代码"><a href="#三、我的代码" class="headerlink" title="三、我的代码"></a>三、我的代码</h3><p>&ensp;&ensp;&ensp;&ensp;直接在力扣上写的。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode() : val(0), next(nullptr) &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(nullptr) &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x, ListNode *next) : val(x), next(next) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">oddEvenList</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(head==<span class="literal">nullptr</span>)</span><br><span class="line">            <span class="keyword">return</span> head;</span><br><span class="line">        ListNode* p=head;</span><br><span class="line">        ListNode* head1=head-&gt;next;</span><br><span class="line">        ListNode* q=head-&gt;next;</span><br><span class="line">        <span class="keyword">while</span>(p-&gt;next!=<span class="literal">nullptr</span>&amp;&amp;q-&gt;next!=<span class="literal">nullptr</span>)&#123;        </span><br><span class="line">                p-&gt;next=q-&gt;next;</span><br><span class="line">                p=p-&gt;next;</span><br><span class="line">                q-&gt;next=p-&gt;next;</span><br><span class="line">                q=q-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        p-&gt;next=head1;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>算法</category>
+        <category>链表</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E6%89%81%E5%B9%B3%E5%8C%96%E5%A4%9A%E7%BA%A7%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8/</url>
+    <content><![CDATA[<h1 id="LeetCode430：扁平化多级双向链表"><a href="#LeetCode430：扁平化多级双向链表" class="headerlink" title="LeetCode430：扁平化多级双向链表"></a>LeetCode430：扁平化多级双向链表</h1><h3 id="一、题目描述"><a href="#一、题目描述" class="headerlink" title="一、题目描述"></a>一、题目描述</h3><p>    多级双向链表中，除了指向下一个节点和前一个节点指针之外，它还有一个子链表指针，可能指向单独的双向链表。这些子列表也可能会有一个或多个自己的子项，依此类推，生成多级数据结构，如下面的示例所示。</p>
+<p>    给你位于列表第一级的头节点，请你扁平化列表，使所有结点出现在单级双链表中。 </p>
+<p><strong>示例 1：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,3,4,5,6,null,null,null,7,8,9,10,null,null,11,12]</span><br><span class="line">输出：[1,2,3,7,8,11,12,9,10,4,5,6]</span><br></pre></td></tr></table></figure>
+
+<p>解释：</p>
+<p>    输入的多级列表如下图所示：</p>
+<p><img src="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E6%89%81%E5%B9%B3%E5%8C%96%E5%A4%9A%E7%BA%A7%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8/1.png" alt="image-20201213163356430"></p>
+<p>    扁平化后的链表如下图：</p>
+<p><img src="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E6%89%81%E5%B9%B3%E5%8C%96%E5%A4%9A%E7%BA%A7%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8/2.png" alt="image-20201213163430536"></p>
+<p><strong>示例 2：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; [1,2,null,3]</span><br><span class="line">输出：[1,3,2]</span><br><span class="line">解释：</span><br><span class="line"></span><br><span class="line">输入的多级列表如下图所示：</span><br><span class="line"></span><br><span class="line">  1---2---NULL</span><br><span class="line">  |</span><br><span class="line">  3---NULL</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 3：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：head &#x3D; []</span><br><span class="line">输出：[]</span><br></pre></td></tr></table></figure>
+
+<p>    <strong>如何表示测试用例中的多级链表？</strong></p>
+<p>    以 <strong>示例 1</strong> 为例：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1---2---3---4---5---6--NULL</span><br><span class="line">        |</span><br><span class="line">        7---8---9---10--NULL</span><br><span class="line">            |</span><br><span class="line">            11--12--NULL</span><br></pre></td></tr></table></figure>
+
+<p>    序列化其中的每一级之后：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[1,2,3,4,5,6,null]</span><br><span class="line">[7,8,9,10,null]</span><br><span class="line">[11,12,null]</span><br></pre></td></tr></table></figure>
+
+<p>    为了将每一级都序列化到一起，我们需要每一级中添加值为 null 的元素，以表示没有节点连接到上一级的上级节点。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[1,2,3,4,5,6,null]</span><br><span class="line">[null,null,7,8,9,10,null]</span><br><span class="line">[null,11,12,null]</span><br></pre></td></tr></table></figure>
+
+<p>    合并所有序列化结果，并去除末尾的 null 。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[1,2,3,4,5,6,null,null,null,7,8,9,10,null,null,11,12]</span><br></pre></td></tr></table></figure>
+
+<p> <strong>提示：</strong></p>
+<ul>
+<li>节点数目不超过 1000</li>
+<li>1 &lt;= Node.val &lt;= 10^5</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">// Definition for a Node.</span></span><br><span class="line"><span class="comment">class Node &#123;</span></span><br><span class="line"><span class="comment">public:</span></span><br><span class="line"><span class="comment">    int val;</span></span><br><span class="line"><span class="comment">    Node* prev;</span></span><br><span class="line"><span class="comment">    Node* next;</span></span><br><span class="line"><span class="comment">    Node* child;</span></span><br><span class="line"><span class="comment">&#125;;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">Node* <span class="title">flatten</span><span class="params">(Node* head)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//to do</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="二、解题思路"><a href="#二、解题思路" class="headerlink" title="二、解题思路"></a>二、解题思路</h3><ol>
+<li><p>对于每个节点，先用双指针：p，pNext=p-&gt;next，当p-&gt;child为空时，p指针向后移动。</p>
+</li>
+<li><p>当p-&gt;child不为空</p>
+<p>2.1将p与p-&gt;child连接为双向链表结构，并将p-&gt;child置为空；</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">Node* pChild=p-&gt;child;</span><br><span class="line">p-&gt;next=pChild;</span><br><span class="line">pChild-&gt;prev=p;</span><br><span class="line">p-&gt;child=<span class="literal">nullptr</span>;</span><br></pre></td></tr></table></figure>
+
+<p>2.2找到p-&gt;child那条子链的尾节点，并与pNext连为双向链表结构</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">Node* tail=pChild;</span><br><span class="line"><span class="keyword">while</span>(tail-&gt;next!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">	tail=tail-&gt;next;</span><br><span class="line">&#125;</span><br><span class="line">tail-&gt;next=pNext;</span><br><span class="line"><span class="keyword">if</span>(pNext!=<span class="literal">nullptr</span>)</span><br><span class="line">	pNext-&gt;prev=tail;  </span><br></pre></td></tr></table></figure></li>
+</ol>
+<p><img src="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E6%89%81%E5%B9%B3%E5%8C%96%E5%A4%9A%E7%BA%A7%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8/3.png" alt="image-20201213205439630"></p>
+<p><img src="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E6%89%81%E5%B9%B3%E5%8C%96%E5%A4%9A%E7%BA%A7%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8/4.png" alt="image-20201213205445673"></p>
+<p><img src="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E6%89%81%E5%B9%B3%E5%8C%96%E5%A4%9A%E7%BA%A7%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8/5.png" alt="image-20201213205450099"></p>
+<p>    以上三图是消除一条子链的情况。</p>
+<h3 id="三、我的代码"><a href="#三、我的代码" class="headerlink" title="三、我的代码"></a>三、我的代码</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">// Definition for a Node.</span></span><br><span class="line"><span class="comment">class Node &#123;</span></span><br><span class="line"><span class="comment">public:</span></span><br><span class="line"><span class="comment">    int val;</span></span><br><span class="line"><span class="comment">    Node* prev;</span></span><br><span class="line"><span class="comment">    Node* next;</span></span><br><span class="line"><span class="comment">    Node* child;</span></span><br><span class="line"><span class="comment">&#125;;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">Node* <span class="title">flatten</span><span class="params">(Node* head)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(head==<span class="literal">nullptr</span>)</span><br><span class="line">            <span class="keyword">return</span> head;</span><br><span class="line">        Node* p=head;</span><br><span class="line">        <span class="keyword">while</span>(p!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">            Node* pNext=p-&gt;next;</span><br><span class="line">            <span class="keyword">if</span>(p-&gt;child!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">                Node* pChild=p-&gt;child;</span><br><span class="line">                p-&gt;next=pChild;</span><br><span class="line">                pChild-&gt;prev=p;</span><br><span class="line">                p-&gt;child=<span class="literal">nullptr</span>;</span><br><span class="line">                Node* tail=pChild;</span><br><span class="line">                <span class="keyword">while</span>(tail-&gt;next!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">                    tail=tail-&gt;next;</span><br><span class="line">                &#125;</span><br><span class="line">                tail-&gt;next=pNext;</span><br><span class="line">                <span class="keyword">if</span>(pNext!=<span class="literal">nullptr</span>)</span><br><span class="line">                    pNext-&gt;prev=tail;                </span><br><span class="line">            &#125;</span><br><span class="line">            p=p-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
+  </entry>
+  <entry>
+    <title>旋转链表</title>
+    <url>/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E6%97%8B%E8%BD%AC%E9%93%BE%E8%A1%A8/</url>
+    <content><![CDATA[<h3 id="一、题目描述"><a href="#一、题目描述" class="headerlink" title="一、题目描述"></a>一、题目描述</h3><p>给定一个链表，旋转链表，将链表每个节点向右移动 <em>k</em> 个位置，其中 <em>k</em> 是非负数。</p>
+<span id="more"></span>
+
+<p><strong>示例 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: 1-&gt;2-&gt;3-&gt;4-&gt;5-&gt;NULL, k &#x3D; 2</span><br><span class="line">输出: 4-&gt;5-&gt;1-&gt;2-&gt;3-&gt;NULL</span><br><span class="line">解释:</span><br><span class="line">向右旋转 1 步: 5-&gt;1-&gt;2-&gt;3-&gt;4-&gt;NULL</span><br><span class="line">向右旋转 2 步: 4-&gt;5-&gt;1-&gt;2-&gt;3-&gt;NULL</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: 0-&gt;1-&gt;2-&gt;NULL, k &#x3D; 4</span><br><span class="line">输出: 2-&gt;0-&gt;1-&gt;NULL</span><br><span class="line">解释:</span><br><span class="line">向右旋转 1 步: 2-&gt;0-&gt;1-&gt;NULL</span><br><span class="line">向右旋转 2 步: 1-&gt;2-&gt;0-&gt;NULL</span><br><span class="line">向右旋转 3 步: 0-&gt;1-&gt;2-&gt;NULL</span><br><span class="line">向右旋转 4 步: 2-&gt;0-&gt;1-&gt;NULL</span><br></pre></td></tr></table></figure>
+
+<h3 id="二、解题思路"><a href="#二、解题思路" class="headerlink" title="二、解题思路"></a>二、解题思路</h3><ol>
+<li><p>先确定链表的长度</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> length=<span class="number">0</span>;</span><br><span class="line">        ListNode* p=head;</span><br><span class="line">        <span class="keyword">while</span>(p!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">            p=p-&gt;next;</span><br><span class="line">            length++;</span><br><span class="line">        &#125;       </span><br></pre></td></tr></table></figure></li>
+<li><p>当链表为空或长度为一或移动零步或移动链表的整数倍步时，返回原链表头结点指针</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(length==<span class="number">0</span>||length==<span class="number">1</span>||k==<span class="number">0</span>||k%length==<span class="number">0</span>)</span><br><span class="line">           <span class="keyword">return</span> head;</span><br></pre></td></tr></table></figure></li>
+<li><p>前两步之后，另k=k%length，再使一个指针移动到原链表末端</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">k=k%length;</span><br><span class="line">   p=head;</span><br><span class="line">   <span class="keyword">while</span>(p-&gt;next!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">   	p=p-&gt;next;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>使用双指针法，从头开始向末端移动 length-k-1步，再见链表断为两个，重新连接</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">ListNode* t1=head;</span><br><span class="line">   ListNode* t2=head-&gt;next;</span><br><span class="line">   <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;length-k<span class="number">-1</span>;i++)&#123;</span><br><span class="line">   	t1=t1-&gt;next;</span><br><span class="line">       t2=t2-&gt;next;</span><br><span class="line">   &#125;</span><br><span class="line">   t1-&gt;next=<span class="literal">nullptr</span>;</span><br><span class="line">   p-&gt;next=head;</span><br></pre></td></tr></table></figure>
+
+<img src="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E6%97%8B%E8%BD%AC%E9%93%BE%E8%A1%A8/1.png" style="zoom:80%;">
+
+<img src="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E6%97%8B%E8%BD%AC%E9%93%BE%E8%A1%A8/2.png" style="zoom:80%;"></li>
+</ol>
+<h3 id="三、我的代码"><a href="#三、我的代码" class="headerlink" title="三、我的代码"></a>三、我的代码</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode() : val(0), next(nullptr) &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(nullptr) &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x, ListNode *next) : val(x), next(next) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">rotateRight</span><span class="params">(ListNode* head, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> length=<span class="number">0</span>;</span><br><span class="line">        ListNode* p=head;</span><br><span class="line">        <span class="keyword">while</span>(p!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">            p=p-&gt;next;</span><br><span class="line">            length++;</span><br><span class="line">        &#125;       </span><br><span class="line">        <span class="keyword">if</span>(length==<span class="number">0</span>||length==<span class="number">1</span>||k==<span class="number">0</span>||k%length==<span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> head;</span><br><span class="line">        k=k%length;</span><br><span class="line">        p=head;</span><br><span class="line">        <span class="keyword">while</span>(p-&gt;next!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">            p=p-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        ListNode* t1=head;</span><br><span class="line">        ListNode* t2=head-&gt;next;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;length-k<span class="number">-1</span>;i++)&#123;</span><br><span class="line">            t1=t1-&gt;next;</span><br><span class="line">            t2=t2-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        t1-&gt;next=<span class="literal">nullptr</span>;</span><br><span class="line">        p-&gt;next=head;</span><br><span class="line">        <span class="keyword">return</span> t2;</span><br><span class="line">    &#125;c</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>算法</category>
+        <category>链表</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>移除链表元素</title>
+    <url>/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A7%BB%E9%99%A4%E9%93%BE%E8%A1%A8%E5%85%83%E7%B4%A0/</url>
+    <content><![CDATA[<h3 id="一、题目描述"><a href="#一、题目描述" class="headerlink" title="一、题目描述"></a>一、题目描述</h3><p>&ensp;&ensp;&ensp;&ensp;删除链表中等于给定值 val 的所有节点。</p>
+<span id="more"></span>
+
+<p>示例:</p>
+<pre><code>输入: 1-&gt;2-&gt;6-&gt;3-&gt;4-&gt;5-&gt;6, val = 6
+输出: 1-&gt;2-&gt;3-&gt;4-&gt;5
+</code></pre>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">removeElements</span><span class="params">(ListNode* head, <span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//to do</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="二、解题思路"><a href="#二、解题思路" class="headerlink" title="二、解题思路"></a>二、解题思路</h3><p>&ensp;&ensp;&ensp;&ensp;当链表为空，返回nullptr;<br>&ensp;&ensp;&ensp;&ensp;确保头节点不是要删除的节点</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span>(head-&gt;val==val)&#123;</span><br><span class="line">         head=head-&gt;next;</span><br><span class="line">         <span class="keyword">if</span>(head==<span class="literal">nullptr</span>)</span><br><span class="line">             <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+<p>&ensp;&ensp;&ensp;&ensp;使用双指针p，q，两指针紧挨着，遇到目标节点则删除</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">ListNode* p=head;</span><br><span class="line">   ListNode* q=p-&gt;next;</span><br><span class="line">   <span class="keyword">while</span>(q!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">       <span class="keyword">if</span>(q-&gt;val==val)&#123;</span><br><span class="line">           q=q-&gt;next;</span><br><span class="line">           p-&gt;next=q;</span><br><span class="line">           <span class="keyword">continue</span>;</span><br><span class="line">       &#125; </span><br><span class="line">       p=p-&gt;next;</span><br><span class="line">       q=p-&gt;next;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="三、我的代码"><a href="#三、我的代码" class="headerlink" title="三、我的代码"></a>三、我的代码</h3><p>&ensp;&ensp;&ensp;&ensp;直接在力扣上写的。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">removeElements</span><span class="params">(ListNode* head, <span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(head==<span class="literal">nullptr</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">        <span class="keyword">while</span>(head-&gt;val==val)&#123;</span><br><span class="line">            head=head-&gt;next;</span><br><span class="line">            <span class="keyword">if</span>(head==<span class="literal">nullptr</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(head-&gt;next==<span class="literal">nullptr</span>)</span><br><span class="line">            <span class="keyword">return</span> head;</span><br><span class="line">        ListNode* p=head;</span><br><span class="line">        ListNode* q=p-&gt;next;</span><br><span class="line">        <span class="keyword">while</span>(q!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">            <span class="keyword">if</span>(q-&gt;val==val)&#123;</span><br><span class="line">                q=q-&gt;next;</span><br><span class="line">                p-&gt;next=q;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125; </span><br><span class="line">            p=p-&gt;next;</span><br><span class="line">            q=p-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>算法</category>
+        <category>链表</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>神奇的双指针在链表中的应用</title>
+    <url>/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</url>
+    <content><![CDATA[<p>双指针在链表中的应用广泛，尤其涉及到有环的链表。</p>
+<span id="more"></span>
+
+<h2 id="141：环形链表1"><a href="#141：环形链表1" class="headerlink" title="141：环形链表1"></a>141：环形链表1</h2><h3 id="一、题目描述"><a href="#一、题目描述" class="headerlink" title="一、题目描述"></a>一、题目描述</h3><p>&ensp;&ensp;&ensp;&ensp;给定一个链表，判断链表中是否有环。<br>&ensp;&ensp;&ensp;&ensp;如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。为了表示给定链表中的环，我们使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。如果 pos 是 -1，则在该链表中没有环。注意：pos 不作为参数进行传递，仅仅是为了标识链表的实际情况。</p>
+<p>&ensp;&ensp;&ensp;&ensp;如果链表中存在环，则返回 true 。 否则，返回 false 。<br><em>进阶</em>：<br>&ensp;&ensp;&ensp;&ensp;你能用 O(1)（即，常量）内存解决此问题吗？<br><em>提示</em>：<br>&ensp;&ensp;&ensp;&ensp;链表中节点的数目范围是 [0, 104]<br>&ensp;&ensp;&ensp;&ensp;-105 &lt;= Node.val &lt;= 105<br>&ensp;&ensp;&ensp;&ensp;pos 为 -1 或者链表中的一个 有效索引 。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">hasCycle</span><span class="params">(ListNode *head)</span> </span>&#123;</span><br><span class="line">       <span class="comment">//to do</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/1.png"></p>
+<h3 id="二、解题思路"><a href="#二、解题思路" class="headerlink" title="二、解题思路"></a>二、解题思路</h3><p>&ensp;&ensp;&ensp;&ensp;为了防止越界问题，每次都需提前判断指针是否为nullptr；两个指针，一快一慢，当二者相等，则有环（快指针在环中转了几圈后“追上”慢的）。</p>
+<h3 id="三、我的代码"><a href="#三、我的代码" class="headerlink" title="三、我的代码"></a>三、我的代码</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">hasCycle</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        ListNode* p1 = head;</span><br><span class="line">        <span class="keyword">if</span> (p1 == <span class="literal">nullptr</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        ListNode* p2 = head;</span><br><span class="line">        <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (p1-&gt;next == <span class="literal">nullptr</span> || p2-&gt;next == <span class="literal">nullptr</span> || p2-&gt;next-&gt;next == <span class="literal">nullptr</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            p1 = p1-&gt;next;		<span class="comment">//跑的慢</span></span><br><span class="line">            p2 = p2-&gt;next-&gt;next;<span class="comment">//跑的快</span></span><br><span class="line">            <span class="keyword">if</span> (p1 == p2)</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;            </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="142：环形链表2"><a href="#142：环形链表2" class="headerlink" title="142：环形链表2"></a>142：环形链表2</h2><h3 id="一、题目描述-1"><a href="#一、题目描述-1" class="headerlink" title="一、题目描述"></a>一、题目描述</h3><p>给定一个链表，返回链表开始入环的第一个节点。 如果链表无环，则返回 null。</p>
+<p>为了表示给定链表中的环，我们使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 pos 是 -1，则在该链表中没有环。注意，pos 仅仅是用于标识环的情况，并不会作为参数传递到函数中。<br><em>说明：</em><br>&ensp;&ensp;&ensp;&ensp;不允许修改给定的链表。<br><em>进阶：</em><br>&ensp;&ensp;&ensp;&ensp;你是否可以使用 O(1) 空间解决此题？<br><img src="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/2.png" style="zoom:50%;"></p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>: </span><br><span class="line">    <span class="function">ListNode *<span class="title">detectCycle</span><span class="params">(ListNode *head)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//to do</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="二、解题思路-1"><a href="#二、解题思路-1" class="headerlink" title="二、解题思路"></a>二、解题思路</h3><p>&ensp;&ensp;&ensp;&ensp;我们使用两个指针，fast 与 slow。它们起始都位于链表的头部。随后，slow 指针每次向后移动一个位置，而 fast 指针向后移动两个位置。如果链表中存在环，则 fast 指针最终将再次与slow 指针在环中相遇。</p>
+<p>&ensp;&ensp;&ensp;&ensp;如下图所示，设链表中环外部分的长度为 a。slow 指针进入环后，又走了b 的距离与 fast 相遇。此时fast 指针已经走完了环的 n 圈，因此它走过的总距离为 a+n(b+c)+b=a+(n+1)b+nca+n(b+c)+b=a+(n+1)b+nc。<br><img src="/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/3.png"></p>
+<p>&ensp;&ensp;&ensp;&ensp;根据题意，任意时刻，fast 指针走过的距离都为 slow 指针的 2 倍。因此，我们有<br>a+(n+1)b+nc=2(a+b)⟹a=c+(n−1)(b+c)<br>&ensp;&ensp;&ensp;&ensp;有了 a=c+(n-1)(b+c)a=c+(n−1)(b+c) 的等量关系，我们会发现：从相遇点到入环点的距离加上 n-1n−1 圈的环长，恰好等于从链表头部到入环点的距离。<br>&ensp;&ensp;&ensp;&ensp;因此，当发现 slow 与 fast 相遇时，我们再额外使用一个指针ptr。起始，它指向链表头部；随后，它和 slow 每次向后移动一个位置。最终，它们会在入环点相遇。<br>&ensp;&ensp;&ensp;&ensp;数学大法好！！！💀💀💀💀</p>
+<h3 id="三、我的代码-1"><a href="#三、我的代码-1" class="headerlink" title="三、我的代码"></a>三、我的代码</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">   <span class="function">ListNode* <span class="title">detectCycle</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        ListNode* p1 = head;</span><br><span class="line">        <span class="keyword">if</span> (p1 == <span class="literal">nullptr</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">        ListNode* p2 = head;</span><br><span class="line">        <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (p1-&gt;next == <span class="literal">nullptr</span> || p2-&gt;next == <span class="literal">nullptr</span> || p2-&gt;next-&gt;next == <span class="literal">nullptr</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">            p1 = p1-&gt;next;</span><br><span class="line">            p2 = p2-&gt;next-&gt;next;</span><br><span class="line">            <span class="keyword">if</span> (p1 == p2) &#123;</span><br><span class="line">                ListNode* ptr = head;</span><br><span class="line">                <span class="keyword">while</span> (ptr != p1) &#123;</span><br><span class="line">                    ptr = ptr-&gt;next;</span><br><span class="line">                    p1 = p1-&gt;next;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> ptr;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="160：相交链表"><a href="#160：相交链表" class="headerlink" title="160：相交链表"></a>160：相交链表</h2><h3 id="一、题目描述-2"><a href="#一、题目描述-2" class="headerlink" title="一、题目描述"></a>一、题目描述</h3><p>&ensp;&ensp;&ensp;&ensp;编写一个程序，找到两个单链表相交的起始节点。<br>&ensp;&ensp;&ensp;&ensp;如下面的两个链表：在节点 c1 开始相交。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">示例 1：</span><br><span class="line">输入：intersectVal &#x3D; 8, listA &#x3D; [4,1,8,4,5], listB &#x3D; [5,0,1,8,4,5], skipA &#x3D; 2, skipB &#x3D; 3</span><br><span class="line">输出：Reference of the node with value &#x3D; 8</span><br><span class="line">输入解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。</span><br><span class="line"></span><br><span class="line">示例 2：</span><br><span class="line">输入：intersectVal &#x3D; 2, listA &#x3D; [0,9,1,2,4], listB &#x3D; [3,2,4], skipA &#x3D; 3, skipB &#x3D; 1</span><br><span class="line">输出：Reference of the node with value &#x3D; 2</span><br><span class="line">输入解释：相交节点的值为 2 （注意，如果两个链表相交则不能为 0）。从各自的表头开始算起，链表 A 为 [0,9,1,2,4]，链表 B 为 [3,2,4]。在 A 中，相交节点前有 3 个节点；在 B 中，相交节点前有 1 个节点。</span><br><span class="line"></span><br><span class="line">示例 3：</span><br><span class="line">输入：intersectVal &#x3D; 0, listA &#x3D; [2,6,4], listB &#x3D; [1,5], skipA &#x3D; 3, skipB &#x3D; 2</span><br><span class="line">输出：null</span><br><span class="line">输入解释：从各自的表头开始算起，链表 A 为 [2,6,4]，链表 B 为 [1,5]。由于这两个链表不相交，所以 intersectVal 必须为 0，而 skipA 和 skipB 可以是任意值。</span><br><span class="line">解释：这两个链表不相交，因此返回 null。</span><br></pre></td></tr></table></figure>
+
+<p>注意：<br>&ensp;&ensp;&ensp;&ensp;如果两个链表没有交点，返回 null.<br>&ensp;&ensp;&ensp;&ensp;在返回结果后，两个链表仍须保持原有的结构。<br>&ensp;&ensp;&ensp;&ensp;可假定整个链表结构中没有循环。<br>&ensp;&ensp;&ensp;&ensp;程序尽量满足 O(n) 时间复杂度，且仅用 O(1) 内存。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode *<span class="title">getIntersectionNode</span><span class="params">(ListNode *headA, ListNode *headB)</span> </span>&#123;</span><br><span class="line">    		<span class="comment">//to do</span></span><br><span class="line">       &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="二、解题思路-2"><a href="#二、解题思路-2" class="headerlink" title="二、解题思路"></a>二、解题思路</h3><p>&ensp;&ensp;&ensp;&ensp;方法一: 暴力法<br>&ensp;&ensp;&ensp;&ensp;对链表A中的每一个结点 a，遍历整个链表 B 并检查链表 B 中是否存在结点和 a相同。</p>
+<p>&ensp;&ensp;&ensp;&ensp;方法二: 双指针法<br>&ensp;&ensp;&ensp;&ensp;创建两个指针 pA 和 pB，分别初始化为链表 A 和 B 的头结点，然后让它们向后逐结点遍历；当 pA 到达链表的尾部时，将它重定位到链表 B 的头结点 (你没看错，就是链表 B); 类似的，当 pB 到达链表的尾部时，将它重定位到链表 A 的头结点；若在某一时刻 pA 和 pB 相遇，则 pA/pB 为相交结点。<br>&ensp;&ensp;&ensp;&ensp;起点虽然不一样，但路程一样,终点一样,速度一样，必定同时到达。</p>
+<h3 id="三、我的代码-2"><a href="#三、我的代码-2" class="headerlink" title="三、我的代码"></a>三、我的代码</h3><p>方法一：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">   <span class="function">ListNode* <span class="title">getIntersectionNode</span><span class="params">(ListNode* headA, ListNode* headB)</span> </span>&#123;</span><br><span class="line">        ListNode* pa = headA;</span><br><span class="line">        <span class="keyword">if</span> (pa == <span class="literal">nullptr</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">        ListNode* pb = headB;</span><br><span class="line">        <span class="keyword">if</span> (pb == <span class="literal">nullptr</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">        <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (pa == pb)</span><br><span class="line">                    <span class="keyword">return</span> pa;</span><br><span class="line">                <span class="keyword">if</span> (pb-&gt;next == <span class="literal">nullptr</span>)</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                pb = pb-&gt;next;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (pa-&gt;next == <span class="literal">nullptr</span>)</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            pa = pa-&gt;next;</span><br><span class="line">            pb = headB;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>方法二：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">ListNode* <span class="title">getIntersectionNode</span><span class="params">(ListNode* headA, ListNode* headB)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n = <span class="number">0</span>;</span><br><span class="line">        ListNode* pa = headA;</span><br><span class="line">        ListNode* pb = headB;</span><br><span class="line">        <span class="keyword">if</span> (pa == <span class="literal">nullptr</span> || pb == <span class="literal">nullptr</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">        <span class="keyword">while</span> (n &lt; <span class="number">2</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (pa == pb)</span><br><span class="line">                <span class="keyword">return</span> pa;</span><br><span class="line">            <span class="keyword">if</span> (pb-&gt;next == <span class="literal">nullptr</span>)</span><br><span class="line">                pb = headA, n++;<span class="comment">//不能用pb-&gt;next=headA,会改变链表结构</span></span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                pb = pb-&gt;next;</span><br><span class="line">            <span class="keyword">if</span> (pa-&gt;next == <span class="literal">nullptr</span>)</span><br><span class="line">                pa = headB;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                pa = pa-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>算法</category>
+        <category>链表</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>设计链表</title>
+    <url>/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E8%AE%BE%E8%AE%A1%E9%93%BE%E8%A1%A8%EF%BC%88%E5%8D%95%E9%93%BE%E8%A1%A8%EF%BC%89/</url>
+    <content><![CDATA[<h3 id="一、题目描述"><a href="#一、题目描述" class="headerlink" title="一、题目描述"></a>一、题目描述</h3><p>&ensp;&ensp;&ensp;&ensp;设计链表的实现。您可以选择使用单链表或双链表。单链表中的节点应该具有两个属性：val 和 next。val 是当前节点的值，next 是指向下一个节点的指针/引用。如果要使用双向链表，则还需要一个属性 prev 以指示链表中的上一个节点。假设链表中的所有节点都是 0-index 的。</p>
+<span id="more"></span>
+
+<p>&ensp;&ensp;&ensp;&ensp;在链表类中实现这些功能：</p>
+<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;get(index)：获取链表中第 index 个节点的值。如果索引无效，则返回-1。<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;addAtHead(val)：在链表的第一个元素之前添加一个值为 val 的节点。插入后，新节点将成为链表的第一个节点。<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;addAtTail(val)：将值为 val 的节点追加到链表的最后一个元素。<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;addAtIndex(index,val)：在链表中的第 index 个节点之前添加值为 val  的节点。如果 index 等于链表的长度，则该节点将附加到链表的末尾。如果 index 大于链表长度，则不会插入节点。如果index小于0，则在头部插入节点。<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;deleteAtIndex(index)：如果索引 index 有效，则删除链表中的第 index 个节点。</p>
+<p>&ensp;&ensp;&ensp;&ensp;示例：</p>
+<pre><code>MyLinkedList linkedList = new MyLinkedList();
+linkedList.addAtHead(1);
+linkedList.addAtTail(3);
+linkedList.addAtIndex(1,2);   //链表变为1-&gt; 2-&gt; 3
+linkedList.get(1);            //返回2
+linkedList.deleteAtIndex(1);  //现在链表是1-&gt; 3
+linkedList.get(1);            //返回3
+</code></pre>
+<p>&ensp;&ensp;&ensp;&ensp;提示：</p>
+<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;所有val值都在 [1, 1000] 之内。<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;操作次数将在  [1, 1000] 之内。<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;请不要使用内置的 LinkedList 库。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyLinkedList</span> &#123;</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">/** Initialize your data structure here. */</span></span><br><span class="line">    <span class="built_in">MyLinkedList</span>() &#123;</span><br><span class="line">       </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** Get the value of the index-th node in the linked list. If the index is invalid, return -1. */</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** Add a node of value val before the first element of the linked list. After the insertion, the new node will be the first node of the linked list. */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addAtHead</span><span class="params">(<span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">       </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** Append a node of value val to the last element of the linked list. */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addAtTail</span><span class="params">(<span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** Add a node of value val before the index-th node in the linked list. If index equals to the length of linked list, the node will be appended to the end of linked list. If index is greater than the length, the node will not be inserted. */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addAtIndex</span><span class="params">(<span class="keyword">int</span> index, <span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** Delete the index-th node in the linked list, if the index is valid. */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">deleteAtIndex</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Your MyLinkedList object will be instantiated and called as such:</span></span><br><span class="line"><span class="comment"> * MyLinkedList* obj = new MyLinkedList();</span></span><br><span class="line"><span class="comment"> * int param_1 = obj-&gt;get(index);</span></span><br><span class="line"><span class="comment"> * obj-&gt;addAtHead(val);</span></span><br><span class="line"><span class="comment"> * obj-&gt;addAtTail(val);</span></span><br><span class="line"><span class="comment"> * obj-&gt;addAtIndex(index,val);</span></span><br><span class="line"><span class="comment"> * obj-&gt;deleteAtIndex(index);</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+<h3 id="二、解题思路"><a href="#二、解题思路" class="headerlink" title="二、解题思路"></a>二、解题思路</h3><p>&ensp;&ensp;&ensp;&ensp;首先定义链表节点（Node）的结构，它有一个值val，和指向下个节点的指针<em>next；故有Node(int x):val(x),next(NULL){}：定义一个节点，它的值为x，下个节点为空。<br>&ensp;&ensp;&ensp;&ensp;链表的属性、成员有链表的长度（size），指向链表头结点的指针（</em>dummy），其作用域标记为private。<br>&ensp;&ensp;&ensp;&ensp; MyLinkedList() ，初始化一个链表，长度为0，只有个dummy。<br>&ensp;&ensp;&ensp;&ensp;get(index)：先判断index是否有效：index&gt;(size-1)||index&lt;0则无效，然后生成一个指针，移到目标节点即可。<br>&ensp;&ensp;&ensp;&ensp;addAtHead(val)：初始化一个节点head，将head指向头节点，dummy指向head。<br>&ensp;&ensp;&ensp;&ensp;addAtTail(val)：遍历到尾节点，加上去即可<br>&ensp;&ensp;&ensp;&ensp;addAtIndex(index,val)：先判断index是否有效：size&lt;index则返回空值；然后将指针移到第 index 个节点之前的那个节点，插入即可（使之成为第index个节点）<br>&ensp;&ensp;&ensp;&ensp;deleteAtIndex(index)：先判断index是否有效：index&gt;=size||index&lt;0则返回空值；然后将指针移到第 index 个节点之前的那个节点，删除后面那个节点，再连接后面节点的后面节点即可。（老套娃了🐶🐶🐶）</p>
+<h5 id="全场最佳：将指针移到第-index-个节点之前的那个节点"><a href="#全场最佳：将指针移到第-index-个节点之前的那个节点" class="headerlink" title="全场最佳：将指针移到第 index 个节点之前的那个节点"></a>全场最佳：将指针移到第 index 个节点之前的那个节点</h5><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">//index从0开始，第一个结点的index为0，题目是这么要求的🐶</span></span><br><span class="line">	Node *head=dummy;</span><br><span class="line">      <span class="keyword">while</span>(index--)&#123;</span><br><span class="line">          head=head-&gt;next;</span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="三、我的代码"><a href="#三、我的代码" class="headerlink" title="三、我的代码"></a>三、我的代码</h3><p>&ensp;&ensp;&ensp;&ensp;直接在力扣上写的。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyLinkedList</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Node</span>&#123;</span></span><br><span class="line">        <span class="keyword">int</span> val;</span><br><span class="line">        Node *next;</span><br><span class="line">        <span class="built_in">Node</span>(<span class="keyword">int</span> x):<span class="built_in">val</span>(x),<span class="built_in">next</span>(<span class="literal">NULL</span>)&#123;&#125;</span><br><span class="line">    &#125;;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> size;</span><br><span class="line">    Node *dummy;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">/** Initialize your data structure here. */</span></span><br><span class="line">    <span class="built_in">MyLinkedList</span>() &#123;</span><br><span class="line">        dummy=<span class="keyword">new</span> <span class="built_in">Node</span>(<span class="number">0</span>);</span><br><span class="line">        size=<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** Get the value of the index-th node in the linked list. If the index is invalid, return -1. */</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(index&gt;(size<span class="number">-1</span>)||index&lt;<span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        Node *head=dummy-&gt;next;</span><br><span class="line">        <span class="keyword">while</span>(index--)&#123;</span><br><span class="line">            head=head-&gt;next;            </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> head-&gt;val;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** Add a node of value val before the first element of the linked list. After the insertion, the new node will be the first node of the linked list. */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addAtHead</span><span class="params">(<span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">        Node *head=<span class="keyword">new</span> <span class="built_in">Node</span>(val);</span><br><span class="line">        head-&gt;next=dummy-&gt;next;</span><br><span class="line">        dummy-&gt;next=head;</span><br><span class="line">        size++;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** Append a node of value val to the last element of the linked list. */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addAtTail</span><span class="params">(<span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">        Node *tailNode=dummy;</span><br><span class="line">        Node *newTailNode=<span class="keyword">new</span> <span class="built_in">Node</span>(val);</span><br><span class="line">        <span class="keyword">while</span>(tailNode-&gt;next!=<span class="literal">NULL</span>)&#123;</span><br><span class="line">            tailNode=tailNode-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        tailNode-&gt;next=newTailNode;</span><br><span class="line">        size++;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** Add a node of value val before the index-th node in the linked list. If index equals to the length of linked list, the node will be appended to the end of linked list. If index is greater than the length, the node will not be inserted. */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addAtIndex</span><span class="params">(<span class="keyword">int</span> index, <span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(size&lt;index)</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        Node *head=dummy;</span><br><span class="line">        Node *t=<span class="keyword">new</span> <span class="built_in">Node</span>(val);</span><br><span class="line">        <span class="keyword">while</span>(index--)&#123;</span><br><span class="line">            head=head-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        t-&gt;next=head-&gt;next;</span><br><span class="line">        head-&gt;next=t;</span><br><span class="line">        size++;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** Delete the index-th node in the linked list, if the index is valid. */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">deleteAtIndex</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(index&gt;=size||index&lt;<span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        Node *head=dummy;</span><br><span class="line">        <span class="keyword">while</span>(index--)&#123;</span><br><span class="line">            head=head-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        Node *t=head-&gt;next;</span><br><span class="line">        head-&gt;next=head-&gt;next-&gt;next;</span><br><span class="line">        <span class="keyword">delete</span> t;</span><br><span class="line">        size--;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Your MyLinkedList object will be instantiated and called as such:</span></span><br><span class="line"><span class="comment"> * MyLinkedList* obj = new MyLinkedList();</span></span><br><span class="line"><span class="comment"> * int param_1 = obj-&gt;get(index);</span></span><br><span class="line"><span class="comment"> * obj-&gt;addAtHead(val);</span></span><br><span class="line"><span class="comment"> * obj-&gt;addAtTail(val);</span></span><br><span class="line"><span class="comment"> * obj-&gt;addAtIndex(index,val);</span></span><br><span class="line"><span class="comment"> * obj-&gt;deleteAtIndex(index);</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>算法</category>
+        <category>链表</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
       </tags>
   </entry>
 </search>

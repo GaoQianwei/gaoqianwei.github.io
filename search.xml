@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>网站说明</title>
-    <url>/2021/04/20/hello-world/</url>
-    <content><![CDATA[<span id="more"></span>
-
-<p>&ensp;&ensp;&ensp;&ensp;本站核心词：<strong>分享、记录</strong></p>
-<p>&ensp;&ensp;&ensp;&ensp; 分享我在学习、工作中的学习与经验总结，并把它们记录下来。</p>
-]]></content>
-  </entry>
-  <entry>
     <title>模幂运算</title>
     <url>/2021/04/30/%E6%A8%A1%E5%B9%82%E8%BF%90%E7%AE%97/</url>
-    <content><![CDATA[<p>a^1234^  =  a^4^  *  (a^123^)^10^</p>
-<p>(a * b) % mod = (a % mod)(b % mod) % mod</p>
-<h4 id="50-Pow-x-n"><a href="#50-Pow-x-n" class="headerlink" title="50. Pow(x, n)"></a><a href="https://leetcode-cn.com/problems/powx-n/">50. Pow(x, n)</a></h4><p>实现 pow(<em>x</em>, <em>n</em>) ，即计算 x 的 n 次幂函数（即，x^n^）。</p>
+    <content><![CDATA[<p>&ensp;&ensp;&ensp;&ensp;由于格式原因可能文章显示有问题，a^1234^代表a的1234次幂</p>
+<p>&ensp;&ensp;&ensp;&ensp;a^1234^  =  a^4^  *  (a^123^)^10^</p>
+<p>&ensp;&ensp;&ensp;&ensp;(a * b) % mod = (a % mod)(b % mod) % mod</p>
+<span id="more"></span>
+
+<h4 id="50-Pow-x-n"><a href="#50-Pow-x-n" class="headerlink" title="50. Pow(x, n)"></a><a href="https://leetcode-cn.com/problems/powx-n/">50. Pow(x, n)</a></h4><p>&ensp;&ensp;&ensp;&ensp;实现 pow(<em>x</em>, <em>n</em>) ，即计算 x 的 n 次幂函数（即，x^n^）。</p>
 <p><strong>示例 1：</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：x &#x3D; 2.00000, n &#x3D; 10</span><br><span class="line">输出：1024.00000</span><br></pre></td></tr></table></figure>
 
@@ -38,7 +32,7 @@
 
 
 
-<p>a^1234^  =  a^4^  *  (a^123^)^10^  $\Longrightarrow$ a^[1,2,3,4]^  =  a^4^  *  (a^[1,2,3]^)^10^ </p>
+<p>&ensp;&ensp;&ensp;&ensp;a^1234^  =  a^4^  *  (a^123^)^10^  $\Longrightarrow$ a^[1,2,3,4]^  =  a^4^  *  (a^[1,2,3]^)^10^ </p>
 <h4 id="372-超级次方"><a href="#372-超级次方" class="headerlink" title="372. 超级次方"></a><a href="https://leetcode-cn.com/problems/super-pow/">372. 超级次方</a></h4><p>你的任务是计算  a^b^  对 <code>1337</code> 取模，<code>a</code> 是一个正整数，<code>b</code> 是一个非常大的正整数且会以数组形式给出。</p>
 <p><strong>示例 1：</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：a &#x3D; 2, b &#x3D; [3]</span><br><span class="line">输出：8</span><br></pre></td></tr></table></figure>
@@ -61,7 +55,6 @@
 </ul>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> mod = <span class="number">1337</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">myPow</span> <span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        x %= mod;</span><br><span class="line">        <span class="keyword">int</span> res = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (n) </span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (n &amp; <span class="number">1</span>) res = res * x % mod;</span><br><span class="line">            x = x * x % mod;</span><br><span class="line">            n &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">superPow</span><span class="params">(<span class="keyword">int</span> a, vector&lt;<span class="keyword">int</span>&gt;&amp; b)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (b.<span class="built_in">empty</span>())</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> lastValue = b.<span class="built_in">back</span>();</span><br><span class="line">        b.<span class="built_in">pop_back</span>();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> part1 = <span class="built_in">myPow</span>(a, lastValue);</span><br><span class="line">        <span class="keyword">int</span> part2 = <span class="built_in">myPow</span>(<span class="built_in">superPow</span>(a, b), <span class="number">10</span>);</span><br><span class="line">        <span class="keyword">return</span> part1 * part2 % mod;  </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<p>a^[1,2,3,4]^  =  a^4^  *  (a^[1,2,3]^)^10^ </p>
 <p><a href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247485035&idx=1&sn=c03c9056f412bf590480156e4357b433&chksm=9bd7f863aca07175eca0bd5e638c857969af1936cc2b7b4a01610809ba1d85a3272703e2b3a2&scene=21#wechat_redirect">Super Pow：如何高效进行模幂运算 (qq.com)</a></p>
 <p><a href="https://mp.weixin.qq.com/s?__biz=MzA5MTM1NTc2Ng==&mid=2458321758&idx=1&sn=e92e7a72d245831c29acb3d2a29607da&scene=21#wechat_redirect">客户端基本不用的算法系列：快速幂 (qq.com)</a></p>
 <p><a href="https://blog.csdn.net/FlushHip/article/details/82495034">右移一位和除二的区别</a></p>
@@ -80,6 +73,8 @@
     <title>跳跃游戏</title>
     <url>/2021/04/29/%E8%B7%B3%E8%B7%83%E6%B8%B8%E6%88%8F/</url>
     <content><![CDATA[<h3 id="一、介绍"><a href="#一、介绍" class="headerlink" title="一、介绍"></a>一、介绍</h3><p>&ensp;&ensp;&ensp;&ensp;2021年4月14日华为笔试题第四题，好像是一个有关信号塔传播的题，后来在刷Leetcode的时候碰见了原题，也就是《跳跃游戏2》；跳跃游戏1和2只是问法不一样，核心算法相同。</p>
+<span id="more"></span>
+
 <h3 id="二、题目"><a href="#二、题目" class="headerlink" title="二、题目"></a>二、题目</h3><p><a href="https://leetcode-cn.com/problems/jump-game/">跳跃游戏</a></p>
 <figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">给定一个非负整数数组 nums ，你最初位于数组的第一个下标 。数组中的每个元素代表你在该位置可以跳跃的最大长度。判断你是否能够到达最后一个下标。 </span><br><span class="line"></span><br><span class="line">示例 1：</span><br><span class="line">输入：nums = [2,3,1,1,4]</span><br><span class="line">输出：true</span><br><span class="line">解释：可以先跳 1 步，从下标 0 到达下标 1, 然后再从下标 1 跳 3 步到达最后一个下标。</span><br><span class="line"></span><br><span class="line">示例 2：</span><br><span class="line">输入：nums = [3,2,1,0,4]</span><br><span class="line">输出：false</span><br><span class="line">解释：无论怎样，总会到达下标为 3 的位置。但该下标的最大跳跃长度是 0 ， 所以永远不可能到达最后一个下标。</span><br><span class="line">提示：</span><br><span class="line">1 &lt;= nums.length &lt;= 3 * 10<span class="built_in">^</span>4</span><br><span class="line">0 &lt;= nums[i] &lt;= 105</span><br></pre></td></tr></table></figure>
 
@@ -109,35 +104,112 @@
 ]]></content>
       <categories>
         <category>算法</category>
+        <category>遇到的笔试（面试）题</category>
       </categories>
       <tags>
         <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>动态规划</tag>
         <tag>华为笔试题</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>位运算</title>
+    <url>/2021/04/26/%E4%BD%8D%E8%BF%90%E7%AE%97/</url>
+    <content><![CDATA[<p>&ensp;&ensp;本文介绍一些我在刷题时遇到的有关位运算的算法题。</p>
+<span id="more"></span>
+
+<h3 id="位异或："><a href="#位异或：" class="headerlink" title="位异或："></a><strong>位异或</strong>：</h3><p>&ensp;&ensp;&ensp;&ensp;一个数和它本身做异或运算结果为 0，即 <code>a ^ a = 0</code>；一个数和 0 做异或运算的结果为它本身，即 <code>a ^ 0 = a</code>。</p>
+<p>&ensp;&ensp;&ensp;&ensp;例：</p>
+<p>&ensp;&ensp;&ensp;&ensp;<a href="https://leetcode-cn.com/problems/single-number/">只出现一次的数字</a></p>
+<p>&ensp;&ensp;&ensp;&ensp;给定一个<strong>非空</strong>整数数组，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。</p>
+<p><strong>说明：</strong></p>
+<p>&ensp;&ensp;&ensp;&ensp;你的算法应该具有线性时间复杂度。 你可以不使用额外空间来实现吗？</p>
+<p><strong>示例 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: [2,2,1]</span><br><span class="line">输出: 1</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: [4,1,2,1,2]</span><br><span class="line">输出: 4</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">singleNumber</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> ans = nums[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; nums.<span class="built_in">size</span>(); ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            ans = ans ^ nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="汉明权重"><a href="#汉明权重" class="headerlink" title="汉明权重"></a>汉明权重</h3><p>&ensp;&ensp;位与<code>&amp;</code>，<code>1 &amp; 1 = 1</code>，<code>1 &amp; 0 = 0 &amp; 1 = 0 &amp; 0 = 0</code></p>
+<p>&ensp;&ensp;判断奇偶，n &amp; 1 == 1则为奇数，否则为偶数。</p>
+<p>&ensp;&ensp;&ensp;&ensp;<strong>汉明重量</strong>是一串符号中非零符号的个数。因此它等同于同样长度的全零符号串的<a href="https://baike.baidu.com/item/%E6%B1%89%E6%98%8E%E8%B7%9D%E7%A6%BB">汉明距离</a>。在最为常见的<a href="https://baike.baidu.com/item/%E6%95%B0%E6%8D%AE%E4%BD%8D">数据位</a>符号串中，它是1的个数。</p>
+<p>&ensp;&ensp;&ensp;&ensp;<code>n&amp;(n-1)</code> 这个操作是算法中常见的，作用是消除数字 <code>n</code> 的二进制表示中的最后一个 1。</p>
+<img src="/2021/04/26/%E4%BD%8D%E8%BF%90%E7%AE%97/2021-4-30-bit.png" alt="图片" style="zoom:50%;">
+
+<p>&ensp;&ensp;&ensp;&ensp;其核心逻辑就是，<code>n - 1</code> 一定可以消除最后一个 1，同时把其后的 0 都变成 1，这样再和 <code>n</code> 做一次 <code>&amp;</code> 运算，就可以仅仅把最后一个 1 变成 0 了。</p>
+<p>&ensp;&ensp;&ensp;&ensp;核心代码：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">hammingWeight</span><span class="params">(<span class="keyword">uint32_t</span> n)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> res = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (n != <span class="number">0</span>) </span><br><span class="line">    &#123;</span><br><span class="line">        n = n &amp; (n - <span class="number">1</span>);</span><br><span class="line">        res++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="338-比特位计数"><a href="#338-比特位计数" class="headerlink" title="338. 比特位计数"></a><a href="https://leetcode-cn.com/problems/counting-bits/">338. 比特位计数</a></h4><p>&ensp;&ensp;&ensp;&ensp;给定一个非负整数 <strong>num</strong>。对于 <strong>0 ≤ i ≤ num</strong> 范围中的每个数字 <strong>i</strong> ，计算其二进制数中的 1 的数目并将它们作为数组返回。</p>
+<p><strong>示例 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: 2</span><br><span class="line">输出: [0,1,1]</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: 5</span><br><span class="line">输出: [0,1,1,2,1,2]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">countBits</span><span class="params">(<span class="keyword">int</span> num)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        vector&lt;<span class="keyword">int</span>&gt; ans;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= num; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            ans.<span class="built_in">push_back</span>(<span class="built_in">hammingWeight</span>(i));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">hammingWeight</span><span class="params">(<span class="keyword">int</span> n)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> res = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (n != <span class="number">0</span>) &#123;</span><br><span class="line">            n = n &amp; (n - <span class="number">1</span>);</span><br><span class="line">            res++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>另一解法：</p>
+<p>&ensp;&ensp;&ensp;&ensp;对于所有的数字，只有两类：</p>
+<p>&ensp;&ensp;&ensp;&ensp;奇数：二进制表示中，奇数一定比前面那个偶数多一个 1，因为多的就是最低位的 1。        </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">举例： </span><br><span class="line">    0 &#x3D; 0       1 &#x3D; 1</span><br><span class="line">    2 &#x3D; 10      3 &#x3D; 11</span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;&ensp;偶数：二进制表示中，偶数中 1 的个数一定和除以 2 之后的那个数一样多。因为最低位是 0，除以 2 就是右移一位，也就是把那个 0 抹掉而已，所以 1 的个数是不变的。         </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">举例：</span><br><span class="line">    2 &#x3D; 10       4 &#x3D; 100       8 &#x3D; 1000</span><br><span class="line">    3 &#x3D; 11       6 &#x3D; 110       12 &#x3D; 1100</span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;&ensp;另外，0 的 1 个数为 0，于是就可以根据奇偶性开始遍历计算了。</p>
+<p>&ensp;&ensp;&ensp;&ensp;代码</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">countBits</span><span class="params">(<span class="keyword">int</span> num)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">result</span><span class="params">(num+<span class="number">1</span>)</span></span>;</span><br><span class="line">    result[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= num; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(i % <span class="number">2</span> == <span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            result[i] = result[i<span class="number">-1</span>] + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            result[i] = result[i/<span class="number">2</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;        </span><br></pre></td></tr></table></figure>
+
+<h4 id="461-汉明距离"><a href="#461-汉明距离" class="headerlink" title="461. 汉明距离"></a><a href="https://leetcode-cn.com/problems/hamming-distance/">461. 汉明距离</a></h4><p>两个整数之间的<a href="https://baike.baidu.com/item/%E6%B1%89%E6%98%8E%E8%B7%9D%E7%A6%BB">汉明距离</a>指的是这两个数字对应二进制位不同的位置的数目。</p>
+<p>给出两个整数 <code>x</code> 和 <code>y</code>，计算它们之间的汉明距离。</p>
+<p><strong>注意：</strong><br>0 ≤ <code>x</code>, <code>y</code> &lt; 231.</p>
+<p><strong>示例:</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入: x &#x3D; 1, y &#x3D; 4</span><br><span class="line"></span><br><span class="line">输出: 2</span><br><span class="line"></span><br><span class="line">解释:</span><br><span class="line">1   (0 0 0 1)</span><br><span class="line">4   (0 1 0 0)</span><br><span class="line">       ↑   ↑</span><br><span class="line"></span><br><span class="line">上面的箭头指出了对应二进制位不同的位置。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">hammingDistance</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n = x ^ y;</span><br><span class="line">        <span class="keyword">int</span> res = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (n != <span class="number">0</span>) </span><br><span class="line">        &#123;</span><br><span class="line">            n = n &amp; (n - <span class="number">1</span>);</span><br><span class="line">            ++res;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247486704&idx=2&sn=59b011722fe722551de8b56f234a4050&chksm=9bd7f2f8aca07bee47852e7bce72325157897ad0a3d5f383d18bca5379d66716518c2b968ae9&scene=21#wechat_redirect">原创 | 东哥教你几招常用的位运算技巧 (qq.com)</a></p>
+]]></content>
+      <categories>
+        <category>算法</category>
+        <category>数学</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>位运算</tag>
+        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
     <title>前缀和数组与差分数组</title>
     <url>/2021/04/23/%E5%89%8D%E7%BC%80%E5%92%8C%E6%95%B0%E7%BB%84%E4%B8%8E%E5%B7%AE%E5%88%86%E6%95%B0%E7%BB%84/</url>
-    <content><![CDATA[<p>当我们需要频繁地查询数组某个区间的累加和或频繁地对数组的某个区间的元素进行增减，便需要用到前缀和数组以及差分数组来提高效率</p>
+    <content><![CDATA[<p>&ensp;&ensp;&ensp;&ensp;当我们需要频繁地查询数组某个区间的累加和或频繁地对数组的某个区间的元素进行增减，便需要用到前缀和数组以及差分数组来提高效率</p>
 <span id="more"></span>
 
-<h3 id="一、概念简介"><a href="#一、概念简介" class="headerlink" title="一、概念简介"></a>一、概念简介</h3><p><strong>前缀和数组</strong>：对于一个给定的数组 <code>nums</code>，额外开辟一个前缀和数组进行预处理：</p>
+<h3 id="一、概念简介"><a href="#一、概念简介" class="headerlink" title="一、概念简介"></a>一、概念简介</h3><p>&ensp;&ensp;&ensp;&ensp;<strong>前缀和数组</strong>：对于一个给定的数组 <code>nums</code>，额外开辟一个前缀和数组进行预处理：</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">preSum</span><span class="params">(nums.size() + <span class="number">1</span>)</span></span>;</span><br><span class="line">preSum[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.<span class="built_in">size</span>(); i++)</span><br><span class="line">&#123;</span><br><span class="line">    preSum[i + <span class="number">1</span>] = preSum[i] + nums[i];</span><br><span class="line">&#125;    </span><br></pre></td></tr></table></figure>
 
-<p>前缀和数组 <code>preSum</code> 的含义很好理解，<code>preSum[i]</code> 就是 <code>nums[0..i-1]</code> 的和。那么如果我们想求 <code>nums[i...j]</code> 的和，只需要一步操作 <code>preSum[j+1] - preSum[i]</code> 即可，而不需要重新去遍历数组了。</p>
-<p><strong>前缀和主要适用的场景是原始数组不会被修改的情况下，频繁查询某个区间的累加和</strong>。</p>
-<p><strong>差分数组</strong>：对于一个给定的数组<code>nums</code>，额外开辟一个差分数组进行预处理：</p>
+<p>&ensp;&ensp;&ensp;&ensp;前缀和数组 <code>preSum</code> 的含义很好理解，<code>preSum[i]</code> 就是 <code>nums[0..i-1]</code> 的和。那么如果我们想求 <code>nums[i...j]</code> 的和，只需要一步操作 <code>preSum[j+1] - preSum[i]</code> 即可，而不需要重新去遍历数组了。</p>
+<p>&ensp;&ensp;&ensp;&ensp;<strong>前缀和主要适用的场景是原始数组不会被修改的情况下，频繁查询某个区间的累加和</strong>。</p>
+<p>&ensp;&ensp;&ensp;&ensp;<strong>差分数组</strong>：对于一个给定的数组<code>nums</code>，额外开辟一个差分数组进行预处理：</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">diff</span><span class="params">(nums.size())</span></span>;</span><br><span class="line">diff[<span class="number">0</span>] = diff[<span class="number">0</span>];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; nums.<span class="built_in">size</span>(); ++i)</span><br><span class="line">&#123;</span><br><span class="line">    diff[i] = nums[i] - nums[i - <span class="number">1</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>通过这个<code>diff</code>差分数组是可以反推出原始数组<code>nums</code>的，代码逻辑如下：</p>
+<p>&ensp;&ensp;&ensp;&ensp;通过这个<code>diff</code>差分数组是可以反推出原始数组<code>nums</code>的，代码逻辑如下：</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">nums</span><span class="params">(diff.size())</span></span>;</span><br><span class="line"><span class="comment">// 根据差分数组构造结果数组</span></span><br><span class="line">nums[<span class="number">0</span>] = diff[<span class="number">0</span>];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; diff.<span class="built_in">size</span>(); ++i) </span><br><span class="line">&#123;</span><br><span class="line">    nums[i] = nums[i - <span class="number">1</span>] + diff[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>这样构造差分数组<code>diff</code>，就可以快速进行区间增减的操作，如果你想对区间<code>nums[i..j]</code>的元素全部加 3，那么只需要让<code>diff[i] += 3</code>，然后再让<code>diff[j+1] -= 3</code>即可。</p>
-<p><code>diff[i] += 3</code>意味着给<code>nums[i..]</code>所有的元素都加了 3，然后<code>diff[j+1] -= 3</code>又意味着对于<code>nums[j+1..]</code>所有元素再减 3，那综合起来，就是对<code>nums[i..j]</code>中的所有元素都加 3 了。</p>
-<p><strong>差分数组的主要适用场景是频繁对原始数组的某个区间的元素进行增减</strong>。</p>
+<p>&ensp;&ensp;&ensp;&ensp;这样构造差分数组<code>diff</code>，就可以快速进行区间增减的操作，如果你想对区间<code>nums[i..j]</code>的元素全部加 3，那么只需要让<code>diff[i] += 3</code>，然后再让<code>diff[j+1] -= 3</code>即可。</p>
+<p>&ensp;&ensp;&ensp;&ensp;<code>diff[i] += 3</code>意味着给<code>nums[i..]</code>所有的元素都加了 3，然后<code>diff[j+1] -= 3</code>又意味着对于<code>nums[j+1..]</code>所有元素再减 3，那综合起来，就是对<code>nums[i..j]</code>中的所有元素都加 3 了。</p>
+<p>&ensp;&ensp;&ensp;&ensp;<strong>差分数组的主要适用场景是频繁对原始数组的某个区间的元素进行增减</strong>。</p>
 <h3 id="二、举个例子"><a href="#二、举个例子" class="headerlink" title="二、举个例子"></a>二、举个例子</h3><p><a href="https://leetcode-cn.com/problems/subarray-sum-equals-k/">560. 和为K的子数组</a></p>
-<p>给定一个整数数组和一个整数 <strong>k，</strong>你需要找到该数组中和为 <strong>k</strong> 的连续的子数组的个数。</p>
+<p>&ensp;&ensp;&ensp;&ensp;给定一个整数数组和一个整数 <strong>k，</strong>你需要找到该数组中和为 <strong>k</strong> 的连续的子数组的个数。</p>
 <p><strong>示例 1 :</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入:nums &#x3D; [1,1,1], k &#x3D; 2</span><br><span class="line">输出: 2 , [1,1] 与 [1,1] 为两种不同的情况。</span><br></pre></td></tr></table></figure>
 
@@ -148,20 +220,20 @@
 </ol>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">subarraySum</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt; nums, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> n = nums.<span class="built_in">size</span>();</span><br><span class="line">  <span class="comment">// 构造前缀和</span></span><br><span class="line">  <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">sum</span><span class="params">(n + <span class="number">1</span>)</span></span>;</span><br><span class="line">  sum[<span class="number">0</span>] = <span class="number">0</span>; </span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">    sum[i + <span class="number">1</span>] = sum[i] + nums[i];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> ans = <span class="number">0</span>;</span><br><span class="line">  <span class="comment">// 穷举所有子数组</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">  &#123;</span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; i; j++)</span><br><span class="line">      &#123;</span><br><span class="line">          <span class="comment">// sum of nums[j..i-1]</span></span><br><span class="line">          <span class="keyword">if</span> (sum[i] - sum[j] == k)</span><br><span class="line">          &#123;</span><br><span class="line">               ans++;</span><br><span class="line">          &#125;             </span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">    </span><br><span class="line">  <span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>前缀和进阶，与 unordered_map 结合。</p>
-<p>前面的解法有嵌套的 for 循环：</p>
+<p>&ensp;&ensp;&ensp;&ensp;前缀和进阶，与 unordered_map 结合。</p>
+<p>&ensp;&ensp;&ensp;&ensp;前面的解法有嵌套的 for 循环：</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line"> &#123;</span><br><span class="line">     <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; i; j++)</span><br><span class="line">     &#123;</span><br><span class="line">         <span class="comment">// sum of nums[j..i-1]</span></span><br><span class="line">         <span class="keyword">if</span> (sum[i] - sum[j] == k)</span><br><span class="line">         &#123;</span><br><span class="line">              ans++;</span><br><span class="line">         &#125;             </span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
 
-<p>第二层 for 循环在计算有几个<code>j</code>能够使得<code>sum[i]</code>和<code>sum[j]</code>的差为 k。毎找到一个这样的<code>j</code>，就把结果加一。</p>
-<p>我们可以把 if 语句里的条件判断移项，这样写：</p>
+<p>&ensp;&ensp;&ensp;&ensp;第二层 for 循环在计算有几个<code>j</code>能够使得<code>sum[i]</code>和<code>sum[j]</code>的差为 k。毎找到一个这样的<code>j</code>，就把结果加一。</p>
+<p>&ensp;&ensp;&ensp;&ensp;我们可以把 if 语句里的条件判断移项，这样写：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if (sum[j] &#x3D;&#x3D; sum[i] - k)</span><br><span class="line">    ans++;</span><br></pre></td></tr></table></figure>
 
-<p>优化的思路是：<strong>我直接记录下有几个<code>sum[j]</code>和<code>sum[i]-k</code>相等，直接更新结果，就避免了内层的 for 循环</strong>。我们可以用哈希表，在记录前缀和的同时记录该前缀和出现的次数。</p>
+<p>&ensp;&ensp;&ensp;&ensp;优化的思路是：<strong>我直接记录下有几个<code>sum[j]</code>和<code>sum[i]-k</code>相等，直接更新结果，就避免了内层的 for 循环</strong>。我们可以用哈希表，在记录前缀和的同时记录该前缀和出现的次数。</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">subarraySum</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> k)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        unordered_map&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; mp;</span><br><span class="line">        mp[<span class="number">0</span>] = <span class="number">1</span>;			<span class="comment">//前缀和为 0 的子数组个数为 1</span></span><br><span class="line">        <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> pre = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span>&amp; x : nums)</span><br><span class="line">        &#123;</span><br><span class="line">            pre += x;	<span class="comment">//前缀和，直接采用一个变量</span></span><br><span class="line">            <span class="keyword">if</span> (mp.<span class="built_in">find</span>(pre - k) != mp.<span class="built_in">end</span>()) <span class="comment">//pre - k 是目标区间前面数组元素的前缀和</span></span><br><span class="line">            &#123;</span><br><span class="line">                count += mp[pre - k];</span><br><span class="line">            &#125;</span><br><span class="line">            ++mp[pre];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<h4 id="1109-航班预订统计"><a href="#1109-航班预订统计" class="headerlink" title="1109. 航班预订统计"></a><a href="https://leetcode-cn.com/problems/corporate-flight-bookings/">1109. 航班预订统计</a></h4><p>这里有 <code>n</code> 个航班，它们分别从 <code>1</code> 到 <code>n</code> 进行编号。</p>
-<p>有一份航班预订表 <code>bookings</code> ，表中第 <code>i</code> 条预订记录 <code>bookings[i] = [firsti, lasti, seatsi]</code> 意味着在从 <code>firsti</code> 到 <code>lasti</code> （<strong>包含</strong> <code>firsti</code> 和 <code>lasti</code> ）的 <strong>每个航班</strong> 上预订了 <code>seatsi</code> 个座位。</p>
-<p>请你返回一个长度为 <code>n</code> 的数组 <code>answer</code>，其中 <code>answer[i]</code> 是航班 <code>i</code> 上预订的座位总数。</p>
+<h4 id="1109-航班预订统计"><a href="#1109-航班预订统计" class="headerlink" title="1109. 航班预订统计"></a><a href="https://leetcode-cn.com/problems/corporate-flight-bookings/">1109. 航班预订统计</a></h4><p>&ensp;&ensp;&ensp;&ensp;这里有 <code>n</code> 个航班，它们分别从 <code>1</code> 到 <code>n</code> 进行编号。</p>
+<p>&ensp;&ensp;&ensp;&ensp;有一份航班预订表 <code>bookings</code> ，表中第 <code>i</code> 条预订记录 <code>bookings[i] = [firsti, lasti, seatsi]</code> 意味着在从 <code>firsti</code> 到 <code>lasti</code> （<strong>包含</strong> <code>firsti</code> 和 <code>lasti</code> ）的 <strong>每个航班</strong> 上预订了 <code>seatsi</code> 个座位。</p>
+<p>&ensp;&ensp;&ensp;&ensp;请你返回一个长度为 <code>n</code> 的数组 <code>answer</code>，其中 <code>answer[i]</code> 是航班 <code>i</code> 上预订的座位总数。</p>
 <p> <strong>示例 1：</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：bookings &#x3D; [[1,2,10],[2,3,20],[2,5,25]], n &#x3D; 5</span><br><span class="line">输出：[10,55,45,25,25]</span><br><span class="line">解释：</span><br><span class="line">航班编号        1   2   3   4   5</span><br><span class="line">预订记录 1 ：   10  10</span><br><span class="line">预订记录 2 ：       20  20</span><br><span class="line">预订记录 3 ：       25  25  25  25</span><br><span class="line">总座位数：      10  55  45  25  25</span><br><span class="line">因此，answer &#x3D; [10,55,45,25,25]</span><br></pre></td></tr></table></figure>
 
@@ -176,7 +248,7 @@
 <li>  <code>1 &lt;= firsti &lt;= lasti &lt;= n</code></li>
 <li>  <code>1 &lt;= seatsi &lt;= 104</code></li>
 </ul>
-<p>直接上差分数组：</p>
+<p>&ensp;&ensp;&ensp;&ensp;直接上差分数组：</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">corpFlightBookings</span><span class="params">(vector&lt;vector&lt;<span class="keyword">int</span>&gt;&gt;&amp; bookings, <span class="keyword">int</span> n)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">res</span><span class="params">(n,<span class="number">0</span>)</span></span>;</span><br><span class="line">        <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">diff</span><span class="params">(n+<span class="number">1</span>, <span class="number">0</span>)</span></span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; bookings.<span class="built_in">size</span>(); ++k)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">int</span> i = bookings[k][<span class="number">0</span>] - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">int</span> j = bookings[k][<span class="number">1</span>] - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">int</span> seat = bookings[k][<span class="number">2</span>];</span><br><span class="line">            diff[i] = diff[i] + seat;</span><br><span class="line">            diff[j+<span class="number">1</span>] = diff[j+<span class="number">1</span>] - seat;</span><br><span class="line">        &#125;</span><br><span class="line">        res[<span class="number">0</span>] = diff[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> k = <span class="number">1</span>; k &lt; n; k++)</span><br><span class="line">        &#123;</span><br><span class="line">            res[k] = res[k<span class="number">-1</span>] + diff[k];</span><br><span class="line">        &#125;          </span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <p>[参考：论那些小而美的算法技巧：差分数组/前缀和](<a href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247487011&idx=1&sn=5e2b00c1c736fd7afbf3ed35edc4aeec&chksm=9bd7f02baca0793d569a9633cc14117e708ccc9eb41b7f0add430ea78f22e4f2443f421c6841&scene=21#wechat_redirect">论那些小而美的算法技巧：差分数组/前缀和 (qq.com)</a>)</p>
@@ -186,18 +258,18 @@
       </categories>
       <tags>
         <tag>算法</tag>
-        <tag>数组</tag>
         <tag>leetcode</tag>
+        <tag>数组</tag>
       </tags>
   </entry>
   <entry>
     <title>缺失的第一个整数</title>
     <url>/2021/04/21/%E7%BC%BA%E5%A4%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E6%AD%A3%E6%95%B0/</url>
-    <content><![CDATA[<h3 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h3><p>2021年拼多多暑期实习技术面一面时碰到了这道题，面试官直接告诉我这是道 hard 级别的题目，还问我要不要换一道，当时头铁，没想换，结果就是代码各种细节漏洞（拼多多面试平台不能运行代码，很痛苦），最后还是换了一道二叉树的 medium 题。</p>
+    <content><![CDATA[<h3 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h3><p>&ensp;&ensp;&ensp;&ensp;2021年拼多多暑期实习技术面一面时碰到了这道题，面试官直接告诉我这是道 hard 级别的题目，还问我要不要换一道，当时头铁，没想换，结果就是代码各种细节漏洞（拼多多面试平台不能运行代码，很痛苦），最后还是换了一道二叉树的 medium 题。</p>
  <span id="more"></span>
 
-<p>题目描述：(<a href="https://leetcode-cn.com/problems/first-missing-positive/">leetcode: 41</a>)</p>
-<p>给你一个未排序的整数数组 <code>nums</code> ，请你找出其中没有出现的最小的正整数要求时间复杂度O(n)，空间复杂度O(1)</p>
+<p>&ensp;&ensp;&ensp;&ensp;题目描述：(<a href="https://leetcode-cn.com/problems/first-missing-positive/">leetcode: 41</a>)</p>
+<p>&ensp;&ensp;&ensp;&ensp;给你一个未排序的整数数组 <code>nums</code> ，请你找出其中没有出现的最小的正整数要求时间复杂度O(n)，空间复杂度O(1)</p>
 <p><strong>示例 1：</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">输入：nums &#x3D; [1,2,0]</span><br><span class="line">输出：3</span><br></pre></td></tr></table></figure>
 
@@ -212,13 +284,13 @@
 <li>  <code>0 &lt;= nums.length &lt;= 300</code></li>
 <li>  <code>-231 &lt;= nums[i] &lt;= 231 - 1</code></li>
 </ul>
-<h3 id="二、题目分析"><a href="#二、题目分析" class="headerlink" title="二、题目分析"></a>二、题目分析</h3><p>首先，我们可以确定给定数组的缺失的最小整数的范围：[1, nums.size() + 1]，因此我们可以把数组中的元素<strong>归位</strong>，比如数组中的 1 放在数组第1个位置， 2 放在数组第2个位置……</p>
-<p>然后从头遍历该数组，当 <code>nums[i] - 1 != i</code>时，返回 <code>i + 1</code>即可；若遍历完仍然没返回值，则返回<code>nums.size() + 1</code>。</p>
-<p>重点是<strong>归位</strong>元素，使数组中的元素 <code>a</code>，归位到 <code>nums[a - 1]</code>（a的范围有限制），还要考虑<code>a</code>的目标位置上的元素不被覆盖。</p>
+<h3 id="二、题目分析"><a href="#二、题目分析" class="headerlink" title="二、题目分析"></a>二、题目分析</h3><p>&ensp;&ensp;&ensp;&ensp;首先，我们可以确定给定数组的缺失的最小整数的范围：[1, nums.size() + 1]，因此我们可以把数组中的元素<strong>归位</strong>，比如数组中的 1 放在数组第1个位置， 2 放在数组第2个位置……</p>
+<p>&ensp;&ensp;&ensp;&ensp;然后从头遍历该数组，当 <code>nums[i] - 1 != i</code>时，返回 <code>i + 1</code>即可；若遍历完仍然没返回值，则返回<code>nums.size() + 1</code>。</p>
+<p>&ensp;&ensp;&ensp;&ensp;重点是<strong>归位</strong>元素，使数组中的元素 <code>a</code>，归位到 <code>nums[a - 1]</code>（a的范围有限制），还要考虑<code>a</code>的目标位置上的元素不被覆盖。</p>
 <blockquote>
 <p>  所以应该交换 a 和 目标位置的元素，这是原来 a 的位置有了新元素，再归位这个新元素。（不要以为只交换一次，新元素可能 ‘’德不配位’‘ ）</p>
 </blockquote>
-<p>例：[3, 4, -1, 1] → [-1, 4, 3, 1] → [-1, 1, 3, 4] → [1, -1, 3, 4]</p>
+<p>&ensp;&ensp;&ensp;&ensp;例：[3, 4, -1, 1] → [-1, 4, 3, 1] → [-1, 1, 3, 4] → [1, -1, 3, 4]</p>
 <ol>
 <li> 归位 3， -1 换到 nums[0]，-1 不满足范围限制</li>
 <li> 归位 4， 1 换到 nums[1]; 再归位 1，使nums[0] = 1, -1换到nums[1] 处</li>
@@ -227,10 +299,11 @@
 <p>代码：</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">firstMissingPositive</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> length = nums.<span class="built_in">size</span>();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; length; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//范围限制</span></span><br><span class="line">            <span class="keyword">while</span> (nums[i] &gt; <span class="number">0</span> &amp;&amp; </span><br><span class="line">                   nums[i] &lt;= nums.<span class="built_in">size</span>() &amp;&amp; </span><br><span class="line">                   nums[nums[i] - <span class="number">1</span>] != nums[i]) </span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">swap</span>(nums[i], nums[nums[i] - <span class="number">1</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.<span class="built_in">size</span>(); ++i) </span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[i] - <span class="number">1</span> != i) </span><br><span class="line">                <span class="keyword">return</span> i + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> nums.<span class="built_in">size</span>() + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<p>更多博客，敬请期待。</p>
+<p>&ensp;&ensp;&ensp;&ensp;更多博客，敬请期待。</p>
 ]]></content>
       <categories>
         <category>算法</category>
+        <category>遇到的笔试（面试）题</category>
       </categories>
       <tags>
         <tag>算法</tag>
@@ -241,10 +314,10 @@
   <entry>
     <title>MySql8.0窗口函数</title>
     <url>/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/</url>
-    <content><![CDATA[<h3 id="一、基本概念"><a href="#一、基本概念" class="headerlink" title="一、基本概念"></a>一、基本概念</h3><p>MySQL从<strong>8.0</strong>开始支持窗口函数，这个功能在大多商业数据库和部分开源数据库中早已支持，有的也叫分析函数。</p>
+    <content><![CDATA[<h3 id="一、基本概念"><a href="#一、基本概念" class="headerlink" title="一、基本概念"></a>一、基本概念</h3><p>&ensp;&ensp;&ensp;&ensp;MySQL从<strong>8.0</strong>开始支持窗口函数，这个功能在大多商业数据库和部分开源数据库中早已支持，有的也叫分析函数。</p>
  <span id="more"></span>
 
-<h5 id="概念："><a href="#概念：" class="headerlink" title="概念："></a>概念：</h5><p><strong>窗口</strong>的概念可以理解为记录集合；<strong>窗口函数</strong>也就是在满足某种条件的记录集合上执行的特殊函数，对于每条记录都要在此窗口内执行函数，有的函数随着记录不同，窗口大小都是固定的，这种是静态窗口；有的函数则是不同的记录对应着不同的窗口，这种动态变化的窗口叫滑动窗口。</p>
+<h5 id="概念："><a href="#概念：" class="headerlink" title="概念："></a>概念：</h5><p>&ensp;&ensp;&ensp;&ensp;<strong>窗口</strong>的概念可以理解为记录集合；<strong>窗口函数</strong>也就是在满足某种条件的记录集合上执行的特殊函数，对于每条记录都要在此窗口内执行函数，有的函数随着记录不同，窗口大小都是固定的，这种是静态窗口；有的函数则是不同的记录对应着不同的窗口，这种动态变化的窗口叫滑动窗口。</p>
 <h5 id="窗口函数与聚合函数："><a href="#窗口函数与聚合函数：" class="headerlink" title="窗口函数与聚合函数："></a>窗口函数与聚合函数：</h5><ol>
 <li>聚合函数是将多条记录聚合为一条；</li>
 <li>窗口函数是每条记录都会执行，有几条记录执行完还是几条；</li>
@@ -262,19 +335,19 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	&#96;姓名&#96;,</span><br><span class="line">	&#96;班级&#96;,</span><br><span class="line">	&#96;人气&#96;,</span><br><span class="line">	rank() over w1 AS rak</span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; window w1 AS ( PARTITION BY &#96;班级&#96; ORDER BY &#96;人气&#96; DESC );</span><br></pre></td></tr></table></figure>
 
 <p>​        结果：</p>
-<img src="C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217104056497.png" alt="image-20201217104056497" style="zoom:80%;" />
+<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217104056497.png" alt="image-20201217104056497" style="zoom:80%;">
 
 <p>​        <strong>partition子句</strong>：窗口按照那些字段进行分组，窗口函数在不同的分组上分别执行。</p>
 <p>​        <strong>order by子句</strong>：按照哪些字段进行排序，窗口函数将按照排序后的记录顺序进行编号。</p>
 <p>​        frame子句：frame是当前分区的一个子集，子句用来定义子集的规则，通常用来作为滑动窗口使用。（本文暂不介绍）</p>
 <p>​            用于操作示例新建的民工漫班级表：</p>
-<img src="C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217000752416.png" alt="民工漫班级" style="zoom: 67%;" />
+<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217000752416.png" alt="民工漫班级" style="zoom: 67%;">
 
 <p>​        </p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	RANK() over ( PARTITION BY &#96;班级&#96; ORDER BY &#96;人气&#96; DESC ) AS ranking </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96;;</span><br><span class="line"># PARTITION BY &#96;班级&#96;：按班级分组（使用group by会改变表的行数，一个类别只保留一行；partition by则不会减少表的行数）</span><br><span class="line"># ORDER BY &#96;人气&#96; DESC：对按班级分组后的结果按人气降序排名，名次作为字段 ranking</span><br></pre></td></tr></table></figure>
 
 <p>​                得到结果：</p>
-<img src="C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217000959621.png" alt="image-20201217000959621" style="zoom: 50%;" /></li>
+<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217000959621.png" alt="image-20201217000959621" style="zoom: 50%;"></li>
 </ul>
 <h3 id="三、mysql窗口函数"><a href="#三、mysql窗口函数" class="headerlink" title="三、mysql窗口函数"></a>三、mysql窗口函数</h3><h5 id="功能划分："><a href="#功能划分：" class="headerlink" title="功能划分："></a>功能划分：</h5><p> 按功能划分可将MySQL支持的窗口函数分为如下几类：</p>
 <ol>
@@ -284,11 +357,11 @@
 <li>头尾函数：FIRST_VALUE(expr)、LAST_VALUE(expr)</li>
 <li>其它函数：NTH_VALUE(expr, n)、NTILE(n)</li>
 </ol>
-<h5 id="分别介绍："><a href="#分别介绍：" class="headerlink" title="分别介绍："></a>分别介绍：</h5><h6 id="序号函数：ROW-NUMBER-、RANK-、DENSE-RANK"><a href="#序号函数：ROW-NUMBER-、RANK-、DENSE-RANK" class="headerlink" title="序号函数：ROW_NUMBER()、RANK()、DENSE_RANK()"></a>序号函数：ROW_NUMBER()、RANK()、DENSE_RANK()</h6><p>举个例子，还用上面的民工漫班级表，用三个函数按人气对其排序：</p>
+<h5 id="分别介绍："><a href="#分别介绍：" class="headerlink" title="分别介绍："></a>分别介绍：</h5><h6 id="序号函数：ROW-NUMBER-、RANK-、DENSE-RANK"><a href="#序号函数：ROW-NUMBER-、RANK-、DENSE-RANK" class="headerlink" title="序号函数：ROW_NUMBER()、RANK()、DENSE_RANK()"></a>序号函数：ROW_NUMBER()、RANK()、DENSE_RANK()</h6><p>&ensp;&ensp;&ensp;&ensp;举个例子，还用上面的民工漫班级表，用三个函数按人气对其排序：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	RANK() over (  ORDER BY &#96;人气&#96; DESC ) AS &#96;rank&#96; ,</span><br><span class="line">	DENSE_RANK() over (  ORDER BY &#96;人气&#96; DESC ) AS &#96;dense_rank&#96; ,</span><br><span class="line">	ROW_NUMBER() over (  ORDER BY &#96;人气&#96; DESC ) AS &#96;row_number&#96; </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96;;</span><br></pre></td></tr></table></figure>
 
-<p>结果：没有再用partition by对班级分组</p>
-<img src="C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217004449218.png" alt="image-20201217004449218" style="zoom: 67%;" />
+<p>&ensp;&ensp;&ensp;&ensp;结果：没有再用partition by对班级分组</p>
+<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217004449218.png" alt="image-20201217004449218" style="zoom: 67%;">
 
 <p>由此可知：</p>
 <ul>
@@ -297,72 +370,78 @@
 <li>ROW_NUMBER()：顺序排序——1、2、3；相当于行号。</li>
 </ul>
 <h6 id="分布函数：PERCENT-RANK-、CUME-DIST"><a href="#分布函数：PERCENT-RANK-、CUME-DIST" class="headerlink" title="分布函数：PERCENT_RANK()、CUME_DIST()"></a>分布函数：PERCENT_RANK()、CUME_DIST()</h6><p><strong>percent_rank()</strong></p>
-<p>用途：和之前的RANK()函数相关，每行按照如下公式进行计算：(rank - 1) / (rows - 1)， 其中，rank为RANK()函数产生的序号，rows为当前窗口的记录总行数 该函数可以用来计算分位数。</p>
-<p>继续举例子（想不到实际生活的应用场景）：</p>
+<p>&ensp;&ensp;&ensp;&ensp;用途：和之前的RANK()函数相关，每行按照如下公式进行计算：(rank - 1) / (rows - 1)， 其中，rank为RANK()函数产生的序号，rows为当前窗口的记录总行数 该函数可以用来计算分位数。</p>
+<p>&ensp;&ensp;&ensp;&ensp;继续举例子（想不到实际生活的应用场景）：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	RANK() OVER w AS rankNo,</span><br><span class="line">	PERCENT_RANK() OVER w AS percent_rankNo </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;人气&#96; DESC );</span><br></pre></td></tr></table></figure>
 
 <p>结果：</p>
-<img src="C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217105136040.png" alt="image-20201217105136040" style="zoom: 50%;" />
+<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217105136040.png" alt="image-20201217105136040" style="zoom: 50%;">
 
-<p>对于路飞，percent_rankNo = (rank - 1) / (rows - 1) =(3 - 1) / (10 - 1) =0.22222222……</p>
+<p>&ensp;&ensp;&ensp;&ensp;对于路飞，percent_rankNo = (rank - 1) / (rows - 1) =(3 - 1) / (10 - 1) =0.22222222……</p>
 <p><strong>CUME_DIST()</strong></p>
-<p>用途：分组内小于、等于当前rank值的行数 / 分组内总行数</p>
-<p>举例：查询小于等于当前人气的比例（或者说某人是前百分之几，生活中很常用）</p>
+<p>&ensp;&ensp;&ensp;&ensp;用途：分组内小于、等于当前rank值的行数 / 分组内总行数</p>
+<p>&ensp;&ensp;&ensp;&ensp;举例：查询小于等于当前人气的比例（或者说某人是前百分之几，生活中很常用）</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	CUME_DIST() OVER w AS cdt </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;人气&#96; DESC );</span><br></pre></td></tr></table></figure>
 
 <p>结果：</p>
-<img src="C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217110444956.png" alt="image-20201217110444956" style="zoom: 67%;" />
+<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217110444956.png" alt="image-20201217110444956" style="zoom: 67%;">
 
-<h6 id="前后函数：LAG-expr-n-、LEAD-expr-n"><a href="#前后函数：LAG-expr-n-、LEAD-expr-n" class="headerlink" title="前后函数：LAG(expr,n)、LEAD(expr,n)"></a>前后函数：LAG(expr,n)、LEAD(expr,n)</h6><p>用途：返回位于当前行的前n行（LAG(expr,n)）或后n行（LEAD(expr,n)）的expr的值（以当前行为原点）</p>
-<p>例：这个生活中应该挺常用</p>
+<h6 id="前后函数：LAG-expr-n-、LEAD-expr-n"><a href="#前后函数：LAG-expr-n-、LEAD-expr-n" class="headerlink" title="前后函数：LAG(expr,n)、LEAD(expr,n)"></a>前后函数：LAG(expr,n)、LEAD(expr,n)</h6><p>&ensp;&ensp;&ensp;&ensp;用途：返回位于当前行的前n行（LAG(expr,n)）或后n行（LEAD(expr,n)）的expr的值（以当前行为原点）</p>
+<p>&ensp;&ensp;&ensp;&ensp;例：这个生活中应该挺常用</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	&#96;我的前面一名人气&#96; - &#96;人气&#96; AS &#96;我和前面一名的差距&#96;,</span><br><span class="line">	&#96;人气&#96; - &#96;后面一名人气&#96; AS &#96;我甩开后面一名多少差距&#96; </span><br><span class="line">FROM</span><br><span class="line">	(</span><br><span class="line">	SELECT</span><br><span class="line">		*,</span><br><span class="line">		LAG( &#96;人气&#96;, 1 ) OVER w AS &#96;我的前面一名人气&#96;,# 取前面第一行的人气值</span><br><span class="line">		LEAD( &#96;人气&#96;, 1 ) OVER w AS &#96;后面一名人气&#96; # 取后面第一行的人气值</span><br><span class="line">		</span><br><span class="line">	FROM</span><br><span class="line">		&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;人气&#96; DESC ) </span><br><span class="line">	) t;</span><br></pre></td></tr></table></figure>
 
 <p>结果：</p>
-<img src="C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217113619889.png" alt="image-20201217113619889" style="zoom: 67%;" />
+<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217113619889.png" alt="image-20201217113619889" style="zoom: 67%;">
 
-<p>蓝染的前1行是路飞，其人气为90，差距为2；后一行是佐助，甩开他1人气。</p>
-<h6 id="头尾函数：FIRST-VALUE-expr-LAST-VALUE-expr"><a href="#头尾函数：FIRST-VALUE-expr-LAST-VALUE-expr" class="headerlink" title="头尾函数：FIRST_VALUE(expr),LAST_VALUE(expr)"></a>头尾函数：FIRST_VALUE(expr),LAST_VALUE(expr)</h6><p>用途：返回第一个（FIRST_VALUE(expr)）或最后一个（LAST_VALUE(expr)）expr的值</p>
-<p>例：截止到当前人气，按人气排名，第一名和最后一名是多少（降序排，最后一名肯定是自己）</p>
+<p>&ensp;&ensp;&ensp;&ensp;蓝染的前1行是路飞，其人气为90，差距为2；后一行是佐助，甩开他1人气。</p>
+<h6 id="头尾函数：FIRST-VALUE-expr-LAST-VALUE-expr"><a href="#头尾函数：FIRST-VALUE-expr-LAST-VALUE-expr" class="headerlink" title="头尾函数：FIRST_VALUE(expr),LAST_VALUE(expr)"></a>头尾函数：FIRST_VALUE(expr),LAST_VALUE(expr)</h6><p>&ensp;&ensp;&ensp;&ensp;用途：返回第一个（FIRST_VALUE(expr)）或最后一个（LAST_VALUE(expr)）expr的值</p>
+<p>&ensp;&ensp;&ensp;&ensp;例：截止到当前人气，按人气排名，第一名和最后一名是多少（降序排，最后一名肯定是自己）</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	FIRST_VALUE( &#96;人气&#96; ) OVER w AS &#96;当前第一人气值&#96;,</span><br><span class="line">	LAST_VALUE( &#96;人气&#96; ) OVER w AS &#96;当前倒数第一人气值&#96; </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;人气&#96; DESC );</span><br></pre></td></tr></table></figure>
 
 <p>结果：</p>
-<img src="C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217114336947.png" alt="image-20201217114336947" style="zoom: 67%;" />
+<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217114336947.png" alt="image-20201217114336947" style="zoom: 67%;">
 
 <h6 id="其它函数：NTH-VALUE-expr-n-、NTILE-n"><a href="#其它函数：NTH-VALUE-expr-n-、NTILE-n" class="headerlink" title="其它函数：NTH_VALUE(expr, n)、NTILE(n)"></a>其它函数：NTH_VALUE(expr, n)、NTILE(n)</h6><p><strong>NTH_VALUE(expr, n)</strong></p>
-<p>用途：返回窗口中第N个expr的值，expr可以是表达式，也可以是列名。</p>
-<p>例：截至当前人气，显示每个人物的人气中排名第2、第4、第6的人气值</p>
+<p>&ensp;&ensp;&ensp;&ensp;用途：返回窗口中第N个expr的值，expr可以是表达式，也可以是列名。</p>
+<p>&ensp;&ensp;&ensp;&ensp;例：截至当前人气，显示每个人物的人气中排名第2、第4、第6的人气值</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	NTH_VALUE( &#96;人气&#96;, 2 ) OVER w AS &#96;第二人气值&#96;,</span><br><span class="line">	NTH_VALUE( &#96;人气&#96;, 4 ) OVER w AS &#96;第四人气值&#96;,</span><br><span class="line">	NTH_VALUE( &#96;人气&#96;, 6 ) OVER w AS &#96;第六人气值&#96; </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;人气&#96; DESC );</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>结果：</p>
-<img src="C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217135748608.png" alt="image-20201217135748608" style="zoom: 67%;" />
+<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217135748608.png" alt="image-20201217135748608" style="zoom: 67%;">
 
 <p><strong>NTILE(n)</strong></p>
-<p>用途：将分区中的有序数据分为n个等级，记录等级数</p>
+<p>&ensp;&ensp;&ensp;&ensp;用途：将分区中的有序数据分为n个等级，记录等级数</p>
 <p>例：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	ROW_NUMBER() OVER w AS &#39;row_number&#39;,</span><br><span class="line">	NTILE( 2 ) OVER w AS &#39;ntile2&#39;,</span><br><span class="line">	NTILE( 4 ) OVER w AS &#39;ntile4&#39; </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;人气&#96; );</span><br></pre></td></tr></table></figure>
 
 <p>结果：</p>
-<img src="C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217170421940.png" alt="image-20201217170421940" style="zoom:67%;" />
+<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217170421940.png" alt="image-20201217170421940" style="zoom:67%;">
 
-<h3 id="四、用聚合函数作为窗口函数"><a href="#四、用聚合函数作为窗口函数" class="headerlink" title="四、用聚合函数作为窗口函数"></a>四、用聚合函数作为窗口函数</h3><p>用途：在窗口中每条记录动态地应用聚合函数（SUM()、AVG()、MAX()、MIN()、COUNT()），可以动态计算在指定的窗口内的各种聚合函数值</p>
+<h3 id="四、用聚合函数作为窗口函数"><a href="#四、用聚合函数作为窗口函数" class="headerlink" title="四、用聚合函数作为窗口函数"></a>四、用聚合函数作为窗口函数</h3><p>&ensp;&ensp;&ensp;&ensp;用途：在窗口中每条记录动态地应用聚合函数（SUM()、AVG()、MAX()、MIN()、COUNT()），可以动态计算在指定的窗口内的各种聚合函数值</p>
 <p>例：普通使用：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	sum( &#96;人气&#96; )  AS current_sum,</span><br><span class="line">	avg( &#96;人气&#96; )  AS current_avg,</span><br><span class="line">	count( &#96;人气&#96; )  AS current_count,</span><br><span class="line">	max( &#96;人气&#96; )  AS current_max,</span><br><span class="line">	min( &#96;人气&#96; ) AS current_min </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96;;</span><br></pre></td></tr></table></figure>
 
 <p>结果：</p>
-<img src="C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217172447565.png" alt="image-20201217172447565" style="zoom: 67%;" />
+<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217172447565.png" alt="image-20201217172447565" style="zoom: 67%;">
 
-<p>按学号排序，作为窗口函数：</p>
+<p>&ensp;&ensp;&ensp;&ensp;按学号排序，作为窗口函数：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT</span><br><span class="line">	*,</span><br><span class="line">	sum( &#96;人气&#96; ) over w AS current_sum,</span><br><span class="line">	avg( &#96;人气&#96; ) over w AS current_avg,</span><br><span class="line">	count( &#96;人气&#96; ) over w AS current_count,</span><br><span class="line">	max( &#96;人气&#96; ) over w AS current_max,</span><br><span class="line">	min( &#96;人气&#96; ) over w AS current_min </span><br><span class="line">FROM</span><br><span class="line">	&#96;民工漫班级&#96; WINDOW w AS ( ORDER BY &#96;学号&#96; );</span><br></pre></td></tr></table></figure>
 
 <p>结果：</p>
-<img src="C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217172207911.png" alt="image-20201217172207911" style="zoom:67%;" />
+<img src="/2021/04/21/MySql8.0%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/Users\admin\AppData\Roaming\Typora\typora-user-images\image-20201217172207911.png" alt="image-20201217172207911" style="zoom:67%;">
 
-<p>以current_sum为例，每一行current_sum的值为上面所有行的<code>人气</code>值之和。</p>
+<p>&ensp;&ensp;&ensp;&ensp;以current_sum为例，每一行current_sum的值为上面所有行的<code>人气</code>值之和。</p>
 <p>本文主要参考：</p>
 <p><a href="https://dev.mysql.com/doc/refman/8.0/en/">《MySql8.0参考手册》</a></p>
 ]]></content>
       <categories>
         <category>数据库</category>
+        <category>MySql</category>
       </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>窗口函数</tag>
+        <tag>MySql</tag>
+      </tags>
   </entry>
 </search>

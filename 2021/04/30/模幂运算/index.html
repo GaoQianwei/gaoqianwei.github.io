@@ -22,16 +22,16 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="a^1234^  &#x3D;  a^4^  *  (a^123^)^10^ (a * b) % mod &#x3D; (a % mod)(b % mod) % mod 50. Pow(x, n)实现 pow(x, n) ，即计算 x 的 n 次幂函数（即，x^n^）。 示例 1： 12输入：x &#x3D; 2.00000, n &#x3D; 10输出：1024.00000  示例 2： 12输入：x &#x3D;">
+  <meta name="description" content="&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;由于格式原因可能文章显示有问题，a^1234^代表a的1234次幂 &amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;a^1234^  &#x3D;  a^4^  *  (a^123^)^10^ &amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;(a * b) % mod &#x3D; (a % mod)(b % mod) % mod">
 <meta property="og:type" content="article">
 <meta property="og:title" content="模幂运算">
 <meta property="og:url" content="http://example.com/2021/04/30/%E6%A8%A1%E5%B9%82%E8%BF%90%E7%AE%97/index.html">
 <meta property="og:site_name" content="学无止境">
-<meta property="og:description" content="a^1234^  &#x3D;  a^4^  *  (a^123^)^10^ (a * b) % mod &#x3D; (a % mod)(b % mod) % mod 50. Pow(x, n)实现 pow(x, n) ，即计算 x 的 n 次幂函数（即，x^n^）。 示例 1： 12输入：x &#x3D; 2.00000, n &#x3D; 10输出：1024.00000  示例 2： 12输入：x &#x3D;">
+<meta property="og:description" content="&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;由于格式原因可能文章显示有问题，a^1234^代表a的1234次幂 &amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;a^1234^  &#x3D;  a^4^  *  (a^123^)^10^ &amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;(a * b) % mod &#x3D; (a % mod)(b % mod) % mod">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-04-30T10:51:04.673Z">
-<meta property="article:modified_time" content="2021-04-29T12:19:32.175Z">
-<meta property="article:author" content="高乾威">
+<meta property="article:modified_time" content="2021-04-30T11:28:33.404Z">
+<meta property="article:author" content="高乾�?">
 <meta property="article:tag" content="算法">
 <meta property="article:tag" content="leetcode">
 <meta property="article:tag" content="数学">
@@ -203,7 +203,7 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="高乾威">
+      <meta itemprop="name" content="高乾�?">
       <meta itemprop="description" content="这是一个终身学习的时代">
     </span>
 
@@ -223,16 +223,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2021-04-30 18:51:04" itemprop="dateCreated datePublished" datetime="2021-04-30T18:51:04+08:00">2021-04-30</time>
+              <time title="创建时间：2021-04-30 18:51:04 / 修改时间：19:28:33" itemprop="dateCreated datePublished" datetime="2021-04-30T18:51:04+08:00">2021-04-30</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-29 20:19:32" itemprop="dateModified" datetime="2021-04-29T20:19:32+08:00">2021-04-29</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -262,9 +256,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>a^1234^  =  a^4^  *  (a^123^)^10^</p>
-<p>(a * b) % mod = (a % mod)(b % mod) % mod</p>
-<h4 id="50-Pow-x-n"><a href="#50-Pow-x-n" class="headerlink" title="50. Pow(x, n)"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/powx-n/">50. Pow(x, n)</a></h4><p>实现 pow(<em>x</em>, <em>n</em>) ，即计算 x 的 n 次幂函数（即，x^n^）。</p>
+        <p>&ensp;&ensp;&ensp;&ensp;由于格式原因可能文章显示有问题，a^1234^代表a的1234次幂</p>
+<p>&ensp;&ensp;&ensp;&ensp;a^1234^  =  a^4^  *  (a^123^)^10^</p>
+<p>&ensp;&ensp;&ensp;&ensp;(a * b) % mod = (a % mod)(b % mod) % mod</p>
+<span id="more"></span>
+
+<h4 id="50-Pow-x-n"><a href="#50-Pow-x-n" class="headerlink" title="50. Pow(x, n)"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/powx-n/">50. Pow(x, n)</a></h4><p>&ensp;&ensp;&ensp;&ensp;实现 pow(<em>x</em>, <em>n</em>) ，即计算 x 的 n 次幂函数（即，x^n^）。</p>
 <p><strong>示例 1：</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：x &#x3D; 2.00000, n &#x3D; 10</span><br><span class="line">输出：1024.00000</span><br></pre></td></tr></table></figure>
 
@@ -288,7 +285,7 @@
 
 
 
-<p>a^1234^  =  a^4^  *  (a^123^)^10^  $\Longrightarrow$ a^[1,2,3,4]^  =  a^4^  *  (a^[1,2,3]^)^10^ </p>
+<p>&ensp;&ensp;&ensp;&ensp;a^1234^  =  a^4^  *  (a^123^)^10^  $\Longrightarrow$ a^[1,2,3,4]^  =  a^4^  *  (a^[1,2,3]^)^10^ </p>
 <h4 id="372-超级次方"><a href="#372-超级次方" class="headerlink" title="372. 超级次方"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/super-pow/">372. 超级次方</a></h4><p>你的任务是计算  a^b^  对 <code>1337</code> 取模，<code>a</code> 是一个正整数，<code>b</code> 是一个非常大的正整数且会以数组形式给出。</p>
 <p><strong>示例 1：</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：a &#x3D; 2, b &#x3D; [3]</span><br><span class="line">输出：8</span><br></pre></td></tr></table></figure>
@@ -311,7 +308,6 @@
 </ul>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> mod = <span class="number">1337</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">myPow</span> <span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        x %= mod;</span><br><span class="line">        <span class="keyword">int</span> res = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (n) </span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (n &amp; <span class="number">1</span>) res = res * x % mod;</span><br><span class="line">            x = x * x % mod;</span><br><span class="line">            n &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">superPow</span><span class="params">(<span class="keyword">int</span> a, vector&lt;<span class="keyword">int</span>&gt;&amp; b)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (b.<span class="built_in">empty</span>())</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> lastValue = b.<span class="built_in">back</span>();</span><br><span class="line">        b.<span class="built_in">pop_back</span>();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> part1 = <span class="built_in">myPow</span>(a, lastValue);</span><br><span class="line">        <span class="keyword">int</span> part2 = <span class="built_in">myPow</span>(<span class="built_in">superPow</span>(a, b), <span class="number">10</span>);</span><br><span class="line">        <span class="keyword">return</span> part1 * part2 % mod;  </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<p>a^[1,2,3,4]^  =  a^4^  *  (a^[1,2,3]^)^10^ </p>
 <p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247485035&idx=1&sn=c03c9056f412bf590480156e4357b433&chksm=9bd7f863aca07175eca0bd5e638c857969af1936cc2b7b4a01610809ba1d85a3272703e2b3a2&scene=21#wechat_redirect">Super Pow：如何高效进行模幂运算 (qq.com)</a></p>
 <p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzA5MTM1NTc2Ng==&mid=2458321758&idx=1&sn=e92e7a72d245831c29acb3d2a29607da&scene=21#wechat_redirect">客户端基本不用的算法系列：快速幂 (qq.com)</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/FlushHip/article/details/82495034">右移一位和除二的区别</a></p>
@@ -404,9 +400,9 @@
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="高乾威"
+    <img class="site-author-image" itemprop="image" alt="高乾�?"
       src="/images/avatar.png">
-  <p class="site-author-name" itemprop="name">高乾威</p>
+  <p class="site-author-name" itemprop="name">高乾�?</p>
   <div class="site-description" itemprop="description">这是一个终身学习的时代</div>
 </div>
 <div class="site-state-wrap motion-element">
@@ -421,13 +417,13 @@
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -472,7 +468,7 @@
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">高乾威</span>
+  <span class="author" itemprop="copyrightHolder">高乾�?</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -481,7 +477,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 5.3k 字</span>
+  <span class="post-count">全站共 6.5k 字</span>
 </div>
 
 <span class="post-meta-divider">|</span>

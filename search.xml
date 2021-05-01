@@ -6,9 +6,57 @@
     <content><![CDATA[<p>&ensp;&ensp;介绍一些近期博客较大的变化（增删改查）以及其它说明。</p>
 <span id="more"></span>
 
-<h3 id="2021年5月1日"><a href="#2021年5月1日" class="headerlink" title="2021年5月1日"></a>2021年5月1日</h3><hr>
-<p>    增添了大量有关链表算法题的文章，都是自己以前写的，今天整理出来了。其它的内容，趁着五一假期，会陆续发布。</p>
+<h3 id="2021年5月1日"><a href="#2021年5月1日" class="headerlink" title="2021年5月1日"></a>2021年5月1日</h3><p>    增添了大量有关链表算法题的文章，都是自己以前写的，今天整理出来了。其它的内容，趁着五一假期，会陆续发布。</p>
 ]]></content>
+  </entry>
+  <entry>
+    <title>makedown语法</title>
+    <url>/2021/05/01/makedown%EF%BC%9Amakedown%E8%AF%AD%E6%B3%95/</url>
+    <content><![CDATA[<p>    介绍一些<code>makedown语法</code>，在<code>Typora</code>可以完美显示，在其它makedown编辑器或网页上可能显示不成功。这篇文章并不是总结性质的，是搜集性质的（需要用到时搜的）。</p>
+<span id="more"></span>
+
+<h5 id="空格"><a href="#空格" class="headerlink" title="空格"></a>空格</h5><figure class="highlight tex"><table><tr><td class="code"><pre><span class="line"><span class="built_in">&amp;</span>ensp;<span class="built_in">&amp;</span>ensp;<span class="built_in">&amp;</span>ensp;<span class="built_in">&amp;</span>ensp;          空格</span><br></pre></td></tr></table></figure>
+
+<h5 id="折叠文章"><a href="#折叠文章" class="headerlink" title="折叠文章"></a>折叠文章</h5><figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">&lt;!-- more --&gt;					折叠文章</span><br></pre></td></tr></table></figure>
+
+<h5 id="上标与下标"><a href="#上标与下标" class="headerlink" title="上标与下标"></a>上标与下标</h5><p>x^2^                    x<del>0</del></p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">输入上标，如：x2，则输入 x<span class="built_in">^</span>2<span class="built_in">^</span></span><br><span class="line">输入下标，如：x0，则输入 x~0~</span><br></pre></td></tr></table></figure>
+
+<h5 id="箭头"><a href="#箭头" class="headerlink" title="箭头"></a>箭头</h5><table>
+<thead>
+<tr>
+<th align="center">$\longleftrightarrow$</th>
+<th align="center">$\longleftrightarrow$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">$\Longrightarrow$</td>
+<td align="center">$\Longrightarrow$</td>
+</tr>
+<tr>
+<td align="center">$\Longleftrightarrow$</td>
+<td align="center">$\Longleftrightarrow$</td>
+</tr>
+<tr>
+<td align="center">$\Longleftarrow$</td>
+<td align="center">$\Longleftarrow$</td>
+</tr>
+<tr>
+<td align="center">$\Updownarrow$</td>
+<td align="center">$\Updownarrow$</td>
+</tr>
+<tr>
+<td align="center">$\circlearrowleft$</td>
+<td align="center">$\circlearrowleft$</td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>makedown</category>
+      </categories>
+      <tags>
+        <tag>makedown</tag>
+      </tags>
   </entry>
   <entry>
     <title>设计链表</title>
@@ -240,25 +288,27 @@ linkedList.get(1);            //返回3
       </tags>
   </entry>
   <entry>
-    <title></title>
+    <title>复制带随机指针的链表</title>
     <url>/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%A4%8D%E5%88%B6%E5%B8%A6%E9%9A%8F%E6%9C%BA%E6%8C%87%E9%92%88%E7%9A%84%E9%93%BE%E8%A1%A8/</url>
-    <content><![CDATA[<h1 id="LeetCode138：复制带随机指针的链表"><a href="#LeetCode138：复制带随机指针的链表" class="headerlink" title="LeetCode138：复制带随机指针的链表"></a>LeetCode138：复制带随机指针的链表</h1><h3 id="一、题目描述"><a href="#一、题目描述" class="headerlink" title="一、题目描述"></a>一、题目描述</h3><p>给定一个链表，每个节点包含一个额外增加的随机指针，该指针可以指向链表中的任何节点或空节点。</p>
+    <content><![CDATA[<h3 id="一、题目描述"><a href="#一、题目描述" class="headerlink" title="一、题目描述"></a>一、题目描述</h3><p>给定一个链表，每个节点包含一个额外增加的随机指针，该指针可以指向链表中的任何节点或空节点。</p>
 <p>要求返回这个链表的深拷贝。 </p>
+<span id="more"></span>
+
 <p>我们用一个由 n 个节点组成的链表来表示输入/输出中的链表。每个节点用一个 [val, random_index] 表示：</p>
 <ul>
 <li>val：一个表示 Node.val 的整数。</li>
 <li>random_index：随机指针指向的节点索引（范围从 0 到 n-1）；如果不指向任何节点，则为  null 。</li>
 </ul>
 <p><strong>示例 1：</strong></p>
-<p><img src="/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%A4%8D%E5%88%B6%E5%B8%A6%E9%9A%8F%E6%9C%BA%E6%8C%87%E9%92%88%E7%9A%84%E9%93%BE%E8%A1%A8/1.png" alt="image-20201213164012901"></p>
+<p><img src="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%A4%8D%E5%88%B6%E5%B8%A6%E9%9A%8F%E6%9C%BA%E6%8C%87%E9%92%88%E7%9A%84%E9%93%BE%E8%A1%A8/1.png" alt="image-20201213164012901"></p>
 <p>输入：head = [[7,null],[13,0],[11,4],[10,2],[1,0]]</p>
 <p>输出：[[7,null],[13,0],[11,4],[10,2],[1,0]]</p>
 <p><strong>示例 2：</strong></p>
-<p><img src="/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%A4%8D%E5%88%B6%E5%B8%A6%E9%9A%8F%E6%9C%BA%E6%8C%87%E9%92%88%E7%9A%84%E9%93%BE%E8%A1%A8/2.png" alt="image-20201213164032257"></p>
+<p><img src="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%A4%8D%E5%88%B6%E5%B8%A6%E9%9A%8F%E6%9C%BA%E6%8C%87%E9%92%88%E7%9A%84%E9%93%BE%E8%A1%A8/2.png" alt="image-20201213164032257"></p>
 <p>输入：head = [[1,1],[2,1]]</p>
 <p>输出：[[1,1],[2,1]]</p>
 <p><strong>示例 3：</strong></p>
-<p><img src="/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%A4%8D%E5%88%B6%E5%B8%A6%E9%9A%8F%E6%9C%BA%E6%8C%87%E9%92%88%E7%9A%84%E9%93%BE%E8%A1%A8/3.png" alt="image-20201213164059316"></p>
+<p><img src="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%A4%8D%E5%88%B6%E5%B8%A6%E9%9A%8F%E6%9C%BA%E6%8C%87%E9%92%88%E7%9A%84%E9%93%BE%E8%A1%A8/3.png" alt="image-20201213164059316"></p>
 <p>输入：head = [[3,null],[3,0],[3,null]]</p>
 <p>输出：[[3,null],[3,0],[3,null]]</p>
 <p><strong>示例 4：</strong></p>
@@ -283,6 +333,15 @@ linkedList.get(1);            //返回3
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">p=head;</span><br><span class="line"><span class="keyword">while</span>(p!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">    nodemap[p]-&gt;random=nodemap[p-&gt;random];</span><br><span class="line">    p=p-&gt;next;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 </ol>
 <h3 id="三、我的代码"><a href="#三、我的代码" class="headerlink" title="三、我的代码"></a>三、我的代码</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">// Definition for a Node.</span></span><br><span class="line"><span class="comment">class Node &#123;</span></span><br><span class="line"><span class="comment">public:</span></span><br><span class="line"><span class="comment">    int val;</span></span><br><span class="line"><span class="comment">    Node* next;</span></span><br><span class="line"><span class="comment">    Node* random;</span></span><br><span class="line"><span class="comment">    </span></span><br><span class="line"><span class="comment">    Node(int _val) &#123;</span></span><br><span class="line"><span class="comment">        val = _val;</span></span><br><span class="line"><span class="comment">        next = NULL;</span></span><br><span class="line"><span class="comment">        random = NULL;</span></span><br><span class="line"><span class="comment">    &#125;</span></span><br><span class="line"><span class="comment">&#125;;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">Node* <span class="title">copyRandomList</span><span class="params">(Node* head)</span> </span>&#123;</span><br><span class="line">        unordered_map&lt;Node*,Node*&gt;nodemap;</span><br><span class="line">        nodemap[<span class="literal">nullptr</span>]=<span class="literal">nullptr</span>;</span><br><span class="line">        Node* p=head;</span><br><span class="line">        <span class="keyword">while</span>(p!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">            nodemap[p]=<span class="keyword">new</span> <span class="built_in">Node</span>(p-&gt;val);</span><br><span class="line">            p=p-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        p=head;</span><br><span class="line">        <span class="keyword">while</span>(p!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">            nodemap[p]-&gt;next=nodemap[p-&gt;next];</span><br><span class="line">            p=p-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        p=head;</span><br><span class="line">        <span class="keyword">while</span>(p!=<span class="literal">nullptr</span>)&#123;</span><br><span class="line">            nodemap[p]-&gt;random=nodemap[p-&gt;random];</span><br><span class="line">            p=p-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> nodemap[head];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>算法</category>
+        <category>链表</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>leetcode</tag>
+        <tag>链表</tag>
+      </tags>
   </entry>
   <entry>
     <title>旋转链表</title>

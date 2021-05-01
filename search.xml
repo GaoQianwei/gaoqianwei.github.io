@@ -6,7 +6,8 @@
     <content><![CDATA[<p>&ensp;&ensp;介绍一些近期博客较大的变化（增删改查）以及其它说明。</p>
 <span id="more"></span>
 
-<h3 id="2021年5月1日"><a href="#2021年5月1日" class="headerlink" title="2021年5月1日"></a>2021年5月1日</h3><p>    增添了大量有关链表算法题的文章，都是自己以前写的，今天整理出来了。其它的内容，趁着五一假期，会陆续发布。</p>
+<h3 id="2021年4月29日"><a href="#2021年4月29日" class="headerlink" title="2021年4月29日"></a>2021年4月29日</h3><p>    增添了大量有关链表算法题的文章，都是自己以前写的，今天整理出来了。其它的内容，趁着五一假期，会陆续发布。</p>
+<h3 id="2021年5月1日"><a href="#2021年5月1日" class="headerlink" title="2021年5月1日"></a>2021年5月1日</h3><p>&ensp;&ensp;&ensp;&ensp;为这个小破站添加了友情链接，主要是收藏自己喜欢的学习网站和好友的博客；同时在侧边栏添加了一个粒子时钟，方便查看时间。</p>
 ]]></content>
   </entry>
   <entry>
@@ -684,8 +685,8 @@ linkedList.get(1);            //返回3
       </categories>
       <tags>
         <tag>算法</tag>
-        <tag>leetcode</tag>
         <tag>位运算</tag>
+        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
@@ -758,8 +759,8 @@ linkedList.get(1);            //返回3
       </categories>
       <tags>
         <tag>算法</tag>
-        <tag>数组</tag>
         <tag>leetcode</tag>
+        <tag>数组</tag>
       </tags>
   </entry>
   <entry>

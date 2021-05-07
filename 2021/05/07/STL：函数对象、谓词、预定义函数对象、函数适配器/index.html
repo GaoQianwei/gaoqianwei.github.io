@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一、函数对象（仿函数）重载函数调用操作符的类，其对象常称为函数对象（function object），即它们是行为类似函数的对象，也叫仿函数(functor),其实就是重载“()”操作符，使得类对象可以像函数那样调用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="STL_函数对象、谓词、预定义函数对象、函数适配器">
+<meta property="og:url" content="http://example.com/2021/05/07/STL%EF%BC%9A%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1%E3%80%81%E8%B0%93%E8%AF%8D%E3%80%81%E9%A2%84%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1%E3%80%81%E5%87%BD%E6%95%B0%E9%80%82%E9%85%8D%E5%99%A8/index.html">
+<meta property="og:site_name" content="学无止境">
+<meta property="og:description" content="一、函数对象（仿函数）重载函数调用操作符的类，其对象常称为函数对象（function object），即它们是行为类似函数的对象，也叫仿函数(functor),其实就是重载“()”操作符，使得类对象可以像函数那样调用。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-07T13:33:44.704Z">
+<meta property="article:modified_time" content="2021-05-07T13:05:55.554Z">
+<meta property="article:author" content="高乾威">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="STL">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/05/07/STL%EF%BC%9A%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1%E3%80%81%E8%B0%93%E8%AF%8D%E3%80%81%E9%A2%84%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1%E3%80%81%E5%87%BD%E6%95%B0%E9%80%82%E9%85%8D%E5%99%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>STL_函数对象、谓词、预定义函数对象、函数适配器 | 学无止境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">学无止境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>友链</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/07/STL%EF%BC%9A%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1%E3%80%81%E8%B0%93%E8%AF%8D%E3%80%81%E9%A2%84%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1%E3%80%81%E5%87%BD%E6%95%B0%E9%80%82%E9%85%8D%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="高乾威">
+      <meta itemprop="description" content="这是一个终身学习的时代">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学无止境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          STL_函数对象、谓词、预定义函数对象、函数适配器
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-05-07 21:33:44 / 修改时间：21:05:55" itemprop="dateCreated datePublished" datetime="2021-05-07T21:33:44+08:00">2021-05-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/STL/" itemprop="url" rel="index"><span itemprop="name">STL</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+            <span class="post-meta-divider">|</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="一、函数对象（仿函数）"><a href="#一、函数对象（仿函数）" class="headerlink" title="一、函数对象（仿函数）"></a>一、函数对象（仿函数）</h3><p>重载函数调用操作符的类，其对象常称为函数对象（function object），即它们是行为类似函数的对象，也叫仿函数(functor),其实就是重载“()”操作符，使得类对象可以像函数那样调用。</p>
+<span id="more"></span>
+
+<p>注意: </p>
+<ol>
+<li>函数对象(仿函数)是一个类，不是一个函数。</li>
+<li>函数对象(仿函数)重载了”() ”操作符使得它可以像函数一样调用。</li>
+</ol>
+<p>分类:假定某个类有一个重载的operator()，而且重载的operator()要求获取一个参数，我们就将这个类称为“一元仿函数”（unary functor）；相反，如果重载的operator()要求获取两个参数，就将这个类称为“二元仿函数”（binary functor）。</p>
+<p>函数对象的作用:</p>
+<p>STL提供的算法往往都有两个版本，其中一个版本表现出最常用的某种运算，另一版本则允许用户通过template参数的形式来指定所要采取的策略。</p>
+<p>“在标准库中，函数对象被广泛地使用以获得弹性”，标准库中的很多算法都可以使用函数对象或者函数来作为自定的回调行为。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _CRT_SECURE_NO_WARNINGS</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MyPrint</span> &#123;</span></span><br><span class="line">	<span class="built_in">MyPrint</span>() &#123;</span><br><span class="line">		mNum = <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">		mNum++;</span><br><span class="line">		cout &lt;&lt; val &lt;&lt; endl;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">int</span> mNum;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> num = <span class="number">0</span>; <span class="comment">//真正开发中，尽量避免去使用全局变量，加锁解锁繁琐</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">MyPrint02</span><span class="params">(<span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">	num++;</span><br><span class="line">	cout &lt;&lt; val &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test01</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	MyPrint print;</span><br><span class="line">	<span class="built_in">print</span>(<span class="number">10</span>);</span><br><span class="line">	<span class="comment">//函数对象可以像普通函数一样调用</span></span><br><span class="line">	<span class="comment">//函数对象可以像普通函数那样接收参数</span></span><br><span class="line">	<span class="comment">//函数对象超出了函数的概念，函数对象可以保存函数调用的状态，避免使用全局变量</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test02</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	vector&lt;<span class="keyword">int</span>&gt; v;</span><br><span class="line">	v.<span class="built_in">push_back</span>(<span class="number">10</span>);</span><br><span class="line">	v.<span class="built_in">push_back</span>(<span class="number">20</span>);</span><br><span class="line">	v.<span class="built_in">push_back</span>(<span class="number">30</span>);</span><br><span class="line">	v.<span class="built_in">push_back</span>(<span class="number">40</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//计算函数调用次数</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> 0</span></span><br><span class="line">	<span class="built_in">MyPrint02</span>(<span class="number">10</span>);</span><br><span class="line">	<span class="built_in">MyPrint02</span>(<span class="number">20</span>);</span><br><span class="line">	cout &lt;&lt; num &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">	MyPrint print;</span><br><span class="line">	<span class="built_in">print</span>(<span class="number">10</span>);</span><br><span class="line">	<span class="built_in">print</span>(<span class="number">20</span>);</span><br><span class="line">	cout &lt;&lt; print.mNum &lt;&lt; endl;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">	MyPrint print;</span><br><span class="line">	MyPrint print02=for_each(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), print);</span><br><span class="line"></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;print调用次数:&quot;</span> &lt;&lt; print.mNum &lt;&lt; endl;</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;print调用次数:&quot;</span> &lt;&lt; print02.mNum &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">	<span class="built_in">test02</span>();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">结果：</span></span><br><span class="line"><span class="comment">10</span></span><br><span class="line"><span class="comment">20</span></span><br><span class="line"><span class="comment">30</span></span><br><span class="line"><span class="comment">40</span></span><br><span class="line"><span class="comment">print调用次数:0</span></span><br><span class="line"><span class="comment">print调用次数:4</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="二、谓词"><a href="#二、谓词" class="headerlink" title="二、谓词"></a>二、谓词</h3><p>谓词是指普通函数或重载的operator()返回值是bool类型的函数对象(仿函数)。如果operator接受一个参数，那么叫做一元谓词,如果接受两个参数，那么叫做二元谓词，谓词可作为一个判断式。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//一元谓词函数举例如下</span></span><br><span class="line"><span class="comment">//1，判断给出的string对象的长度是否小于6</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">GT6</span><span class="params">(<span class="keyword">const</span> string &amp;s)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">return</span> s.<span class="built_in">size</span>() &gt;= <span class="number">6</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//2,判断给出的int是否在3到8之间</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">Compare</span><span class="params">( <span class="keyword">int</span> i )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">return</span> ( i &gt;= <span class="number">3</span> &amp;&amp; i &lt;= <span class="number">8</span> );</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//二元谓词举例如下</span></span><br><span class="line"><span class="comment">//1，比较两个string对象，返回一个bool值，指出第一个string是否比第二个短</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">isShorter</span><span class="params">(<span class="keyword">const</span> string &amp;s1, <span class="keyword">const</span> string &amp;s2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">return</span> s1.<span class="built_in">size</span>() &lt; s2.<span class="built_in">size</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="三、预定义函数对象"><a href="#三、预定义函数对象" class="headerlink" title="三、预定义函数对象"></a>三、预定义函数对象</h3><h5 id="1）预定义函数对象基本概念："><a href="#1）预定义函数对象基本概念：" class="headerlink" title="1）预定义函数对象基本概念："></a>1）预定义函数对象基本概念：</h5><p>标准模板库STL提前定义了很多预定义函数对象，#include &lt;functional&gt; 必须包含。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//使用预定义函数对象：</span></span><br><span class="line"><span class="comment">//类模板plus&lt;&gt; 的实现了： 不同类型的数据进行加法运算</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main41</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    plus&lt;<span class="keyword">int</span>&gt; intAdd;</span><br><span class="line">    <span class="keyword">int</span> x = <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">int</span> y = <span class="number">20</span>;</span><br><span class="line">    <span class="keyword">int</span> z = <span class="built_in">intAdd</span>(x, y); <span class="comment">//等价于 x + y </span></span><br><span class="line">    cout &lt;&lt; z &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    plus&lt;string&gt; stringAdd;</span><br><span class="line">    string myc = <span class="built_in">stringAdd</span>(<span class="string">&quot;aaa&quot;</span>, <span class="string">&quot;bbb&quot;</span>);</span><br><span class="line">    cout &lt;&lt; myc &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    vector&lt;string&gt; v1;</span><br><span class="line">    v1.<span class="built_in">push_back</span>(<span class="string">&quot;bbb&quot;</span>);</span><br><span class="line">    v1.<span class="built_in">push_back</span>(<span class="string">&quot;aaa&quot;</span>);</span><br><span class="line">    v1.<span class="built_in">push_back</span>(<span class="string">&quot;ccc&quot;</span>);</span><br><span class="line">    v1.<span class="built_in">push_back</span>(<span class="string">&quot;zzzz&quot;</span>);</span><br><span class="line"> </span><br><span class="line">   <span class="comment">//缺省情况下，sort()用底层元素类型的小于操作符以升序排列容器的元素。</span></span><br><span class="line">   <span class="comment">//为了降序，可以传递预定义的类模板greater,它调用底层元素类型的大于操作符：</span></span><br><span class="line"></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;sort()函数排序&quot;</span> &lt;&lt; endl;</span><br><span class="line">    <span class="built_in">sort</span>(v1.<span class="built_in">begin</span>(), v1.<span class="built_in">end</span>(), greater&lt;string&gt;() ); <span class="comment">//从大到小</span></span><br><span class="line">    <span class="keyword">for</span> (vector&lt;string&gt;::iterator it=v1.<span class="built_in">begin</span>(); it!=v1.<span class="built_in">end</span>(); it++ )</span><br><span class="line">    &#123;</span><br><span class="line">         cout &lt;&lt; *it &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="2）算术函数对象"><a href="#2）算术函数对象" class="headerlink" title="2）算术函数对象"></a>2）算术函数对象</h5><p>预定义的函数对象支持加、减、乘、除、求余和取反。调用的操作符是与type相关联的实例</p>
+<p>加法：plus&lt;Types&gt;</p>
+<p>plus&lt;string&gt; stringAdd;</p>
+<p>sres = stringAdd(sva1,sva2);</p>
+<p>减法：minus&lt;Types&gt;</p>
+<p>乘法：multiplies&lt;Types&gt;</p>
+<p>除法divides&lt;Tpye&gt;</p>
+<p>求余：modulus&lt;Tpye&gt;</p>
+<p>取反：negate&lt;Type&gt;</p>
+<p>negate&lt;int&gt; intNegate;</p>
+<p>ires = intNegate(ires);</p>
+<p>Ires= UnaryFunc(negate&lt;int&gt;(),Ival1);</p>
+<h5 id="3）关系函数对象"><a href="#3）关系函数对象" class="headerlink" title="3）关系函数对象"></a>3）关系函数对象</h5><p>等于equal_to&lt;Tpye&gt;</p>
+<p>equal_to&lt;string&gt; stringEqual;</p>
+<p>sres = stringEqual(sval1,sval2);</p>
+<p>不等于not_equal_to&lt;Type&gt;</p>
+<p>大于 greater&lt;Type&gt;</p>
+<p>大于等于greater_equal&lt;Type&gt;</p>
+<p>小于 less&lt;Type&gt;</p>
+<p>小于等于less_equal&lt;Type&gt;</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main42</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    vector&lt;string&gt; v1;</span><br><span class="line">    v1.<span class="built_in">push_back</span>(<span class="string">&quot;bbb&quot;</span>);</span><br><span class="line">    v1.<span class="built_in">push_back</span>(<span class="string">&quot;aaa&quot;</span>);</span><br><span class="line">    v1.<span class="built_in">push_back</span>(<span class="string">&quot;ccc&quot;</span>);</span><br><span class="line">    v1.<span class="built_in">push_back</span>(<span class="string">&quot;zzzz&quot;</span>);</span><br><span class="line">    v1.<span class="built_in">push_back</span>(<span class="string">&quot;ccc&quot;</span>);</span><br><span class="line">    string s1 = <span class="string">&quot;ccc&quot;</span>;</span><br><span class="line">    <span class="comment">//int num = count_if(v1.begin(),v1.end(), equal_to&lt;string&gt;(),s1);</span></span><br><span class="line">    <span class="keyword">int</span> num = <span class="built_in">count_if</span>(v1.<span class="built_in">begin</span>(),v1.<span class="built_in">end</span>(),<span class="built_in">bind2nd</span>(equal_to&lt;string&gt;(), s1));</span><br><span class="line">    cout &lt;&lt; num &lt;&lt; endl;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<h5 id="4）逻辑函数对象"><a href="#4）逻辑函数对象" class="headerlink" title="4）逻辑函数对象"></a>4）逻辑函数对象</h5><p>逻辑与 logical_and&lt;Type&gt;</p>
+<p>logical_and&lt;int&gt; indAnd;</p>
+<p>ires = intAnd(ival1,ival2);</p>
+<p>dres=BinaryFunc( logical_and&lt;double&gt;(),dval1,dval2);</p>
+<p>逻辑或logical_or&lt;Type&gt;</p>
+<p>逻辑非logical_not&lt;Type&gt;</p>
+<p>logical_not&lt;int&gt; IntNot;</p>
+<p>Ires = IntNot(ival1);</p>
+<p>Dres=UnaryFunc( logical_not&lt;double&gt;,dval1);</p>
+<h3 id="四、函数适配器"><a href="#四、函数适配器" class="headerlink" title="四、函数适配器"></a>四、函数适配器</h3><p>标准库提供一组函数适配器，用来特殊化或者扩展一元和二元函数对象。常用适配器是：</p>
+<ul>
+<li>绑定器（binder）: binder通过把二元函数对象的一个实参绑定到一个特殊的值上，将其转换成一元函数对象。C＋＋标准库提供两种预定义的binder适配器：bind1st和bind2nd，前者把值绑定到二元函数对象的第一个实参上，后者绑定在第二个实参上。</li>
+<li>取反器(negator) : negator是一个将函数对象的值翻转的函数适配器。标准库提供两个预定义的ngeator适配器：not1翻转一元预定义函数对象的真值，而not2翻转二元谓词函数的真值。</li>
+</ul>
+<p>常用函数适配器列表如下：</p>
+<ul>
+<li>bind1st(op, value)</li>
+<li>bind2nd(op, value)</li>
+<li>not1(op)</li>
+<li>not2(op)</li>
+<li>mem_fun_ref(op)</li>
+<li>mem_fun(op)</li>
+<li>ptr_fun(op)</li>
+</ul>
+<h5 id="绑定器（binder）"><a href="#绑定器（binder）" class="headerlink" title="绑定器（binder）"></a>绑定器（binder）</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MyPrint</span> :</span> <span class="keyword">public</span> binary_function&lt;<span class="keyword">int</span>, <span class="keyword">int</span>, <span class="keyword">void</span>&gt; &#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="keyword">int</span> v, <span class="keyword">int</span> val)</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">		cout &lt;&lt; <span class="string">&quot;v:&quot;</span> &lt;&lt; v &lt;&lt; <span class="string">&quot;   val:&quot;</span>&lt;&lt; val&lt;&lt; <span class="string">&quot;   v+val:&quot;</span> &lt;&lt; v + val &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; endl;</span><br><span class="line">		&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test01</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	vector&lt;<span class="keyword">int</span>&gt; v;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</span><br><span class="line">		v.<span class="built_in">push_back</span>(i);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> addNum = <span class="number">200</span>;</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;bind1st结果:&quot;</span> &lt;&lt; endl;</span><br><span class="line">	for_each(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), <span class="built_in">bind1st</span>(<span class="built_in">MyPrint</span>(), addNum));<span class="comment">//绑定适配器  将一个二元函数对象转变成一元函数对象</span></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;bind2nd结果:&quot;</span> &lt;&lt; endl;</span><br><span class="line">	for_each(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), <span class="built_in">bind2nd</span>(<span class="built_in">MyPrint</span>(), addNum));</span><br><span class="line">	<span class="comment">//bind1st bind2nd区别？</span></span><br><span class="line">	<span class="comment">//bind1st，将addNum绑定为函数对象的第一个参数</span></span><br><span class="line">	<span class="comment">//bind2nd，将addNum绑定为函数对象的第二个参数</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">bind1st结果:</span></span><br><span class="line"><span class="comment">v:200   val:0   v+val:200</span></span><br><span class="line"><span class="comment">v:200   val:1   v+val:201</span></span><br><span class="line"><span class="comment">v:200   val:2   v+val:202</span></span><br><span class="line"><span class="comment">bind2nd结果:</span></span><br><span class="line"><span class="comment">v:0   val:200   v+val:200</span></span><br><span class="line"><span class="comment">v:1   val:200   v+val:201</span></span><br><span class="line"><span class="comment">v:2   val:200   v+val:202</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="取反器-negator"><a href="#取反器-negator" class="headerlink" title="取反器(negator)"></a>取反器(negator)</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MyPrint02</span> &#123;</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="keyword">int</span> v)</span> </span>&#123;</span><br><span class="line">		cout &lt;&lt; v &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MyCompare</span> :</span> <span class="keyword">public</span> binary_function&lt;<span class="keyword">int</span>, <span class="keyword">int</span>, <span class="keyword">bool</span>&gt; &#123;</span><br><span class="line">	<span class="function"><span class="keyword">bool</span> <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="keyword">int</span> v1, <span class="keyword">int</span> v2)</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> v1 &gt; v2;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MyGreater5</span> :</span> <span class="keyword">public</span> binary_function&lt;<span class="keyword">int</span>, <span class="keyword">int</span>, <span class="keyword">bool</span>&gt; &#123;</span><br><span class="line">	<span class="function"><span class="keyword">bool</span> <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="keyword">int</span> v, <span class="keyword">int</span> val)</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">		cout &lt;&lt; <span class="string">&quot;v:&quot;</span> &lt;&lt; v &lt;&lt; <span class="string">&quot; val:&quot;</span> &lt;&lt; val &lt;&lt; endl;</span><br><span class="line">		<span class="keyword">return</span> v &gt; val;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//仿函数适配器 not1 not2 取反适配器</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test02</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	vector&lt;<span class="keyword">int</span>&gt; v;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">		v.<span class="built_in">push_back</span>(<span class="built_in">rand</span>()%<span class="number">100</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	for_each(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), <span class="built_in">MyPrint02</span>()); </span><br><span class="line">	cout &lt;&lt; endl;</span><br><span class="line">	<span class="built_in">sort</span>(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), <span class="built_in">MyCompare</span>());</span><br><span class="line">	for_each(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), <span class="built_in">MyPrint02</span>());</span><br><span class="line">	cout &lt;&lt; endl;</span><br><span class="line">	<span class="built_in">sort</span>(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), <span class="built_in">not2</span>(<span class="built_in">MyCompare</span>()));</span><br><span class="line">	for_each(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), <span class="built_in">MyPrint02</span>());</span><br><span class="line">	cout &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//not1 not2 </span></span><br><span class="line">	<span class="comment">//如果对二元谓词取反，用not2</span></span><br><span class="line">	<span class="comment">//如果对一元谓词取反，用not1</span></span><br><span class="line">	vector&lt;<span class="keyword">int</span>&gt;::iterator it = <span class="built_in">find_if</span>(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), <span class="built_in">not1</span>(<span class="built_in">bind2nd</span>(<span class="built_in">MyGreater5</span>(), <span class="number">10</span>)));</span><br><span class="line">	<span class="keyword">if</span> (it == v.<span class="built_in">end</span>()) &#123;</span><br><span class="line">		cout &lt;&lt; <span class="string">&quot;没有找到&quot;</span> &lt;&lt; endl;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		cout &lt;&lt; *it &lt;&lt; endl;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="ptr-fun-op"><a href="#ptr-fun-op" class="headerlink" title="ptr_fun(op)"></a>ptr_fun(op)</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">MyPrint03</span><span class="params">(<span class="keyword">int</span> val, <span class="keyword">int</span> val2)</span> </span>&#123;</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;val1:&quot;</span> &lt;&lt; val &lt;&lt; <span class="string">&quot;   val2:&quot;</span> &lt;&lt; val2 &lt;&lt; <span class="string">&quot;   val + val2:&quot;</span>&lt;&lt;val + val2 &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test03</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	vector&lt;<span class="keyword">int</span>&gt; v;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">		v.<span class="built_in">push_back</span>(i);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//ptr_func把普通函数转成函数对象</span></span><br><span class="line">	for_each(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), <span class="built_in">bind2nd</span>(<span class="built_in">ptr_fun</span>(MyPrint03), <span class="number">10</span>));</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">结果：</span></span><br><span class="line"><span class="comment">val1:0   val2:10   val + val2:10</span></span><br><span class="line"><span class="comment">val1:1   val2:10   val + val2:11</span></span><br><span class="line"><span class="comment">val1:2   val2:10   val + val2:12</span></span><br><span class="line"><span class="comment">val1:3   val2:10   val + val2:13</span></span><br><span class="line"><span class="comment">val1:4   val2:10   val + val2:14</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="成员函数适配器："><a href="#成员函数适配器：" class="headerlink" title="成员函数适配器："></a>成员函数适配器：</h5><p>mem_fun_ref、mem_fun</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">Person</span>(<span class="keyword">int</span> age, <span class="keyword">int</span> id) :<span class="built_in">age</span>(age), <span class="built_in">id</span>(id) &#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		cout &lt;&lt; <span class="string">&quot;age:&quot;</span> &lt;&lt; age &lt;&lt; <span class="string">&quot; id:&quot;</span> &lt;&lt; id &lt;&lt; <span class="string">&quot; aaa&quot;</span> &lt;&lt; endl;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">int</span> age;</span><br><span class="line">	<span class="keyword">int</span> id;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test04</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//如果容器中存放的对象或者对象指针，我们for_each算法打印的时候，调用类自己提供的打印函数</span></span><br><span class="line"></span><br><span class="line">	vector&lt;Person&gt; v;</span><br><span class="line">	Person p1(10, 20), p2(30, 40), p3(50, 60);</span><br><span class="line">	v.<span class="built_in">push_back</span>(p1);</span><br><span class="line">	v.<span class="built_in">push_back</span>(p2);</span><br><span class="line">	v.<span class="built_in">push_back</span>(p3);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//格式: &amp;类名::函数名</span></span><br><span class="line">	for_each(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), <span class="built_in">mem_fun_ref</span>(&amp;Person::show));</span><br><span class="line"></span><br><span class="line">	vector&lt;Person*&gt; v1;</span><br><span class="line">	v1.<span class="built_in">push_back</span>(&amp;p1);</span><br><span class="line">	v1.<span class="built_in">push_back</span>(&amp;p2);</span><br><span class="line">	v1.<span class="built_in">push_back</span>(&amp;p3);</span><br><span class="line"></span><br><span class="line">	for_each(v1.<span class="built_in">begin</span>(), v1.<span class="built_in">end</span>(), <span class="built_in">mem_fun</span>(&amp;Person::show));</span><br><span class="line">	<span class="comment">//mem_fun_ref mem_fun区别?</span></span><br><span class="line">	<span class="comment">//如果存放的是对象指针 使用mem_fun</span></span><br><span class="line">	<span class="comment">//如果使用的是对象 使用mem_fun_ref</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">结果：</span></span><br><span class="line"><span class="comment">age:10 id:20 aaa</span></span><br><span class="line"><span class="comment">age:30 id:40 aaa</span></span><br><span class="line"><span class="comment">age:50 id:60 aaa</span></span><br><span class="line"><span class="comment">age:10 id:20 aaa</span></span><br><span class="line"><span class="comment">age:30 id:40 aaa</span></span><br><span class="line"><span class="comment">age:50 id:60 aaa</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+              <a href="/tags/STL/" rel="tag"># STL</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/07/STL%EF%BC%9A%E8%BF%AD%E4%BB%A3%E5%99%A8/" rel="prev" title="STL_迭代器">
+      <i class="fa fa-chevron-left"></i> STL_迭代器
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/05/07/STL%EF%BC%9A%E7%AE%80%E4%BB%8B/" rel="next" title="STL_简介">
+      STL_简介 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1%EF%BC%88%E4%BB%BF%E5%87%BD%E6%95%B0%EF%BC%89"><span class="nav-text">一、函数对象（仿函数）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E8%B0%93%E8%AF%8D"><span class="nav-text">二、谓词</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E9%A2%84%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1"><span class="nav-text">三、预定义函数对象</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%EF%BC%89%E9%A2%84%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%EF%BC%9A"><span class="nav-text">1）预定义函数对象基本概念：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%EF%BC%89%E7%AE%97%E6%9C%AF%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1"><span class="nav-text">2）算术函数对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%EF%BC%89%E5%85%B3%E7%B3%BB%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1"><span class="nav-text">3）关系函数对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%EF%BC%89%E9%80%BB%E8%BE%91%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1"><span class="nav-text">4）逻辑函数对象</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%87%BD%E6%95%B0%E9%80%82%E9%85%8D%E5%99%A8"><span class="nav-text">四、函数适配器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BB%91%E5%AE%9A%E5%99%A8%EF%BC%88binder%EF%BC%89"><span class="nav-text">绑定器（binder）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%96%E5%8F%8D%E5%99%A8-negator"><span class="nav-text">取反器(negator)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ptr-fun-op"><span class="nav-text">ptr_fun(op)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E9%80%82%E9%85%8D%E5%99%A8%EF%BC%9A"><span class="nav-text">成员函数适配器：</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="高乾威"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">高乾威</p>
+  <div class="site-description" itemprop="description">这是一个终身学习的时代</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="http://github.com/GaoQianwei" title="GitHub → http:&#x2F;&#x2F;github.com&#x2F;GaoQianwei" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2966807184@qq.com" title="E-Mail → mailto:2966807184@qq.com" rel="noopener" target="_blank">E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xue-wu-zhi-jing-75-22" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xue-wu-zhi-jing-75-22" rel="noopener" target="_blank">知乎</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_45341339" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_45341339" rel="noopener" target="_blank">CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div><div>
+  <canvas id="canvasDiyBlock" style="width:60%;">当前浏览器不支持canvas，请更换浏览器后再试</canvas>
+<script src="/js/custom/clock.js"></script>
+
+</div>
+
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 到 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">高乾威</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<span class="post-meta-divider">|</span>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">全站共 60.8k 字</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

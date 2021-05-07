@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="构建二叉树的方式多种多样，可以从前序与中序遍历序列构造二叉树、从中序与后序遍历序列构造二叉树，还可以从有序数组和链表中构建二叉树。掌握构建的前提是理解遍历二叉树和二叉树的结构。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="构建二叉树">
+<meta property="og:url" content="http://example.com/2021/05/07/%E4%BA%8C%E5%8F%89%E6%A0%91%EF%BC%9A%E6%9E%84%E5%BB%BA%E4%BA%8C%E5%8F%89%E6%A0%91/index.html">
+<meta property="og:site_name" content="学无止境">
+<meta property="og:description" content="构建二叉树的方式多种多样，可以从前序与中序遍历序列构造二叉树、从中序与后序遍历序列构造二叉树，还可以从有序数组和链表中构建二叉树。掌握构建的前提是理解遍历二叉树和二叉树的结构。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-07T10:03:50.000Z">
+<meta property="article:modified_time" content="2021-05-07T10:59:32.796Z">
+<meta property="article:author" content="高乾威">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="leetcode">
+<meta property="article:tag" content="二叉树">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/05/07/%E4%BA%8C%E5%8F%89%E6%A0%91%EF%BC%9A%E6%9E%84%E5%BB%BA%E4%BA%8C%E5%8F%89%E6%A0%91/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>构建二叉树 | 学无止境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">学无止境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>友链</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/07/%E4%BA%8C%E5%8F%89%E6%A0%91%EF%BC%9A%E6%9E%84%E5%BB%BA%E4%BA%8C%E5%8F%89%E6%A0%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="高乾威">
+      <meta itemprop="description" content="这是一个终身学习的时代">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学无止境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          构建二叉树
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-05-07 18:03:50 / 修改时间：18:59:32" itemprop="dateCreated datePublished" datetime="2021-05-07T18:03:50+08:00">2021-05-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/%E4%BA%8C%E5%8F%89%E6%A0%91/" itemprop="url" rel="index"><span itemprop="name">二叉树</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+            <span class="post-meta-divider">|</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>    构建二叉树的方式多种多样，可以从前序与中序遍历序列构造二叉树、从中序与后序遍历序列构造二叉树，还可以从有序数组和链表中构建二叉树。掌握构建的前提是理解遍历二叉树和二叉树的结构。</p>
+<span id="more"></span>
+
+<h3 id="105-从前序与中序遍历序列构造二叉树"><a href="#105-从前序与中序遍历序列构造二叉树" class="headerlink" title="105. 从前序与中序遍历序列构造二叉树"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/">105. 从前序与中序遍历序列构造二叉树</a></h3><p>    根据一棵树的前序遍历与中序遍历构造二叉树。</p>
+<p>    **注意:**你可以假设树中没有重复的元素。</p>
+<p>    例如，给出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">前序遍历 preorder &#x3D; [3,9,20,15,7]</span><br><span class="line">中序遍历 inorder &#x3D; [9,3,15,20,7]</span><br></pre></td></tr></table></figure>
+
+<p>    返回如下的二叉树：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">  3</span><br><span class="line"> &#x2F; \</span><br><span class="line">9  20</span><br><span class="line">  &#x2F;  \</span><br><span class="line"> 15   7</span><br></pre></td></tr></table></figure>
+
+<p><strong>思路与代码</strong>：</p>
+<p>    首先要知道一个结论，前序/后序+中序序列可以唯一确定一棵二叉树，所以自然而然可以用来建树。</p>
+<p>    看一下前序和中序有什么特点，前序<code>1,2,4,7,3,5,6,8</code> ，中序<code>4,7,2,1,5,3,8,6</code>；</p>
+<p>    有如下特征：</p>
+<ol>
+<li> 前序中左起第一位<code>1</code>肯定是根结点，我们可以据此找到中序中根结点的位置<code>rootin</code>；</li>
+<li> 中序中根结点左边就是左子树结点，右边就是右子树结点，即<code>[左子树结点，根结点，右子树结点]</code>，我们就可以得出左子树结点个数为<code>int left = rootin - leftin;</code>；</li>
+<li> 前序中结点分布应该是：<code>[根结点，左子树结点，右子树结点]</code>；</li>
+<li> 根据前一步确定的左子树个数，可以确定前序中左子树结点和右子树结点的范围；</li>
+<li>如果我们要前序遍历生成二叉树的话，下一层递归应该是：<ul>
+<li>  左子树：<code>root-&gt;left = pre_order(前序序列，前序左子树范围，中序序列，中序左子树范围);</code>；</li>
+<li>  右子树：<code>root-&gt;right = pre_order(前序序列，前序右子树范围，中序序列，中序右子树范围);</code>。</li>
+</ul>
+</li>
+<li> 每一层递归都要返回当前根结点<code>root</code>；</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">TreeNode* <span class="title">buildTree</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; preorder, vector&lt;<span class="keyword">int</span>&gt;&amp; inorder)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">help</span>(preorder, <span class="number">0</span>, preorder.<span class="built_in">size</span>() - <span class="number">1</span>, </span><br><span class="line">                    inorder, <span class="number">0</span>, inorder.<span class="built_in">size</span>() - <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">TreeNode* <span class="title">help</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; preorder, <span class="keyword">int</span> low1, <span class="keyword">int</span> high1, </span></span></span><br><span class="line"><span class="function"><span class="params">                    vector&lt;<span class="keyword">int</span>&gt;&amp; inorder, <span class="keyword">int</span> low2, <span class="keyword">int</span> high2)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(low1 &gt; high1 || low2 &gt; high2)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> root = preorder.<span class="built_in">at</span>(low1);</span><br><span class="line">        <span class="keyword">int</span> mid = low2;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = low2; i &lt;= high2; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(inorder.<span class="built_in">at</span>(i) == root)</span><br><span class="line">            &#123;</span><br><span class="line">                mid = i;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        TreeNode* rootPtr = <span class="keyword">new</span> <span class="built_in">TreeNode</span>(root);</span><br><span class="line"></span><br><span class="line">        rootPtr-&gt;left = <span class="built_in">help</span>(preorder, low1 + <span class="number">1</span>, low1 + mid - low2,</span><br><span class="line">                            inorder, low2, mid - <span class="number">1</span>);</span><br><span class="line">        rootPtr-&gt;right = <span class="built_in">help</span>(preorder, low1 + mid - low2 +<span class="number">1</span>, high1,</span><br><span class="line">                            inorder, mid + <span class="number">1</span>, high2);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> rootPtr;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="106-从中序与后序遍历序列构造二叉树"><a href="#106-从中序与后序遍历序列构造二叉树" class="headerlink" title="106. 从中序与后序遍历序列构造二叉树"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/">106. 从中序与后序遍历序列构造二叉树</a></h3><p>    根据一棵树的中序遍历与后序遍历构造二叉树。</p>
+<p>    **注意:**你可以假设树中没有重复的元素。</p>
+<p>    例如，给出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">中序遍历 inorder &#x3D; [9,3,15,20,7]</span><br><span class="line">后序遍历 postorder &#x3D; [9,15,7,20,3]</span><br></pre></td></tr></table></figure>
+
+<p>    返回如下的二叉树：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">  3</span><br><span class="line"> &#x2F; \</span><br><span class="line">9  20</span><br><span class="line">  &#x2F;  \</span><br><span class="line"> 15   7</span><br></pre></td></tr></table></figure>
+
+<p><strong>思路与代码</strong>：</p>
+<p>    首先要知道一个结论，前序/后序+中序序列可以唯一确定一棵二叉树，所以自然而然可以用来建树。</p>
+<p>    看一下中序和后序有什么特点，中序<code>[9,3,15,20,7]</code> ，后序<code>[9,15,7,20,3]</code>；</p>
+<p>    有如下特征：</p>
+<ol>
+<li> 后序中右起第一位<code>3</code>肯定是根结点，我们可以据此找到中序中根结点的位置<code>rootin</code>；</li>
+<li> 中序中根结点左边就是左子树结点，右边就是右子树结点，即<code>[左子树结点，根结点，右子树结点]</code>，我们就可以得出左子树结点个数为<code>int left = rootin - leftin;</code>；</li>
+<li> 后序中结点分布应该是：<code>[左子树结点，右子树结点，根结点]</code>；</li>
+<li> 根据前一步确定的左子树个数，可以确定后序中左子树结点和右子树结点的范围；</li>
+<li>如果我们要前序遍历生成二叉树的话，下一层递归应该是：<ul>
+<li>  左子树：<code>root-&gt;left = pre_order(中序序列，中序左子树范围，后序序列，后序左子树范围);</code>；</li>
+<li>  右子树：<code>root-&gt;right = pre_order(中序序列，中序右子树范围，后序序列，后序右子树范围);</code>。</li>
+</ul>
+</li>
+<li> 每一层递归都要返回当前根结点<code>root</code>；</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">TreeNode* <span class="title">buildTree</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; inorder, vector&lt;<span class="keyword">int</span>&gt;&amp; postorder)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">help</span>(inorder, <span class="number">0</span>, inorder.<span class="built_in">size</span>() - <span class="number">1</span>,</span><br><span class="line">                    postorder, <span class="number">0</span>, postorder.<span class="built_in">size</span>() - <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">TreeNode* <span class="title">help</span><span class="params">(<span class="keyword">const</span> vector&lt;<span class="keyword">int</span>&gt;&amp; inorder, <span class="keyword">int</span> low1, <span class="keyword">int</span> high1,</span></span></span><br><span class="line"><span class="function"><span class="params">                   <span class="keyword">const</span> vector&lt;<span class="keyword">int</span>&gt;&amp; postorder, <span class="keyword">int</span> low2, <span class="keyword">int</span> high2)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(low1 &gt;high1 || low2 &gt; high2)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> rootVal = postorder.<span class="built_in">at</span>(high2);</span><br><span class="line">        <span class="keyword">int</span> mid = low1;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = low1; i &lt;= high1; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(inorder.<span class="built_in">at</span>(i) == rootVal)</span><br><span class="line">            &#123;</span><br><span class="line">                mid = i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        TreeNode* root = <span class="keyword">new</span> <span class="built_in">TreeNode</span>(rootVal);</span><br><span class="line"></span><br><span class="line">        root-&gt;left = <span class="built_in">help</span>(inorder, low1, mid - <span class="number">1</span>, </span><br><span class="line">                          postorder, low2, low2 + mid - low1 - <span class="number">1</span>);</span><br><span class="line">        root-&gt;right = <span class="built_in">help</span>(inorder, mid + <span class="number">1</span>, high1,</span><br><span class="line">                           postorder, low2 + mid - low1, high2 - <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> root;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="108-将有序数组转换为二叉搜索树"><a href="#108-将有序数组转换为二叉搜索树" class="headerlink" title="108. 将有序数组转换为二叉搜索树"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/convert-sorted-array-to-binary-search-tree/">108. 将有序数组转换为二叉搜索树</a></h3><p>    给你一个整数数组 <code>nums</code> ，其中元素已经按 <strong>升序</strong> 排列，请你将其转换为一棵 <strong>高度平衡</strong> 二叉搜索树。</p>
+<p>    <strong>高度平衡</strong> 二叉树是一棵满足「每个节点的左右两个子树的高度差的绝对值不超过 1 」的二叉树。</p>
+<p><strong>示例 1：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">输入：nums &#x3D; [-10,-3,0,5,9]</span><br><span class="line">输出：[0,-3,9,-10,null,5]</span><br><span class="line">        0</span><br><span class="line">       &#x2F; \</span><br><span class="line">     -3   9</span><br><span class="line">    &#x2F;    &#x2F;</span><br><span class="line">  10    5</span><br><span class="line">解释：[0,-10,5,null,-3,null,9] 也将被视为正确答案：</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 2：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">输入：nums &#x3D; [1,3]</span><br><span class="line">输出：[3,1]</span><br><span class="line">   3   1</span><br><span class="line">  &#x2F;     \</span><br><span class="line"> 1       3</span><br><span class="line">解释：[1,3] 和 [3,1] 都是高度平衡二叉搜索树。</span><br></pre></td></tr></table></figure>
+
+<p> <strong>提示：</strong></p>
+<ul>
+<li>  <code>1 &lt;= nums.length &lt;= 104</code></li>
+<li>  <code>-104 &lt;= nums[i] &lt;= 104</code></li>
+<li>  <code>nums</code> 按 <strong>严格递增</strong> 顺序排列</li>
+</ul>
+<p><strong>思路与代码</strong>：</p>
+<p>    数组的中间节点即为当前”root”</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">TreeNode* <span class="title">sortedArrayToBST</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">help</span>(nums, <span class="number">0</span>, nums.<span class="built_in">size</span>() - <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">TreeNode* <span class="title">help</span><span class="params">(<span class="keyword">const</span> vector&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> low, <span class="keyword">int</span> high)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(low &gt; high)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">int</span> mid = (low + high + <span class="number">1</span>) / <span class="number">2</span> ;</span><br><span class="line"></span><br><span class="line">        TreeNode* root = <span class="keyword">new</span> <span class="built_in">TreeNode</span>(nums.<span class="built_in">at</span>(mid));</span><br><span class="line"></span><br><span class="line">        root-&gt;left = <span class="built_in">help</span>(nums, low, mid - <span class="number">1</span>);</span><br><span class="line">        root-&gt;right = <span class="built_in">help</span>(nums, mid + <span class="number">1</span>, high);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> root;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="109-有序链表转换二叉搜索树"><a href="#109-有序链表转换二叉搜索树" class="headerlink" title="109. 有序链表转换二叉搜索树"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/convert-sorted-list-to-binary-search-tree/">109. 有序链表转换二叉搜索树</a></h3><p>    给定一个单链表，其中的元素按升序排序，将其转换为高度平衡的二叉搜索树。</p>
+<p>    本题中，一个高度平衡二叉树是指一个二叉树<em>每个节点</em> 的左右两个子树的高度差的绝对值不超过 1。</p>
+<p><strong>示例:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">给定的有序链表： [-10, -3, 0, 5, 9],</span><br><span class="line"></span><br><span class="line">一个可能的答案是：[0, -3, 9, -10, null, 5], 它可以表示下面这个高度平衡二叉搜索树：</span><br><span class="line"></span><br><span class="line">      0</span><br><span class="line">     &#x2F; \</span><br><span class="line">   -3   9</span><br><span class="line">   &#x2F;   &#x2F;</span><br><span class="line"> -10  5</span><br></pre></td></tr></table></figure>
+
+<p><strong>思路与代码</strong>：</p>
+<p>    还是找中间节点</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">TreeNode* <span class="title">sortedListToBST</span><span class="params">(ListNode* head)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">       </span><br><span class="line">        <span class="keyword">if</span>(!head)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(head-&gt;next == <span class="literal">nullptr</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">TreeNode</span>(head-&gt;val);</span><br><span class="line">    </span><br><span class="line">        <span class="comment">//双指针，找中点</span></span><br><span class="line">        ListNode* pre = head;</span><br><span class="line">        ListNode* p = head-&gt;next;</span><br><span class="line">        ListNode* q = p-&gt;next;        </span><br><span class="line">        <span class="keyword">while</span>(q != <span class="literal">nullptr</span> &amp;&amp; q-&gt;next != <span class="literal">nullptr</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            pre = pre-&gt;next;</span><br><span class="line">            p = pre-&gt;next;</span><br><span class="line">            q = q-&gt;next-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        pre-&gt;next = <span class="literal">nullptr</span>;</span><br><span class="line">        TreeNode* root = <span class="keyword">new</span> <span class="built_in">TreeNode</span>(p-&gt;val); </span><br><span class="line">        root-&gt;left = <span class="built_in">sortedListToBST</span>(head);</span><br><span class="line">        root-&gt;right = <span class="built_in">sortedListToBST</span>(p-&gt;next);</span><br><span class="line">        <span class="keyword">return</span> root;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="654-最大二叉树"><a href="#654-最大二叉树" class="headerlink" title="654. 最大二叉树"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/maximum-binary-tree/">654. 最大二叉树</a></h3><p>    给定一个不含重复元素的整数数组 <code>nums</code> 。一个以此数组直接递归构建的 <strong>最大二叉树</strong> 定义如下：</p>
+<ol>
+<li> 二叉树的根是数组 <code>nums</code> 中的最大元素。</li>
+<li> 左子树是通过数组中 <strong>最大值左边部分</strong> 递归构造出的最大二叉树。</li>
+<li> 右子树是通过数组中 <strong>最大值右边部分</strong> 递归构造出的最大二叉树。</li>
+</ol>
+<p>返回有给定数组 <code>nums</code> 构建的 <strong>最大二叉树</strong> 。 </p>
+<p><strong>示例 1：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">输入：nums &#x3D; [3,2,1,6,0,5]</span><br><span class="line">输出：[6,3,5,null,2,0,null,null,1]</span><br><span class="line">            6</span><br><span class="line">          &#x2F;   \</span><br><span class="line">        3       5</span><br><span class="line">         \    &#x2F;</span><br><span class="line">          2  0</span><br><span class="line">           \</span><br><span class="line">            1</span><br><span class="line">解释：递归调用如下所示：</span><br><span class="line">- [3,2,1,6,0,5] 中的最大值是 6 ，左边部分是 [3,2,1] ，右边部分是 [0,5] 。</span><br><span class="line">    - [3,2,1] 中的最大值是 3 ，左边部分是 [] ，右边部分是 [2,1] 。</span><br><span class="line">        - 空数组，无子节点。</span><br><span class="line">        - [2,1] 中的最大值是 2 ，左边部分是 [] ，右边部分是 [1] 。</span><br><span class="line">            - 空数组，无子节点。</span><br><span class="line">            - 只有一个元素，所以子节点是一个值为 1 的节点。</span><br><span class="line">    - [0,5] 中的最大值是 5 ，左边部分是 [0] ，右边部分是 [] 。</span><br><span class="line">        - 只有一个元素，所以子节点是一个值为 0 的节点。</span><br><span class="line">        - 空数组，无子节点。</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 2：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">输入：nums &#x3D; [3,2,1]</span><br><span class="line">输出：[3,null,2,null,1]</span><br><span class="line">    3</span><br><span class="line">     \</span><br><span class="line">      2</span><br><span class="line">       \</span><br><span class="line">        1 </span><br></pre></td></tr></table></figure>
+
+<p><strong>提示：</strong></p>
+<ul>
+<li>  <code>1 &lt;= nums.length &lt;= 1000</code></li>
+<li>  <code>0 &lt;= nums[i] &lt;= 1000</code></li>
+<li>  <code>nums</code> 中的所有整数 <strong>互不相同</strong></li>
+</ul>
+<p>代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">TreeNode* <span class="title">constructMaximumBinaryTree</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> <span class="built_in">build</span>(nums, <span class="number">0</span>, nums.<span class="built_in">size</span>() - <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">TreeNode* <span class="title">build</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> low, <span class="keyword">int</span> high)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(low &gt; high)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> index = <span class="number">-1</span>, MAX = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = low; i &lt;= high; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(nums.<span class="built_in">at</span>(i) &gt;= MAX)</span><br><span class="line">            &#123;</span><br><span class="line">                MAX = nums.<span class="built_in">at</span>(i);</span><br><span class="line">                index = i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        TreeNode* root = <span class="keyword">new</span> <span class="built_in">TreeNode</span>(MAX);</span><br><span class="line">        <span class="comment">//TreeNode* root = &amp;rootNode;</span></span><br><span class="line"></span><br><span class="line">        root-&gt;left = <span class="built_in">build</span>(nums, low, index<span class="number">-1</span>);</span><br><span class="line">        root-&gt;right = <span class="built_in">build</span>(nums, index+<span class="number">1</span>, high);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> root;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247487270&idx=1&sn=2f7ad74aabc88b53d94012ceccbe51be&chksm=9bd7f12eaca078384733168971147866c140496cb257946f8170f05e46d16099f3eef98d39d9&scene=21#wechat_redirect">东哥手把手帮你刷通二叉树|第二期 (qq.com)</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+              <a href="/tags/leetcode/" rel="tag"># leetcode</a>
+              <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/" rel="tag"># 二叉树</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/07/%E4%BA%8C%E5%8F%89%E6%A0%91%EF%BC%9A%E4%BA%8C%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86%E6%A8%A1%E6%9D%BF/" rel="prev" title="二叉树的遍历模板">
+      <i class="fa fa-chevron-left"></i> 二叉树的遍历模板
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#105-%E4%BB%8E%E5%89%8D%E5%BA%8F%E4%B8%8E%E4%B8%AD%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-text">105. 从前序与中序遍历序列构造二叉树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#106-%E4%BB%8E%E4%B8%AD%E5%BA%8F%E4%B8%8E%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-text">106. 从中序与后序遍历序列构造二叉树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#108-%E5%B0%86%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84%E8%BD%AC%E6%8D%A2%E4%B8%BA%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91"><span class="nav-text">108. 将有序数组转换为二叉搜索树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#109-%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8%E8%BD%AC%E6%8D%A2%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91"><span class="nav-text">109. 有序链表转换二叉搜索树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#654-%E6%9C%80%E5%A4%A7%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-text">654. 最大二叉树</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="高乾威"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">高乾威</p>
+  <div class="site-description" itemprop="description">这是一个终身学习的时代</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="http://github.com/GaoQianwei" title="GitHub → http:&#x2F;&#x2F;github.com&#x2F;GaoQianwei" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2966807184@qq.com" title="E-Mail → mailto:2966807184@qq.com" rel="noopener" target="_blank">E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xue-wu-zhi-jing-75-22" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xue-wu-zhi-jing-75-22" rel="noopener" target="_blank">知乎</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_45341339" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_45341339" rel="noopener" target="_blank">CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div><div>
+  <canvas id="canvasDiyBlock" style="width:60%;">当前浏览器不支持canvas，请更换浏览器后再试</canvas>
+<script src="/js/custom/clock.js"></script>
+
+</div>
+
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 到 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">高乾威</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<span class="post-meta-divider">|</span>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">全站共 29.8k 字</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

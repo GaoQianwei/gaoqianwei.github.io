@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;分为两部分，前一部分老师给的考试前的参考习题，后一部分是平常三次作业。只归纳了选择题，代码题没有整理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据酷客习题知识整理">
+<meta property="og:url" content="http://example.com/2021/05/15/%E8%AF%BE%E5%A0%82%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6%E5%AF%BC%E8%AE%BA%EF%BC%9A%E6%95%B0%E6%8D%AE%E9%85%B7%E5%AE%A2%E4%B9%A0%E9%A2%98%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/index.html">
+<meta property="og:site_name" content="学无止境">
+<meta property="og:description" content="&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;分为两部分，前一部分老师给的考试前的参考习题，后一部分是平常三次作业。只归纳了选择题，代码题没有整理。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-15T08:03:00.000Z">
+<meta property="article:modified_time" content="2021-05-15T08:08:04.530Z">
+<meta property="article:author" content="高乾威">
+<meta property="article:tag" content="课堂学习笔记">
+<meta property="article:tag" content="数据科学导引">
+<meta property="article:tag" content="数据酷客">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/05/15/%E8%AF%BE%E5%A0%82%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6%E5%AF%BC%E8%AE%BA%EF%BC%9A%E6%95%B0%E6%8D%AE%E9%85%B7%E5%AE%A2%E4%B9%A0%E9%A2%98%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>数据酷客习题知识整理 | 学无止境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">学无止境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>友链</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/15/%E8%AF%BE%E5%A0%82%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6%E5%AF%BC%E8%AE%BA%EF%BC%9A%E6%95%B0%E6%8D%AE%E9%85%B7%E5%AE%A2%E4%B9%A0%E9%A2%98%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="高乾威">
+      <meta itemprop="description" content="这是一个终身学习的时代">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学无止境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数据酷客习题知识整理
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-05-15 16:03:00 / 修改时间：16:08:04" itemprop="dateCreated datePublished" datetime="2021-05-15T16:03:00+08:00">2021-05-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BE%E5%A0%82%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">课堂学习笔记</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BE%E5%A0%82%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6%E5%AF%BC%E5%BC%95/" itemprop="url" rel="index"><span itemprop="name">数据科学导引</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+            <span class="post-meta-divider">|</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>&ensp;&ensp;&ensp;&ensp;分为两部分，前一部分老师给的考试前的参考习题，后一部分是平常三次作业。只归纳了选择题，代码题没有整理。</p>
+<span id="more"></span>
+
+<h3 id="一、考前作业整理"><a href="#一、考前作业整理" class="headerlink" title="一、考前作业整理"></a>一、考前作业整理</h3><ol>
+<li><p>关联规则</p>
+<ul>
+<li>  关联规则探寻数据集各个<strong>特征</strong>之间的联系</li>
+<li>  关联规则挖掘属于<strong>无监督学习算法</strong></li>
+<li>  典型应用场景：<strong>推荐系统</strong></li>
+<li>  Aprior算法需要重复扫描数据集，生成频繁项集</li>
+</ul>
+</li>
+<li><p>过度拟合</p>
+<ul>
+<li>  机器学习模型在<strong>训练集</strong>上的误差称为<strong>训练误差</strong></li>
+<li>  机器学习模型在<strong>测试集</strong>上的误差称为<strong>泛化误差</strong></li>
+<li>  使用机器学习模型拟合训练集，<strong>训练误差小，泛化误差大，称为过度拟合现象</strong></li>
+<li>  <strong>训练误差通常会随着模型复杂度的升高越来越小</strong>，同时也更容易造成过度拟合现象</li>
+</ul>
+</li>
+<li><p> Logistic标准化算法：Logistic会改变数据分布，是非线性映射，σ(0)=0.5</p>
+</li>
+<li><p>One-Hot编码</p>
+<ul>
+<li>  <strong>分类模型</strong>常用的预处理方法之一</li>
+<li>  将<code>k</code>个取值的离散型特征转化为<code>k</code>个二元特征</li>
+<li>  编码后的<strong>特征之间距离相同</strong>，<strong>没有次序关系</strong></li>
+<li>  编码后的特征存在<strong>多重共线性</strong>的问题</li>
+</ul>
+</li>
+<li><p>数据离散化</p>
+<ul>
+<li>  <strong>聚类离散化和卡方离散化</strong>都可以采用<strong>自底向上</strong>的策略进行簇或者区间的合并</li>
+<li>  等距离散化对离群值<strong>敏感</strong></li>
+<li>  等频离散化为了保持离散化后区间的样本数大致相同，会将相似的样本划入到不同的子区间内</li>
+<li>  <strong>信息增益离散化</strong>采用<strong>自顶向下</strong>的分裂策略</li>
+</ul>
+</li>
+<li><p> 线性回归模型的目标函数为$\Longrightarrow$残差平方和</p>
+</li>
+<li><p>回归算法</p>
+<ul>
+<li>  回归算法可以用最小二乘法求解</li>
+<li>  最大似然估计可以得到和最小二乘法相同的结果</li>
+<li>  加入绝对值是lasso回归，平方项（L2正则化）是岭回归</li>
+<li>  回归算法也会产生过拟合问题</li>
+</ul>
+</li>
+<li><p>假定一个4次多项式回归模型即可很好拟合数据集x，那么</p>
+<ul>
+<li>  与4次多项式相比，使用2次多项式拟合x，<strong>偏差会变大，方差会变大</strong></li>
+<li>  与4次多项式相比，使用7次多项式拟合x，<strong>偏差会变小，方差会变大</strong></li>
+</ul>
+</li>
+<li><p>岭回归</p>
+<ul>
+<li>  岭回归使用<strong>L2范数</strong>作为<strong>惩罚项</strong></li>
+<li>  岭回归的<strong>回归系数</strong>可以找到解析解</li>
+<li>  当惩罚系数为<strong>零</strong>时，岭回归退化为<strong>线性回归</strong>模型</li>
+<li>  当惩罚系数趋于<strong>无穷大</strong>时，回归系数会趋近于<strong>零</strong></li>
+</ul>
+</li>
+<li><p>正则化路径</p>
+<ul>
+<li>  正则化路径指回归系数随着惩罚系数增大而变化的曲线</li>
+<li>  正则化路径可以用来分析变量是否存在共线性，也可以用来做变量选择</li>
+<li>  岭回归的正则化路径称为岭迹，岭迹波动大，说明回归参数存在多重共线性</li>
+<li>  随着惩罚系数增大，LASSO的回归系数会<strong>逐渐</strong>减少到零</li>
+</ul>
+</li>
+<li><p>逻辑回归模型</p>
+<ul>
+<li>  逻辑回归通常<strong>用于分类</strong></li>
+<li>  逻辑回归<strong>不用于</strong>回归</li>
+<li>  逻辑回归也能够解决线性不可分问题</li>
+<li>  逻辑回归可用<strong>极大似然</strong>估计系数</li>
+</ul>
+</li>
+<li><p><strong>度量相似度</strong>的方法</p>
+<ul>
+<li>  汉明距离</li>
+<li>  马氏距离</li>
+<li>  KL散度</li>
+</ul>
+</li>
+<li><p>衡量<strong>决策树节点不纯度</strong>的度量方式</p>
+<ul>
+<li>  Gini指数</li>
+<li>  信息熵</li>
+<li>  误分率</li>
+</ul>
+</li>
+<li><p>决策树常见算法</p>
+<ul>
+<li>  ID3，ID3算法使用信息增益作为不纯度的度量</li>
+<li>  CART</li>
+<li>  C4.5</li>
+</ul>
+</li>
+<li><p> <strong>FP Growth</strong>是关联规则算法，属于无监督学习的模型</p>
+</li>
+<li><p> 决策树算法在<strong>第一次分裂</strong>时采用的策略是$\Longrightarrow$贪心策略</p>
+</li>
+<li><p>决策树剪枝</p>
+<ul>
+<li>  决策树算法会产生<strong>层数太多</strong>，<strong>节点数过多</strong>的树，因此需要对树进行剪枝处理</li>
+<li>  预剪枝会依据节点的不纯度设置阈值从而决定是否分裂</li>
+<li>  后剪枝使用自定义的整体损失函数衡量决策树的优劣，对比剪枝前后的决策树决定是否实施剪枝操作</li>
+</ul>
+</li>
+<li><pre><code> 【单选】给定特征x1、x2、x3和标签y，如下表所示
+ 
+ x1    x2    x3    y
+ 1    1    1    A
+ 1    1    0    A
+ 0    0    0    A
+ 0    1    0    B
+ 1    0    1    B
+ 0    1    1    B
+ 利用上面的数据建立朴素贝叶斯模型，现有一待测样本x=(1,0,0)，则下列说法正确的是 （1）
+ 选项1
+ p(y=B|x)=1/5
+ 选项2
+ p(y=A|x)=1/54
+ 选项3
+ p(y=A|x)=3/5
+ 选项4
+ p(y=B|x)=1/27
+</code></pre>
+</li>
+<li><p>集成方法</p>
+<ul>
+<li>  集成方法中的基模型之间具有差异性</li>
+<li>  集成方法通常能获得比单个模型更好的预测性能</li>
+<li>  集成方法能够增强单个模型的表达能力</li>
+</ul>
+</li>
+<li><p>聚类模型</p>
+<ul>
+<li>  聚类模型属于无监督学习</li>
+<li>  聚类模型的本质是寻找数据集内在的分布结构</li>
+<li>  聚类使得同簇的样本相似度高，簇间的样本相似度低。</li>
+<li>  聚类常作为其他分析任务的前置过程，如数据清洗</li>
+<li>  推荐系统可以看做是聚类模型的一种应用场景</li>
+<li>  聚类模型可以用于文本处理，如情感分析</li>
+<li>  决策树算法可以用来解决聚类的任务</li>
+</ul>
+</li>
+<li><p>聚类算法</p>
+<ul>
+<li>  轮廓系数综合了簇的凝聚度和分离度两个指标</li>
+<li>  rand指数取值<strong>越大</strong>意味着聚类结果与真实情况<strong>越吻合</strong>。</li>
+<li>  聚类评价指标分为外部和内部指标</li>
+<li>  Jaccard系数是用来比较样本集中的相似性和分散性的一个概率</li>
+</ul>
+</li>
+<li><p> 给定数据集和初始的簇个数，运行两次K-means算法得到的结果：两次结果可能相同也可能不同</p>
+</li>
+<li><p> K-means算法应用在哪些数据上能产生好的效果：具有有圆形轮廓的数据集</p>
+</li>
+<li><p> K-means算法采用应分配的策略，也就是将样本直接分配给距离最近的簇。而软分配的策略则是给出样本分数各个簇的概率。下列哪些算法采用了软分配的策略：高斯混合模型、Fuzzy K-means算法</p>
+</li>
+<li><p>  K-means算法的效果依赖于初始质心的选择，对离群值敏感</p>
+</li>
+<li><p>k近邻算法</p>
+<ul>
+<li>  k近邻算法对异常数据不敏感</li>
+<li>  k近邻算法是一种有监督学习</li>
+<li>  k近邻算法需要占用大量内存空间</li>
+<li>  k近邻算法无训练过程</li>
+</ul>
+</li>
+<li><p>为了让K-means算法获得全局最优的结果，下列可以采取的有</p>
+<ul>
+<li>  尝试不同的质心选择</li>
+<li>  设定不同的簇的个数</li>
+<li>  调整算法的迭代次数</li>
+</ul>
+</li>
+<li><p>支持向量机</p>
+<ul>
+<li>  支持向量机的目标是<strong>最大化</strong>分割线两侧的间隔</li>
+<li>  支持向量机在边界线上的点称为支持向量</li>
+<li>  支持向量机可以转换成对偶问题</li>
+<li>  支持向量机的划分需要d-1维超平面，d是特征空间的维度</li>
+</ul>
+</li>
+<li><p>核方法</p>
+<ul>
+<li>  kernel方法不需要知道变换的具体形式</li>
+<li>  核矩阵满足半正定性质</li>
+<li>  核函数把特征映射到高维空间中</li>
+<li>  核函数让数据在新空间中线性可分</li>
+</ul>
+</li>
+<li><p>主成分分析的优点</p>
+<ul>
+<li>  低维空间的每一个特征都能够写成高维特征的线性加权形式，为理解低维数据提供了便利</li>
+<li>  没有需要调参的超参数，且具有全局最优解</li>
+<li>  计算效率较高</li>
+</ul>
+</li>
+<li><p> 去掉缺失值较多的特征可以使得降维效果更好</p>
+</li>
+<li><p> 在PCA中，如果特征值分解后的各个特征值大致相等，则PCA的降维效果变差</p>
+</li>
+<li><p>主成分分析是最著名的数据降维方法</p>
+<ul>
+<li>  主成分分析是一种无监督方法</li>
+<li>  它的目标是使得数据在低维空间中的方差最大</li>
+<li>  主成分的最大数量不能超过原特征数</li>
+<li>  所有主成分之间互相正交</li>
+</ul>
+</li>
+<li><p>关于PCA与LDA的比较</p>
+<ul>
+<li>  PCA和LDA都是线性降维方法</li>
+<li>  LDA是有监督方法，PCA是无监督方法</li>
+<li>  PCA和LDA都可以通过拉格朗日求解其最优化问题</li>
+<li>  PCA的目标是最大化数据的方差，LDA的目标是最大化不同类之间的距离</li>
+</ul>
+</li>
+<li><p>关于介数中心度和紧密中心度</p>
+<ul>
+<li>  介数中心度衡量节点在连接其他节点时的桥接作用</li>
+<li>  介数中心度是除节点v作为起点或终点的经过节点v的最短路径数量除以所有的最短路径数量</li>
+<li>  紧密中心度衡量的是节点距离所有其他点的远近关系</li>
+<li>  紧密中心度越大越靠近中心.</li>
+</ul>
+</li>
+<li><p> Spark运算速度比Hadoop快的原因：Spark支持DAG执行机制，以及内存运算</p>
+</li>
+<li><p>大数据分析的主要困难</p>
+<ul>
+<li>  数据类型复杂</li>
+<li>  数据维度高</li>
+<li>  数据量大</li>
+</ul>
+</li>
+<li><p>关于模型评价指标</p>
+<ul>
+<li>  召回率(recall)是判定为正类的正类/所有实际正类样本</li>
+<li>  F1值是兼顾精确率和召回率的指标</li>
+<li>AUC指在ROC曲线下方的面积</li>
+</ul>
+</li>
+</ol>
+<h3 id="二、三次作业整理"><a href="#二、三次作业整理" class="headerlink" title="二、三次作业整理"></a>二、三次作业整理</h3><ol>
+<li> 非结构化数据：视频、图像、网页</li>
+<li> 使用科学的方法研究数据的学科：机器学习、统计学</li>
+<li> 数据分析面临的困难：数据量大、数据维度高、数据包含的噪音大</li>
+<li>机器学习的基本概念<ul>
+<li>  机器学习模型是建立在输入数据和模型输出之间的映射关系</li>
+<li>  训练集是用来训练模型的数据集</li>
+<li>  测试集是用来测试模型真实泛化能力的数据集</li>
+</ul>
+</li>
+<li>与传统互联网行业大数据相比，现代大数据具备的特点：<ul>
+<li>  数据体积更大</li>
+<li>  数据产生速度更快</li>
+<li>  具有总价值上升，价值密度下降</li>
+<li>  数据种类更丰富</li>
+</ul>
+</li>
+<li>关于数据的说法<ul>
+<li>  数据的类别有多种多样</li>
+<li>  数据库中的一列代表一个特征</li>
+<li>  一组数据平均值会受异常值影响</li>
+<li>  数据点之间的距离满足 dij+djk≥dik</li>
+</ul>
+</li>
+<li> 对于特征工程，就是人工地设计输入变量</li>
+<li> 特征选择的方式：过滤式、封装式、嵌入式</li>
+<li>近年来，大数据受到整个社会的广泛关注。推动大数据行业发展的三大主要推动力包括：<ul>
+<li>  丰富的数据源。特别是文本、语音和视频等非结构化数据。</li>
+<li>  模型和计算能力的大幅提升。例如深度学习技术的发展和GPU、分布式计算的发展。</li>
+<li>  广泛的应用场景。来自现实社会的广泛应用需求推动了大数据行业的发展，例如营销、广告、金融、交通、医疗等。</li>
+</ul>
+</li>
+<li> 对数据进行分组，既可以使用分类模型，也可以使用聚类模型。</li>
+<li>删除法<ul>
+<li>  删除法包括删除数据样本和删除数据特征</li>
+<li>  特征存在的缺失值对分析目标影响不大时，可以删除该特征</li>
+<li>  删除法虽减少了数据数量，但不一定会减少数据的信息量</li>
+</ul>
+</li>
+<li>均值填补<ul>
+<li>  均值填补在处理非数值型特征时，会使用众数来代替缺失值</li>
+<li>  均值填补会导致数据样本多集中在均值或者众数附近，降低数据样本的方差</li>
+<li>  均值填补不考虑特征之间的相关性</li>
+<li>  基于模型的填补将缺失特征当做目标特征，其余特征作为输入特征，建立分类或者回归模型，预测缺失值</li>
+</ul>
+</li>
+<li>特征编码<ul>
+<li>  特征编码将非数值型特征转换为数值型特征</li>
+<li>  特征编码包括数字编码，one-hot编码和哑变量编码等方式</li>
+<li>  数字编码的缺点是在原始特征的基础上引入了次序关系</li>
+</ul>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AF%BE%E5%A0%82%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag"># 课堂学习笔记</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6%E5%AF%BC%E5%BC%95/" rel="tag"># 数据科学导引</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E9%85%B7%E5%AE%A2/" rel="tag"># 数据酷客</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/15/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E7%BB%84%EF%BC%9A%E7%BC%BA%E5%A4%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E6%AD%A3%E6%95%B0/" rel="prev" title="缺失的第一个整数">
+      <i class="fa fa-chevron-left"></i> 缺失的第一个整数
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E8%80%83%E5%89%8D%E4%BD%9C%E4%B8%9A%E6%95%B4%E7%90%86"><span class="nav-text">一、考前作业整理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E4%B8%89%E6%AC%A1%E4%BD%9C%E4%B8%9A%E6%95%B4%E7%90%86"><span class="nav-text">二、三次作业整理</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="高乾威"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">高乾威</p>
+  <div class="site-description" itemprop="description">这是一个终身学习的时代</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="http://github.com/GaoQianwei" title="GitHub → http:&#x2F;&#x2F;github.com&#x2F;GaoQianwei" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2966807184@qq.com" title="E-Mail → mailto:2966807184@qq.com" rel="noopener" target="_blank">E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xue-wu-zhi-jing-75-22" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xue-wu-zhi-jing-75-22" rel="noopener" target="_blank">知乎</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_45341339" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_45341339" rel="noopener" target="_blank">CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div><div>
+  <canvas id="canvasDiyBlock" style="width:60%;">当前浏览器不支持canvas，请更换浏览器后再试</canvas>
+<script src="/js/custom/clock.js"></script>
+
+</div>
+
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 到 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">高乾威</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<span class="post-meta-divider">|</span>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">全站共 71.7k 字</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

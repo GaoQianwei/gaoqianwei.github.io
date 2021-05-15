@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;对与数组题，有一类题喜欢对数组的子序列做文章，这篇博客便搜集了几道相关的题目。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="子数组相关算法问题">
+<meta property="og:url" content="http://example.com/2021/05/15/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E7%BB%84%EF%BC%9A%E5%AD%90%E6%95%B0%E7%BB%84%E7%9B%B8%E5%85%B3/index.html">
+<meta property="og:site_name" content="学无止境">
+<meta property="og:description" content="&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;对与数组题，有一类题喜欢对数组的子序列做文章，这篇博客便搜集了几道相关的题目。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-15T05:04:18.335Z">
+<meta property="article:modified_time" content="2021-05-15T04:54:20.719Z">
+<meta property="article:author" content="高乾威">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="数组">
+<meta property="article:tag" content="子数组">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/05/15/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E7%BB%84%EF%BC%9A%E5%AD%90%E6%95%B0%E7%BB%84%E7%9B%B8%E5%85%B3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>子数组相关算法问题 | 学无止境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">学无止境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>友链</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/15/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E7%BB%84%EF%BC%9A%E5%AD%90%E6%95%B0%E7%BB%84%E7%9B%B8%E5%85%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="高乾威">
+      <meta itemprop="description" content="这是一个终身学习的时代">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学无止境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          子数组相关算法问题
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-05-15 13:04:18 / 修改时间：12:54:20" itemprop="dateCreated datePublished" datetime="2021-05-15T13:04:18+08:00">2021-05-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/%E6%95%B0%E7%BB%84/" itemprop="url" rel="index"><span itemprop="name">数组</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+            <span class="post-meta-divider">|</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>&ensp;&ensp;&ensp;&ensp;对与数组题，有一类题喜欢对数组的子序列做文章，这篇博客便搜集了几道相关的题目。</p>
+<span id="more"></span>
+
+<h3 id="一、最大子序和"><a href="#一、最大子序和" class="headerlink" title="一、最大子序和"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/maximum-subarray/">一、最大子序和</a></h3><h4 id="1-1题目"><a href="#1-1题目" class="headerlink" title="1.1题目"></a>1.1题目</h4><p>&ensp;&ensp;&ensp;&ensp;给定一个整数数组 <code>nums</code> ，找到一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。</p>
+<p><strong>示例 1：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：nums &#x3D; [-2,1,-3,4,-1,2,1,-5,4]</span><br><span class="line">输出：6</span><br><span class="line">解释：连续子数组 [4,-1,2,1] 的和最大，为 6 。</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 2：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：nums &#x3D; [1]</span><br><span class="line">输出：1</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 3：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：nums &#x3D; [0]</span><br><span class="line">输出：0</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 4：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：nums &#x3D; [-1]</span><br><span class="line">输出：-1</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 5：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：nums &#x3D; [-100000]</span><br><span class="line">输出：-100000</span><br></pre></td></tr></table></figure>
+
+<p><strong>提示：</strong></p>
+<ul>
+<li>  <code>1 &lt;= nums.length &lt;= 3 * 104</code></li>
+<li>  <code>-105 &lt;= nums[i] &lt;= 105</code></li>
+</ul>
+<h4 id="1-2思路与代码："><a href="#1-2思路与代码：" class="headerlink" title="1.2思路与代码："></a>1.2思路与代码：</h4><p>&ensp;&ensp;&ensp;&ensp;很明显是动态规划来解决，<code>dp[i]</code> 用来记载下标 <code>0 ~ i</code> 之间的最大子序和，由于 <code>dp[i]</code> 只与 <code>dp[i - 1]</code> 有关：<code>dp[i] = max&#123;dp[i - 1] + nums[i], nums[i]&#125;</code>。</p>
+<p>&ensp;&ensp;&ensp;&ensp;所以无需数组 <code>dp[]</code>，用一个变量 <code>sum</code> 记载即可，另有 <code>ans</code> 记录最大值。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">maxSubArray</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> ans = nums[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">const</span> <span class="keyword">int</span> &amp;i : nums)</span><br><span class="line">        &#123;</span><br><span class="line">            sum = sum &gt; <span class="number">0</span> ? sum + i : i; </span><br><span class="line">            ans = ans &gt; sum ? ans : sum;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="二、乘积最大子数组"><a href="#二、乘积最大子数组" class="headerlink" title="二、乘积最大子数组"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/maximum-product-subarray/">二、乘积最大子数组</a></h3><h4 id="2-1题目"><a href="#2-1题目" class="headerlink" title="2.1题目"></a>2.1题目</h4><p>&ensp;&ensp;&ensp;&ensp;你一个整数数组 <code>nums</code> ，请你找出数组中乘积最大的连续子数组（该子数组中至少包含一个数字），并返回该子数组所对应的乘积。</p>
+<p><strong>示例 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入: [2,3,-2,4]</span><br><span class="line">输出: 6</span><br><span class="line">解释: 子数组 [2,3] 有最大乘积 6。</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入: [-2,0,-1]</span><br><span class="line">输出: 0</span><br><span class="line">解释: 结果不能为 2, 因为 [-2,-1] 不是子数组。</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2思路与代码"><a href="#2-2思路与代码" class="headerlink" title="2.2思路与代码"></a>2.2思路与代码</h4><p>&ensp;&ensp;&ensp;&ensp;与最大子序和类似，本题也要用动态规划。</p>
+<p>&ensp;&ensp;&ensp;&ensp;首先假设存在某个最大乘积，然后对数组遍历，在经过每个元素的时候，有以下四种情况：</p>
+<ul>
+<li>如果该元素为正数：<ul>
+<li>  如果到上一个元素为止的最大乘积也是正数，那么直接乘上就好了，同样的最大乘积也会变得更大</li>
+<li>  如果到上一个元素为止的最大乘积是负数，那么最大乘积就会变成该元素本身，且连续性被断掉</li>
+</ul>
+</li>
+<li>如果该元素为负数：<ul>
+<li>  如果到上一个元素为止的最大乘积也是负数，那么直接乘上就好了，同样的最大乘积也会变得更大</li>
+<li>  如果到上一个元素为止的最大乘积是正数，那么最大乘积就会不变，且连续性被断掉</li>
+</ul>
+</li>
+</ul>
+<p>&ensp;&ensp;&ensp;&ensp;以上四种情况中说到的最大乘积都是临时最大乘积，每遍历新的元素都需要进行比较来确定真正的最大乘积。</p>
+<p>&ensp;&ensp;&ensp;&ensp;如果细心的话就可以发现，如果要得到乘以当前元素以后的最大乘积，需要记录最大乘积，也要记录最小乘积，因为最小值可能翻身变最大值。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">maxProduct</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> minValue = <span class="number">1</span>, maxValue = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">int</span> ans = INT_MIN;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> it = nums.<span class="built_in">begin</span>(); it != nums.<span class="built_in">end</span>(); ++it)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (*it &lt; <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">swap</span>(minValue, maxValue);</span><br><span class="line">            &#125;</span><br><span class="line">            maxValue = <span class="built_in">max</span>((*it) * maxValue, *it);</span><br><span class="line">            minValue = <span class="built_in">min</span>((*it) * minValue, *it);</span><br><span class="line"></span><br><span class="line">            ans = ans &gt; maxValue ? ans : maxValue;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="三、最短无序连续子数组"><a href="#三、最短无序连续子数组" class="headerlink" title="三、最短无序连续子数组"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/">三、最短无序连续子数组</a></h3><h4 id="3-1题目"><a href="#3-1题目" class="headerlink" title="3.1题目"></a>3.1题目</h4><p>&ensp;&ensp;&ensp;&ensp;给你一个整数数组 <code>nums</code> ，你需要找出一个 <strong>连续子数组</strong> ，如果对这个子数组进行升序排序，那么整个数组都会变为升序排序。</p>
+<p>&ensp;&ensp;&ensp;&ensp;请你找出符合题意的 <strong>最短</strong> 子数组，并输出它的长度。</p>
+<p><strong>示例 1：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：nums &#x3D; [2,6,4,8,10,9,15]</span><br><span class="line">输出：5</span><br><span class="line">解释：你只需要对 [6, 4, 8, 10, 9] 进行升序排序，那么整个表都会变为升序排序。</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 2：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：nums &#x3D; [1,2,3,4]</span><br><span class="line">输出：0</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 3：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：nums &#x3D; [1]</span><br><span class="line">输出：0</span><br></pre></td></tr></table></figure>
+
+<p><strong>提示：</strong></p>
+<ul>
+<li>  <code>1 &lt;= nums.length &lt;= 104</code></li>
+<li>  <code>-105 &lt;= nums[i] &lt;= 105</code></li>
+</ul>
+<p> <strong>进阶：</strong>你可以设计一个时间复杂度为 <code>O(n)</code> 的解决方案吗？</p>
+<h4 id="3-2思路与代码"><a href="#3-2思路与代码" class="headerlink" title="3.2思路与代码"></a>3.2思路与代码</h4><p>&ensp;&ensp;&ensp;&ensp;将数组拷贝一份并进行排序，然后我们比较原数组和排序后的数组的元素来决定最左边和最右边不匹配的元素。它们之间的子数组就是要求的最短无序子数组。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">findUnsortedSubarray</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">sortedNums</span><span class="params">(nums)</span></span>;</span><br><span class="line">        <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="built_in">sort</span>(sortedNums.<span class="built_in">begin</span>(), sortedNums.<span class="built_in">end</span>());</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.<span class="built_in">size</span>(); ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[i] != sortedNums[i])</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            ++count;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (count == nums.<span class="built_in">size</span>())</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = nums.<span class="built_in">size</span>() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; --i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[i] != sortedNums[i])</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            ++count;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> nums.<span class="built_in">size</span>() - count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+              <a href="/tags/%E6%95%B0%E7%BB%84/" rel="tag"># 数组</a>
+              <a href="/tags/%E5%AD%90%E6%95%B0%E7%BB%84/" rel="tag"># 子数组</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/15/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E7%BB%84%EF%BC%9A%E5%85%83%E7%B4%A0%E4%B8%8E%E4%B8%8B%E6%A0%87/" rel="prev" title="数组元素与下标">
+      <i class="fa fa-chevron-left"></i> 数组元素与下标
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/05/15/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E7%BB%84%EF%BC%9A%E9%99%A4%E8%87%AA%E8%BA%AB%E4%BB%A5%E5%A4%96%E6%95%B0%E7%BB%84%E7%9A%84%E4%B9%98%E7%A7%AF/" rel="next" title="除自身以外数组的乘积">
+      除自身以外数组的乘积 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%9C%80%E5%A4%A7%E5%AD%90%E5%BA%8F%E5%92%8C"><span class="nav-text">一、最大子序和</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1%E9%A2%98%E7%9B%AE"><span class="nav-text">1.1题目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2%E6%80%9D%E8%B7%AF%E4%B8%8E%E4%BB%A3%E7%A0%81%EF%BC%9A"><span class="nav-text">1.2思路与代码：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E4%B9%98%E7%A7%AF%E6%9C%80%E5%A4%A7%E5%AD%90%E6%95%B0%E7%BB%84"><span class="nav-text">二、乘积最大子数组</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1%E9%A2%98%E7%9B%AE"><span class="nav-text">2.1题目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2%E6%80%9D%E8%B7%AF%E4%B8%8E%E4%BB%A3%E7%A0%81"><span class="nav-text">2.2思路与代码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E6%9C%80%E7%9F%AD%E6%97%A0%E5%BA%8F%E8%BF%9E%E7%BB%AD%E5%AD%90%E6%95%B0%E7%BB%84"><span class="nav-text">三、最短无序连续子数组</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1%E9%A2%98%E7%9B%AE"><span class="nav-text">3.1题目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2%E6%80%9D%E8%B7%AF%E4%B8%8E%E4%BB%A3%E7%A0%81"><span class="nav-text">3.2思路与代码</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="高乾威"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">高乾威</p>
+  <div class="site-description" itemprop="description">这是一个终身学习的时代</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="http://github.com/GaoQianwei" title="GitHub → http:&#x2F;&#x2F;github.com&#x2F;GaoQianwei" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2966807184@qq.com" title="E-Mail → mailto:2966807184@qq.com" rel="noopener" target="_blank">E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xue-wu-zhi-jing-75-22" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xue-wu-zhi-jing-75-22" rel="noopener" target="_blank">知乎</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_45341339" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_45341339" rel="noopener" target="_blank">CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div><div>
+  <canvas id="canvasDiyBlock" style="width:60%;">当前浏览器不支持canvas，请更换浏览器后再试</canvas>
+<script src="/js/custom/clock.js"></script>
+
+</div>
+
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 到 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">高乾威</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<span class="post-meta-divider">|</span>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">全站共 68.7k 字</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一、简介&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;哈希表（Hash table，也叫散列表），是根据关键字而直接进行访问的数据结构。也就是说，它通过把关键字映射到表中一个位置来访问记录，以加快查找的速度。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="散列表总结">
+<meta property="og:url" content="http://example.com/2021/05/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E6%95%A3%E5%88%97%E8%A1%A8/index.html">
+<meta property="og:site_name" content="学无止境">
+<meta property="og:description" content="一、简介&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;哈希表（Hash table，也叫散列表），是根据关键字而直接进行访问的数据结构。也就是说，它通过把关键字映射到表中一个位置来访问记录，以加快查找的速度。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/05/22/Typora%E5%9B%BE%E7%89%87/image-20210522011156229.png">
+<meta property="og:image" content="http://example.com/2021/05/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E6%95%A3%E5%88%97%E8%A1%A8/4.png">
+<meta property="og:image" content="http://example.com/2021/05/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E6%95%A3%E5%88%97%E8%A1%A8/1.png">
+<meta property="og:image" content="http://example.com/2021/05/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E6%95%A3%E5%88%97%E8%A1%A8/2.png">
+<meta property="og:image" content="http://example.com/2021/05/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E6%95%A3%E5%88%97%E8%A1%A8/3.png">
+<meta property="article:published_time" content="2021-05-22T09:10:41.479Z">
+<meta property="article:modified_time" content="2021-05-22T09:17:59.305Z">
+<meta property="article:author" content="高乾威">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="散列表">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/05/22/Typora%E5%9B%BE%E7%89%87/image-20210522011156229.png">
+
+<link rel="canonical" href="http://example.com/2021/05/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E6%95%A3%E5%88%97%E8%A1%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>散列表总结 | 学无止境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">学无止境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>友链</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E6%95%A3%E5%88%97%E8%A1%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="高乾威">
+      <meta itemprop="description" content="报我楼成秋望月，把君诗读夜回灯">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学无止境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          散列表总结
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-05-22 17:10:41 / 修改时间：17:17:59" itemprop="dateCreated datePublished" datetime="2021-05-22T17:10:41+08:00">2021-05-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">数据结构</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+            <span class="post-meta-divider">|</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h3><p>&ensp;&ensp;&ensp;&ensp;<code>哈希表</code>（<code>Hash table</code>，也叫<code>散列表</code>），是根据关键字而直接进行访问的数据结构。也就是说，它通过把关键字映射到表中一个位置来访问记录，以加快查找的速度。</p>
+<span id="more"></span>
+
+<p>&ensp;&ensp;&ensp;&ensp;通常，我们把这个关键字称为 <code>Key</code>，把对应的记录称为 <code>Value</code>，所以也可以说是通过 <code>Key</code> 访问一个映射表来得到 <code>Value</code> 的地址。而这个<code>映射</code>，也叫作<code>散列函数</code>或者<code>哈希函数</code>，存放记录的数组叫作<code>散列表</code>。</p>
+<p>&ensp;&ensp;&ensp;&ensp;我们把表的大小记作 <code>Table Size</code>，并将其理解为散列数据结构的一部分而不仅仅是浮动于全局的某个变量。</p>
+<p>&ensp;&ensp;&ensp;&ensp;每个关键字被映射到从<code>0</code>到 <code>Tablesize-1</code>这个范围中的某个数，并且被放到适当的单元中。这个映射就叫作<code>散列函数</code>(hash function)，理想情况下它应该算起来简单并且应该保证任何两个不同的关键字都要映射到不同的单元。但是，这显然是不可能的，因为单元的数目是有限的，而关键字实际上是用不完的。因此，我们寻找一个散列函数,该函数要在单元之间均匀地分配关键字。</p>
+<p>&ensp;&ensp;&ensp;&ensp;这就是散列的基本想法。剩下的问题就是要选择一个函数，决定当两个关键字散列到同个值的时候（这叫作<code>冲突</code>（collision））应该做什么以及如何确定散列表的大小。</p>
+<blockquote>
+<p>优点：一对一的查找效率很高；</p>
+<p>缺点：一个关键字可能对应多个散列地址；需要查找一个范围时，效果不好。</p>
+<p>散列冲突：不同的关键字经过散列函数的计算得到了相同的散列地址。</p>
+<p>好的散列函数=计算简单+分布均匀（计算得到的散列地址分布均匀）</p>
+<p>哈希表是种数据结构，它可以提供快速的插入操作和查找操作。</p>
+<p>优缺点</p>
+<p>优点：不论哈希表中有多少数据，查找、插入、删除（有时包括删除）只需要接近常量的时间即0(1）的时间级。实际上，这只需要几条机器指令。</p>
+<p>哈希表运算得非常快，在计算机程序中，如果需要在一秒种内查找上千条记录通常使用哈希表（例如拼写检查器)哈希表的速度明显比树快，树的操作通常需要O(N)的时间级。哈希表不仅速度快，编程实现也相对容易。</p>
+<p>如果不需要有序遍历数据，并且可以提前预测数据量的大小。那么哈希表在速度和易用性方面是无与伦比的。</p>
+<p>缺点：它是基于数组的，数组创建后难于扩展，某些哈希表被基本填满时，性能下降得非常严重，所以程序员必须要清楚表中将要存储多少数据（或者准备好定期地把数据转移到更大的哈希表中，这是个费时的过程）。</p>
+</blockquote>
+<h3 id="二、散列函数"><a href="#二、散列函数" class="headerlink" title="二、散列函数"></a>二、散列函数</h3><p>&ensp;&ensp;&ensp;&ensp;如果输入的关键字是<code>整数</code>，则一般合理的方法就是直接返回 Key mod Tablesize，除非<code>Key</code>巧具有某些不理想的性质。在这种情况下，散列函数的选择需要仔细地考虑。</p>
+<p>&ensp;&ensp;&ensp;&ensp;若表的大小是10而关键字都以0为个位，则此时上述标准的散列函数就是一个坏的选择。其原因是（………………）。而为了避免上面那样的情况，好的办法通常是<strong>保证表的大小是素数</strong>。当输入的关键字是随机整数时，这个函数此时不仅算起来非常简单而且关键字的分配也很均匀。</p>
+<p>&ensp;&ensp;&ensp;&ensp;通常，关键字是字符串。在这种情形下,散列函数需要仔细选择。下面介绍《数据结构与算法分析》中的三种方法。</p>
+<p>&ensp;&ensp;&ensp;&ensp;第一种：把字符串中字符的<code>ASCI</code>码值加起来。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">hash</span><span class="params">(<span class="keyword">const</span> string key, <span class="keyword">int</span> tablesize)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> hashval = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">char</span> ch : key)</span><br><span class="line">         hashva1 += Ch;</span><br><span class="line">    <span class="keyword">return</span> hashval % tablesize;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;&ensp;这个散列函数实现起来简单而且能够很快地算出答案。不过，如果表过大，则函数将不会很好地分配关键字。例如，设 <code>Tablesize = 10007</code>(10007是<code>素数</code>)，并设所有的关键字均为 <code>8</code> 个或更少个字符长。由于<code>ASCI</code>字符的值最多是<code>127</code>，因此散列函数只能假设值在 <code>0</code> 和 <code>1016</code> 之间，其 <code>1016</code> 为 <code>127*8</code>。显然这不是一种合理的分配。</p>
+<p>&ensp;&ensp;&ensp;&ensp;第二种：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">hash</span><span class="params">(<span class="keyword">const</span> string key, <span class="keyword">int</span> tablesize)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (key[<span class="number">0</span>] + <span class="number">27</span> * key[<span class="number">1</span>] + <span class="number">729</span> * key[<span class="number">2</span>]) % tablesize;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;这个散列函数假设<code>Key</code>至少有 3 个字符。值 27 英文字母表的字母外加一个空格的个数，729是<code>27^2</code>。该函数只考査前 3 个字符，但是，假如它们是随机的，而表的大小像前面那样还是10007，那么我们就会得到一个合理的均衡分布。但英文不是随机的，虽然3个字符(忽略空格)有<code>26^3=17576</code>种可能的组合，但查验合理的足够大的联机词典却揭示：3个字母的不同组合数实际只有2851。即使这些组合没有冲突,也不过只有表的28%被真正散列到。<strong>因此，虽然很容易计算，但是，如果散列表就算大小适当，那么这个函数也还是不合适的。</strong></p>
+<p>&ensp;&ensp;&ensp;&ensp;第三种：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 字符串对象的散列例程</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">hash</span><span class="params">(<span class="keyword">const</span> string &amp; key, <span class="keyword">int</span> tablesize)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> hashval = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">char</span> ch : key)</span><br><span class="line">      hashval = <span class="number">37</span> * hashval + ch;</span><br><span class="line">    <span class="keyword">return</span> hashval % tablesize</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;&ensp;这个散列函数涉及到关键字中的所有字符，并且一般可以分布得很好(它计算<img src="/2021/05/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E6%95%A3%E5%88%97%E8%A1%A8/../Typora%E5%9B%BE%E7%89%87/image-20210522011156229.png" alt="image-20210522011156229" style="zoom:50%;">,并将结果限制在适当的范围)。程序根据 Horner 法则计算一个(37的)多项式函数。例如，计算h<del>k</del> = k<del>0</del> + 37k<del>1</del> + 37^2^k<del>2</del>的另一种方式是借助于公式 h<del>k</del> = ((k<del>2</del>) * 37 + k<del>1</del>) * 37 + k<del>0</del> 进行。 Horner 法则将其扩展到用于 n 次多项式。<br>&ensp;&ensp;&ensp;&ensp;这个散列函数利用到以下事实：允许溢出，同时用到  unsigned int 型量以避免引进负数。</p>
+<p>&ensp;&ensp;&ensp;&ensp;这个散列函数就表的分布而言未必是最好的,但是确实具有极其简单的优点而且速度也很快。如果关键字特别长，那么该散列函数计算起来将会花费过多的时间，在这种情况下通常的经验是不使用所有的字符。此时关键字的长度和性质将影响选择。例如,关键字可能是完整的街道地址，散列函数可以包括街道地址的几个字符，也许还有城市名和邮政区码的儿个字符。有些程序设计人员通过只使用奇数位置上的字符来实现他们的散列函数，这里有这么一层想法：用计算散列函数节省下的时间来补偿轻微地不均匀分布的函数。</p>
+<blockquote>
+<p>哈希函数比较常用的实现方法比较多，通常需要考虑几个因素：关键字的长度、哈希表的大小、关键字的分布情况、记录的查找频率，等等。</p>
+<p>下面简单介绍几种哈希函数。</p>
+<ul>
+<li>  直接寻址法：取关键字或关键字的某个线性函数值为散列地址。</li>
+<li>  数字分析法：通过对数据的分析，发现数据中冲突较少的部分，并构造散列地址。例如同学们的学号，通常同一届学生的学号，其中前面的部分差别不太大，所以用后面的部分来构造散列地址。</li>
+<li>  平方取中法：当无法确定关键字里哪几位的分布相对比较均匀时，可以先求出关键字的平方值，然后按需要取平方值的中间几位作为散列地址。这是因为：计算平方之后的中间几位和关键字中的每一位都相关，所以不同的关键字会以较高的概率产生不同的散列地址。</li>
+<li>  取随机数法：使用一个随机函数，取关键字的随机值作为散列地址，这种方式通常用于关键字长度不同的场合。</li>
+<li>  除留取余法：取关键字被某个不大于散列表的表长 n 的数 m 除后所得的余数 p 为散列地址。这种方式也可以在用过其他方法后再使用。该函数对 m 的选择很重要，一般取素数或者直接用 n。</li>
+</ul>
+</blockquote>
+<h3 id="三、分离链接法"><a href="#三、分离链接法" class="headerlink" title="三、分离链接法"></a>三、分离链接法</h3><p>&ensp;&ensp;&ensp;&ensp;解决冲突的第一种方法通常叫作分离链接法( separate chaining)，其做法是将散列到同个值的所有元素保留到一个链表中。哈希表有多种不同的实现方法，这是最常用的一种方法，我们可以理解为“链表的数组”。</p>
+<img src="/2021/05/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E6%95%A3%E5%88%97%E8%A1%A8/4.png" alt="image-20210522014355022">
+
+<p>&ensp;&ensp;&ensp;散列表存储一个链表数组,它们在构造函数中被指定。</p>
+<p>&ensp;&ensp;&ensp;左边很明显是个数组，数组的每个成员包括一个指针，指向一个链表的头，当然这个链表可能为空，也可能元素很多。我们根据元素的一些特征把元素分配到不同的链表中去，也是根据这些特征，找到正确的链表，再从链表中找出这个元素。</p>
+<p>&ensp;&ensp;&ensp;为执行一次 <code>查询</code>，我们使用散列函数来确定究竟遍历哪个链表。然后再在适当的链表中执行一次查找。为执行 Insert，我们检查相应的链表看看该元素是否已经处在相应的位置(如果允许插入重复元，那么通常要留出一个额外的数据成员，当出现匹配事件时这个数据成员增1)。如果这个元素是个新的元素，那么它将被插入到链表的前端，这不仅因为方便，而且还因为常常发生这样的事实：新近插入的元素最有可能不久又被访问。</p>
+<blockquote>
+<p>冲突的处理方式还也有很多，下面介绍几种。</p>
+<ul>
+<li>  开放地址法（也叫开放寻址法）：实际上就是当需要存储值时，对Key哈希之后，发现这个地址已经有值了，这时该怎么办？不能放在这个地址，不然之前的映射会被覆盖。这时对计算出来的地址进行一个探测再哈希，比如往后移动一个地址，如果没人占用，就用这个地址。如果超过最大长度，则可以对总长度取余。这里移动的地址是产生冲突时的增列序量。</li>
+<li>  再哈希法：在产生冲突之后，使用关键字的其他部分继续计算地址，如果还是有冲突，则继续使用其他部分再计算地址。这种方式的缺点是时间增加了。</li>
+<li>  建立一个公共溢出区：这种方式是建立一个公共溢出区，当地址存在冲突时，把新的地址放在公共溢出区里。</li>
+</ul>
+</blockquote>
+<h3 id="四、不用链表的散列表"><a href="#四、不用链表的散列表" class="headerlink" title="四、不用链表的散列表"></a>四、不用链表的散列表</h3><p>&ensp;&ensp;&ensp;分离链接散列算法的缺点是使用一些链表。由于给新单元分配地址需要时间(特别是在其他语言中),因此这就导致算法的速度有些减慢，同时算法实际上还要求对第二种数据结构实现。另外一种不用链表解决冲突的方法是尝试另外一些单元，直到找出空的单元为止。一般地，单元 h<del>0</del>(x)，h<del>1</del>(x)，h<del>2</del>(x)，…相继被试选,其中 h<del>i</del>(x) = ( hash(x) + f(i)）mod TableSize，且 f(0) = 0。函数f是冲突解决方法。因为所有的数据都要置入表内，所以这种解决方案所要的表要比分离链接散列的表大。一般说来，对于不使用分离链接的散列表来说，其装填子应该低于 λ=0.5。我们把这样的表叫作探测散列表( probing hash table)。</p>
+<ol>
+<li>线性探测法<br> 在线性探测法中,函数 f 是 i 的线性函数,典型的情形是 f(i) = i。这相当于相继探测逐个单元(必要时可以回绕)以查找出一个空单元。</li>
+<li>平方探测法<br> 平方探测是消除线性探测中一次聚集问题的冲突解决方法。平方探测是我们通常预期冲突函数为二次的探测方法。流行的选择是 f(i) = i^2^。</li>
+<li>双散列<br> 我们将要考察的最后一个冲突解决方案是双散列( double hashing)。对于双散列,一种流行的选择是 f(i) = i * hash<del>2</del>(x)。这个公式是说，我们将第二个散列函数应用到 x  在距离hash<del>2</del>(x)，2hash<del>2</del>(x),…等处探测。hash<del>2</del>(x)选择得不好将会是灾难性的。</li>
+</ol>
+<h3 id="五、再散列"><a href="#五、再散列" class="headerlink" title="五、再散列"></a>五、再散列</h3><p>&ensp;&ensp;&ensp;对于使用平方探测的开放定址散列法( open addressing hashing)，如果散列表填得太满，那么操作的运行时间将消耗过长，且插入操作可能失败。这可能发生在有太多的删除和插入的场合。此时，一种解决方法是建立另外一个大约两倍大的表(而且使用一个相关的新散列函数)，扫描整个原始散列表,计算每个(未删除的）元素的新散列值并将其插入到新表中。</p>
+<p>&ensp;&ensp;&ensp;再散列可以用平方探测以多种方法实现。一种做法是只要表满到一半就再散列。另一种极端的做法是只有当插入失败时才再散列。第三种方法即所谓的途中策略( middle-of-the-road strategy)：当散列表到达某一特定的装填因子时进行再散列。由于随着装填因子的增长散列表的性能确实在下降，因此，以好的截止手段实现的第三种策略可能是最好的策略。</p>
+<p>例：</p>
+<ul>
+<li><strong>1）</strong>将元素13， 15， 24 和 6 插入到大小为 7 的开放定址散列表中：散列函数是 h（X） = X mod 7；设使用线性探测方法解决冲突问题， 插入结果得到的散列表表示在下图中：<br>  ![]<img src="/2021/05/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E6%95%A3%E5%88%97%E8%A1%A8/1.png"></li>
+<li><strong>2）</strong>如果将 23 插入表中， 那么从<strong>下图</strong>可以看到， 插入后的表将有超过70% 的单元是满的，因为表填得过满， 所以我们建立一个新表；该表的大小为 17， 因为17是原表大小两倍后的第一个素数；新的散列函数为 h(X) = X mod 17；扫描原来的表， 并将元素 6, 15, 23 , 24 以及13 插入到新表中， 如<strong>下图</strong>所示：<br>  ![]<img src="/2021/05/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E6%95%A3%E5%88%97%E8%A1%A8/2.png"><br>  ![]<img src="/2021/05/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E6%95%A3%E5%88%97%E8%A1%A8/3.png"></li>
+</ul>
+<h3 id="六、散列表的适用场景"><a href="#六、散列表的适用场景" class="headerlink" title="六、散列表的适用场景"></a>六、散列表的适用场景</h3><p>   根据散列表的特点可以想到，散列表比较适合无序、需要快速访问的情况。</p>
+<p><strong>缓存</strong></p>
+<p>   通常我们开发程序时，对一些常用的信息会做缓存，用的就是散列表，比如我们要缓存用户的信息，一般用户的信息都会有唯一标识的字段，比如 ID。这时做缓存，可以把 ID 作为 Key，而 Value 用来存储用户的详细信息，这里的 Value 通常是一个对象（高级语言中的术语，前面提到过），包含用户的一些关键字段，比如名字、年龄等。</p>
+<p>   在我们每次需要获取一个用户的信息时，就不用与数据库这类的本地磁盘存储交互了（其实在大多数时候，数据库可能与我们的服务不在一台机器上，还会有相应的网络性能损耗），可以直接从内存中得到结果。这样不仅能够快速获取数据，也能够减轻数据库的压力。</p>
+<p>   有时我们要查询一些数据，这些数据与其他数据是有关联的，如果我们进行数据库的关联查询，那么效率会非常低，这时可以分为两部分进行查询：将被关联的部分放入散列表中，只需要遍历一遍；对于另一部分数据，则通过程序手动关联，速度会很快，并且由于我们是通过散列表的 Key、Value 的对应关系对应数据的，所以性能也会比较好。</p>
+<p><strong>快速查找</strong></p>
+<p>   这里说的查找，不是排序，而是在集合中找出是否存在指定的元素。</p>
+<p>   这样的场景很多，比如我们要在指定的用户列表中查找是否存在指定的用户，这时就可以使用散列表了。在这个场景下使用的散列表其实是在上面提到的 Set 类型，实际上不需要 Value 这个值。</p>
+<p>   还有一个场景，我们一般对网站的操作会有个IP地址黑名单，我们认为某些 IP 有大量的非法操作，于是封锁了这些 IP 对我们网站的访问。这个 IP 是如何存储的呢？就是用的散列表。当一个访问行为发送过来时，我们会获取其 IP，判断其是否存在于黑名单中，如果存在，则禁止其访问。这种情况也是使用的 Set。</p>
+<p>   当然，对于上面说的两个例子，用列表也是可以实现的，但是访问速度会受到很大的影响，尤其是列表越来越长时，查找速度会很慢。散列表则不会。</p>
+<p>参考：《数据结构与算法分析 C++描述版》</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/duan19920101/article/details/51579136">(4条消息) 哈希表（散列表）原理详解_那年聪聪-CSDN博客_哈希表</a></p>
+<p><a target="_blank" rel="noopener" href="http://data.biancheng.net/view/107.html">散列表（哈希表）及其存储结构和特点详解 (biancheng.net)</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+              <a href="/tags/%E6%95%A3%E5%88%97%E8%A1%A8/" rel="tag"># 散列表</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/22/Hadoop%EF%BC%9AHadoop%E7%AE%80%E4%BB%8B/" rel="prev" title="Hadoop简介">
+      <i class="fa fa-chevron-left"></i> Hadoop简介
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%AE%80%E4%BB%8B"><span class="nav-text">一、简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%95%A3%E5%88%97%E5%87%BD%E6%95%B0"><span class="nav-text">二、散列函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%88%86%E7%A6%BB%E9%93%BE%E6%8E%A5%E6%B3%95"><span class="nav-text">三、分离链接法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E4%B8%8D%E7%94%A8%E9%93%BE%E8%A1%A8%E7%9A%84%E6%95%A3%E5%88%97%E8%A1%A8"><span class="nav-text">四、不用链表的散列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%86%8D%E6%95%A3%E5%88%97"><span class="nav-text">五、再散列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E6%95%A3%E5%88%97%E8%A1%A8%E7%9A%84%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-text">六、散列表的适用场景</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="高乾威"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">高乾威</p>
+  <div class="site-description" itemprop="description">报我楼成秋望月，把君诗读夜回灯</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">64</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="http://github.com/GaoQianwei" title="GitHub → http:&#x2F;&#x2F;github.com&#x2F;GaoQianwei" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2966807184@qq.com" title="E-Mail → mailto:2966807184@qq.com" rel="noopener" target="_blank">E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xue-wu-zhi-jing-75-22" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xue-wu-zhi-jing-75-22" rel="noopener" target="_blank">知乎</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_45341339" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_45341339" rel="noopener" target="_blank">CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div><div>
+  <canvas id="canvasDiyBlock" style="width:60%;">当前浏览器不支持canvas，请更换浏览器后再试</canvas>
+<script src="/js/custom/clock.js"></script>
+
+</div>
+
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 到 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">高乾威</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<span class="post-meta-divider">|</span>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">全站共 84.4k 字</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

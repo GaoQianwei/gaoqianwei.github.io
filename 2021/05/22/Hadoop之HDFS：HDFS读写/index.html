@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="&amp;ensp;&amp;ensp;&amp;ensp;介绍HDFS读写流程相关的知识和操作，这是数据研发面试时的一个重点。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HDFS读写">
+<meta property="og:url" content="http://example.com/2021/05/22/Hadoop%E4%B9%8BHDFS%EF%BC%9AHDFS%E8%AF%BB%E5%86%99/index.html">
+<meta property="og:site_name" content="学无止境">
+<meta property="og:description" content="&amp;ensp;&amp;ensp;&amp;ensp;介绍HDFS读写流程相关的知识和操作，这是数据研发面试时的一个重点。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/05/22/Hadoop%E4%B9%8BHDFS%EF%BC%9AHDFS%E8%AF%BB%E5%86%99/1.png">
+<meta property="og:image" content="http://example.com/2021/05/22/Hadoop%E4%B9%8BHDFS%EF%BC%9AHDFS%E8%AF%BB%E5%86%99/2.png">
+<meta property="og:image" content="http://example.com/2021/05/22/Hadoop%E4%B9%8BHDFS%EF%BC%9AHDFS%E8%AF%BB%E5%86%99/3.png">
+<meta property="og:image" content="http://example.com/2021/05/22/Hadoop%E4%B9%8BHDFS%EF%BC%9AHDFS%E8%AF%BB%E5%86%99/4.png">
+<meta property="article:published_time" content="2021-05-22T08:19:27.151Z">
+<meta property="article:modified_time" content="2021-05-22T08:27:14.033Z">
+<meta property="article:author" content="高乾威">
+<meta property="article:tag" content="数据研发">
+<meta property="article:tag" content="Hadoop">
+<meta property="article:tag" content="HDFS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/05/22/Hadoop%E4%B9%8BHDFS%EF%BC%9AHDFS%E8%AF%BB%E5%86%99/1.png">
+
+<link rel="canonical" href="http://example.com/2021/05/22/Hadoop%E4%B9%8BHDFS%EF%BC%9AHDFS%E8%AF%BB%E5%86%99/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>HDFS读写 | 学无止境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">学无止境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>友链</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/22/Hadoop%E4%B9%8BHDFS%EF%BC%9AHDFS%E8%AF%BB%E5%86%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="高乾威">
+      <meta itemprop="description" content="这是一个终身学习的时代">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学无止境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          HDFS读写
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-05-22 16:19:27 / 修改时间：16:27:14" itemprop="dateCreated datePublished" datetime="2021-05-22T16:19:27+08:00">2021-05-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%A0%94%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">数据研发</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%A0%94%E5%8F%91/Hadoop/" itemprop="url" rel="index"><span itemprop="name">Hadoop</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%A0%94%E5%8F%91/Hadoop/HDFS/" itemprop="url" rel="index"><span itemprop="name">HDFS</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+            <span class="post-meta-divider">|</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>&ensp;&ensp;&ensp;介绍HDFS读写流程相关的知识和操作，这是数据研发面试时的一个重点。</p>
+<span id="more"></span>
+
+<h3 id="一、-机架感知"><a href="#一、-机架感知" class="headerlink" title="一、 机架感知"></a>一、 机架感知</h3><h4 id="1-1-设计机架感知的目的（副本存储节点选择）"><a href="#1-1-设计机架感知的目的（副本存储节点选择）" class="headerlink" title="1.1 设计机架感知的目的（副本存储节点选择）"></a>1.1 设计机架感知的目的（副本存储节点选择）</h4><p>&ensp;&ensp;&ensp;&ensp;机架感知的设计，考虑到两个方面：</p>
+<ol>
+<li> 不同节点之间的通信，希望在同一<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/52578218">机架</a>内进行（<code>Hadoop</code>集群会分布在很多机架上），而不是跨机架；</li>
+<li> 为了提高容错能力，<code>NameNode</code> （名称节点）会尽可能把 数据块的副本 放在多个机架上。</li>
+</ol>
+<p>&ensp;&ensp;&ensp;&ensp;官方说明 <a target="_blank" rel="noopener" href="http://hadoop.apache.org/docs/r3.1.3/hadoop-project-dist/hadoop-hdfs/HdfsDesign.html#Data_Replication">http://hadoop.apache.org/docs/r3.1.3/hadoop-project-dist/hadoop-hdfs/HdfsDesign.html#Data_Replication</a></p>
+<h4 id="1-2-网络拓扑-节点距离计算"><a href="#1-2-网络拓扑-节点距离计算" class="headerlink" title="1.2 网络拓扑-节点距离计算"></a>1.2 网络拓扑-节点距离计算</h4><h5 id="1-2-1-网络拓扑图介绍"><a href="#1-2-1-网络拓扑图介绍" class="headerlink" title="1.2.1 网络拓扑图介绍"></a>1.2.1 网络拓扑图介绍</h5><p>&ensp;&ensp;<code>&amp;ensp;&amp;ensp;DataNode</code> 的<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/267710797#:~:text=%E7%BD%91%E7%BB%9C%E6%8B%93%E6%89%91%E6%98%AF%E7%BD%91%E7%BB%9C%E5%BD%A2%E7%8A%B6,%E4%BB%A5%E5%8F%8A%E6%B7%B7%E5%90%88%E5%9E%8B%E7%BB%93%E6%9E%84%E7%AD%89%E3%80%82">网络拓扑</a>图如下：</p>
+<p><img src="/2021/05/22/Hadoop%E4%B9%8BHDFS%EF%BC%9AHDFS%E8%AF%BB%E5%86%99/1.png" alt="image-20210520201704429"></p>
+<h5 id="1-2-2-功能分析"><a href="#1-2-2-功能分析" class="headerlink" title="1.2.2 功能分析"></a>1.2.2 功能分析</h5><p>&ensp;&ensp;&ensp;&ensp;默认情况下，<code>HDFS </code>不能 自动判断 集群中各个 <code>DataNode</code> 的网络拓扑情况，集群默认都处在同一个机架名为 <code>/default-rack</code>的机架上（在这种情况下，任何一台 <code>DataNode</code> 机器，不管在物理上是否是属于同一个机架，都会被认为是在同一个机架下）。</p>
+<p>&ensp;&ensp;&ensp;&ensp;通常，我们通过外在脚本实现机架感知，需要配置 <code>net.topology.script.file.name</code>属性（属性值一般是一个可执行脚本文件的路径）。脚本接收一个值，再输出一个值（一般都是接收 IP地址 ，输出这个地址所对应的 机架信息 ）。</p>
+<h3 id="二、-副本冗余存储策略"><a href="#二、-副本冗余存储策略" class="headerlink" title="二、 副本冗余存储策略"></a>二、 副本冗余存储策略</h3><p>&ensp;&ensp;&ensp;&ensp;HDFS 上的文件对应的数据块保存有多个副本（<strong>默认保存3个副本</strong>），且提供容错机制 ，副本丢失或宕机（即死机）时自动恢复。</p>
+<h4 id="2-1-策略的介绍"><a href="#2-1-策略的介绍" class="headerlink" title="2.1 策略的介绍"></a>2.1 策略的介绍</h4><p>&ensp;&ensp;&ensp;&ensp;下面，以保存 3个副本 为例：<br><img src="/2021/05/22/Hadoop%E4%B9%8BHDFS%EF%BC%9AHDFS%E8%AF%BB%E5%86%99/2.png" alt="在这里插入图片描述"></p>
+<ol>
+<li> 第一个副本（副本一）：放置在上传文件的数据节点上（若是在集群外提交，则随机挑选一个 <strong>CPU比较空闲</strong>、<strong>磁盘不太满</strong> 的节点）。</li>
+<li> 第二个副本（副本二）：放置在与第一个副本<strong>不同</strong>的机架的节点上。</li>
+<li> 第三个副本（副本三）：放置在与第二个副本<strong>相同</strong>机架的其他节点上。</li>
+<li> 如果有更多副本，那么这些副本随机选择节点存放。</li>
+</ol>
+<p>&ensp;&ensp;&ensp;&ensp;需要注意的是，副本并不都是均匀分布在不同的机架上。</p>
+<h4 id="2-2-策略的优点"><a href="#2-2-策略的优点" class="headerlink" title="2.2 策略的优点"></a>2.2 策略的优点</h4><p>副本冗余存储策略，主要有三个优点：</p>
+<ol>
+<li> 减少了机架间的 数据传输 ，提高了<strong>写操作</strong>的效率。（不会影响数据的可靠性和可用性，因为机架的错误远远比节点的错误小）</li>
+<li> 减少了读取数据时所需的<strong>网络传输总带宽</strong>。（因为数据块只放在两个不同的机架上）</li>
+<li> 在不损害数据可靠性和读取性能的情况下，改进了<strong>写操作</strong>的性能。（一个副本在一个机架的一个节点上，另外两个副本在另一个机架的不同节点上，其他副本则均匀分布在剩下的机架中。如  2.1 所介绍。）</li>
+</ol>
+<h3 id="三、HDFS读写流程"><a href="#三、HDFS读写流程" class="headerlink" title="三、HDFS读写流程"></a>三、HDFS读写流程</h3><h4 id="3-1-HDFS写数据流程"><a href="#3-1-HDFS写数据流程" class="headerlink" title="3.1 HDFS写数据流程"></a>3.1 HDFS写数据流程</h4><img src="/2021/05/22/Hadoop%E4%B9%8BHDFS%EF%BC%9AHDFS%E8%AF%BB%E5%86%99/3.png" alt="image-20210520202421789" style="zoom:80%;">
+
+<p><strong>流程</strong>：</p>
+<ol>
+<li> 客户端通过<code>Distributed FileSystem</code>模块向<code>NameNode</code>请求上传文件，<code>NameNode</code>检查目标文件是否已存在，父目录是否存在。</li>
+<li> <code>NameNode</code>返回是否可以上传。不能上传会返回异常。</li>
+<li> 确定可以上传，客户端请求第一个 <code>Block</code> 上传到哪几个<code>datanode</code>服务器上。</li>
+<li> <code>NameNode</code>返回3个<code>datanode</code>节点，假定分别为<code>dn1</code>、<code>dn2</code>、<code>dn3</code>。</li>
+<li> 客户端通过<code>FSDataOutputStream</code>模块请求<code>dn1</code>上传数据，<code>dn1</code>收到请求会继续调用<code>dn2</code>，然后<code>dn2</code>调用<code>dn3</code>，将这个通信管道建立完成。</li>
+<li> <code>dn1</code>、<code>dn2</code>、<code>dn3</code>逐级应答客户端。</li>
+<li> 客户端开始往<code>dn1</code>上传第一个<code>block</code>（先从磁盘读取数据放到一个本地内存缓存），以<code>packet</code>（64KB）为单位，<code>dn1</code>收到一个<code>packet</code>就会传给<code>dn2</code>，<code>dn2</code>传给<code>dn3</code>；<code>dn1</code>每传一个<code>packet</code>会放入一个应答队列等待应答。</li>
+<li> 当一个<code>block</code>传输完成之后，客户端再次请求<code>NameNode</code>上传第二个<code>block</code>的服务器。（重复执行3-7步）。</li>
+</ol>
+<blockquote>
+<p>⑴ 客户端调用 DistributedFileSystem 对象的 create() 方法创建一个文件输出流对象。</p>
+<p>⑵ DistributedFileSystem 对象远程的 NameNode 节点发起一次 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/36427583">RPC调用</a> ，NameNode 检查这个文件 是否存在 ，以及客户端 是否有权限 新建文件。</p>
+<p>⑶ 客户端调用 FSDataOutputStream 对象的 write() 方法写数据（数据鲜卑写入缓冲区，再被切分为一个个数据包）。</p>
+<p>⑷ 每个数据包被发送到由 NameNode 节点分配的一组数据节点中的一个数据节点上，在这组数据节点组成的管道上依次传输数据包。</p>
+<p>⑸ 管道上的节点按反向顺序返回确认信息，最终由管道的第一个数据节点将整条管道的确认信息发送给客户端。</p>
+<p>⑹ 客户端完成写入，调用 close() 方法关闭文件输出流。</p>
+<p>⑺ 通知 NameNode 文件写入成功。</p>
+</blockquote>
+<h5 id="FSDataOutputStream-类介绍"><a href="#FSDataOutputStream-类介绍" class="headerlink" title="FSDataOutputStream 类介绍"></a>FSDataOutputStream 类介绍</h5><p>&ensp;&ensp;&ensp;&ensp;FSDataOutputStream 输入流类的常用方法：</p>
+<table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>返回值</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>write(byte[] b)</td>
+<td>void</td>
+<td>将数组 b 中的所有字节写入输出流</td>
+</tr>
+<tr>
+<td>write(byte[] buf,int off,int len)</td>
+<td>void</td>
+<td>将字节组写入底层输出流，写入的字节从 off 偏移量开始，写入长度为 len</td>
+</tr>
+<tr>
+<td>flush()</td>
+<td>void</td>
+<td>刷新数据输出流（缓冲区内容被强制写入流中）</td>
+</tr>
+</tbody></table>
+<p>&ensp;&ensp;&ensp;&ensp;<code>len </code>指定读操作的最大字节数。</p>
+<h4 id="3-2-HDFS读数据流程"><a href="#3-2-HDFS读数据流程" class="headerlink" title="3.2 HDFS读数据流程"></a>3.2 HDFS读数据流程</h4><img src="/2021/05/22/Hadoop%E4%B9%8BHDFS%EF%BC%9AHDFS%E8%AF%BB%E5%86%99/4.png" alt="image-20210520203712825" style="zoom:80%;">
+
+<ol>
+<li> 首先调用<code>FileSystem.open()</code>方法，获取到<code>DistributedFileSystem</code>实例</li>
+<li> <code>DistributedFileSystem</code> 向<code>Namenode</code>发起<code>RPC</code>(远程过程调用)请求获得文件的开始部分或全部<code>block</code>列表，对于每个返回的块，都包含块所在的<code>DataNode</code>地址。这些<code>DataNode</code>会按照<code>Hadoop</code>定义的集群拓扑结构得出客户端的距离，然后再进行排序。如果客户端本身就是一个<code>DataNode</code>，那么他将从本地读取文件。</li>
+<li> <code>DistributedFileSystem</code>会向客户端client返回一个支持文件定位的输入流对象<code>FSDataInputStream</code>，用于客户端读取数据。<code>FSDataInputStream</code>包含一个<code>DFSInputStream</code>对象，这个对象用来管理<code>DataNode</code>和<code>NameNode</code>之间的I/O</li>
+<li> 客户端调用<code>read()</code>方法，<code>DFSInputStream</code>就会找出离客户端最近的<code>datanode</code>并连接<code>datanode</code></li>
+<li> <code>DFSInputStream</code>对象中包含文件开始部分的数据块所在的<code>DataNode</code>地址，首先它会连接包含文件第一个块最近<code>DataNode</code>。随后，在数据流中重复调用<code>read()</code>函数，直到这个块全部读完为止。如果第一个<code>block</code>块的数据读完，就会关闭指向第一个<code>block</code>块的<code>datanode</code>连接，接着读取下一个<code>block</code>块</li>
+<li> 如果第一批<code>block</code>都读完了，<code>DFSInputStream</code>就会去<code>NameNode</code>拿下一批<code>blocks</code>的<code>location</code>，然后继续读，如果所有的<code>block</code>块都读完，这时就会关闭掉所有的流。</li>
+</ol>
+<p><strong>FSDataInputStream</strong> 类介绍</p>
+<p>&ensp;&ensp;&ensp;&ensp;FSDataInputStream 输入流类的常用方法：</p>
+<table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>返回值</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>read(ByteBuffer buf)</td>
+<td>int</td>
+<td>读取并写入 buf 缓冲区，返回所读的字节数</td>
+</tr>
+<tr>
+<td>read(long pos,byte[] buf,int offset,int len)</td>
+<td>int</td>
+<td>从输入流的指定位置开始，把数据读入缓冲区。</td>
+</tr>
+<tr>
+<td>readFully(long pos,byte[] buf)</td>
+<td>void</td>
+<td>从指定位置开始，读取所有数据到缓冲区</td>
+</tr>
+<tr>
+<td>seek(long offset)</td>
+<td>void</td>
+<td>指向输入流的第 offset 字节</td>
+</tr>
+<tr>
+<td>releaseBuffer(ByteBuffer buf)</td>
+<td>void</td>
+<td>删除指定的缓冲区</td>
+</tr>
+</tbody></table>
+<p>&ensp;&ensp;&ensp;&ensp;<em>pos</em> 指定从输入流中读取数据的位置；<em>offset</em> 指定数据写入缓冲区的位置（偏移量）；<em>len</em> 指定读操作的最大字节数。</p>
+<p>&ensp;&ensp;&ensp;&ensp;<code>HDFS</code>如何控制客户端读取哪个副本节点数据 ?<br>&ensp;&ensp;&ensp;&ensp;<code>HDFS</code>满足客户端访问副本数据的最近原则。即客户端距离哪个副本数据最近，HDFS就让哪个节点把数据给客户端。</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45069279/article/details/114734679">(4条消息) 干货满满，图文详解 HDFS 的 工作机制 及其原理_苜苜的烂笔头的博客-CSDN博客</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%A0%94%E5%8F%91/" rel="tag"># 数据研发</a>
+              <a href="/tags/Hadoop/" rel="tag"># Hadoop</a>
+              <a href="/tags/HDFS/" rel="tag"># HDFS</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/22/Hadoop%E4%B9%8BHDFS%EF%BC%9AHDFS%E7%9A%84%E5%90%84%E4%B8%AA%E8%8A%82%E7%82%B9%E5%B7%A5%E4%BD%9C%E6%9C%BA%E5%88%B6/" rel="prev" title="HDFS的各个节点工作机制">
+      <i class="fa fa-chevron-left"></i> HDFS的各个节点工作机制
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/05/22/Hadoop%E4%B9%8BHDFS%EF%BC%9AHDFS%E6%A6%82%E8%BF%B0/" rel="next" title="HDFS简介">
+      HDFS简介 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81-%E6%9C%BA%E6%9E%B6%E6%84%9F%E7%9F%A5"><span class="nav-text">一、 机架感知</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-%E8%AE%BE%E8%AE%A1%E6%9C%BA%E6%9E%B6%E6%84%9F%E7%9F%A5%E7%9A%84%E7%9B%AE%E7%9A%84%EF%BC%88%E5%89%AF%E6%9C%AC%E5%AD%98%E5%82%A8%E8%8A%82%E7%82%B9%E9%80%89%E6%8B%A9%EF%BC%89"><span class="nav-text">1.1 设计机架感知的目的（副本存储节点选择）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-%E7%BD%91%E7%BB%9C%E6%8B%93%E6%89%91-%E8%8A%82%E7%82%B9%E8%B7%9D%E7%A6%BB%E8%AE%A1%E7%AE%97"><span class="nav-text">1.2 网络拓扑-节点距离计算</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-1-%E7%BD%91%E7%BB%9C%E6%8B%93%E6%89%91%E5%9B%BE%E4%BB%8B%E7%BB%8D"><span class="nav-text">1.2.1 网络拓扑图介绍</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-2-%E5%8A%9F%E8%83%BD%E5%88%86%E6%9E%90"><span class="nav-text">1.2.2 功能分析</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81-%E5%89%AF%E6%9C%AC%E5%86%97%E4%BD%99%E5%AD%98%E5%82%A8%E7%AD%96%E7%95%A5"><span class="nav-text">二、 副本冗余存储策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-%E7%AD%96%E7%95%A5%E7%9A%84%E4%BB%8B%E7%BB%8D"><span class="nav-text">2.1 策略的介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-%E7%AD%96%E7%95%A5%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-text">2.2 策略的优点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81HDFS%E8%AF%BB%E5%86%99%E6%B5%81%E7%A8%8B"><span class="nav-text">三、HDFS读写流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-HDFS%E5%86%99%E6%95%B0%E6%8D%AE%E6%B5%81%E7%A8%8B"><span class="nav-text">3.1 HDFS写数据流程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#FSDataOutputStream-%E7%B1%BB%E4%BB%8B%E7%BB%8D"><span class="nav-text">FSDataOutputStream 类介绍</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-HDFS%E8%AF%BB%E6%95%B0%E6%8D%AE%E6%B5%81%E7%A8%8B"><span class="nav-text">3.2 HDFS读数据流程</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="高乾威"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">高乾威</p>
+  <div class="site-description" itemprop="description">这是一个终身学习的时代</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">63</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="http://github.com/GaoQianwei" title="GitHub → http:&#x2F;&#x2F;github.com&#x2F;GaoQianwei" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2966807184@qq.com" title="E-Mail → mailto:2966807184@qq.com" rel="noopener" target="_blank">E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xue-wu-zhi-jing-75-22" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xue-wu-zhi-jing-75-22" rel="noopener" target="_blank">知乎</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_45341339" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_45341339" rel="noopener" target="_blank">CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div><div>
+  <canvas id="canvasDiyBlock" style="width:60%;">当前浏览器不支持canvas，请更换浏览器后再试</canvas>
+<script src="/js/custom/clock.js"></script>
+
+</div>
+
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 到 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">高乾威</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<span class="post-meta-divider">|</span>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">全站共 79.8k 字</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;MapTask的并行度决定map阶段的任务处理并发度，进而影响到整个job的处理速度。那么，MapTask并行实例是否越多越好呢？其并行度又是如何决定呢？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MapReduce并行度决定机制">
+<meta property="og:url" content="http://example.com/2021/06/06/Hadoop%E4%B9%8BMapReduce%EF%BC%9AMapTask%E5%B9%B6%E8%A1%8C%E5%BA%A6%E5%86%B3%E5%AE%9A%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:site_name" content="学无止境">
+<meta property="og:description" content="&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;MapTask的并行度决定map阶段的任务处理并发度，进而影响到整个job的处理速度。那么，MapTask并行实例是否越多越好呢？其并行度又是如何决定呢？">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/06/06/Hadoop%E4%B9%8BMapReduce%EF%BC%9AMapTask%E5%B9%B6%E8%A1%8C%E5%BA%A6%E5%86%B3%E5%AE%9A%E6%9C%BA%E5%88%B6/1.png">
+<meta property="og:image" content="http://example.com/2021/06/06/Hadoop%E4%B9%8BMapReduce%EF%BC%9AMapTask%E5%B9%B6%E8%A1%8C%E5%BA%A6%E5%86%B3%E5%AE%9A%E6%9C%BA%E5%88%B6/2.png">
+<meta property="og:image" content="http://example.com/2021/06/06/Hadoop%E4%B9%8BMapReduce%EF%BC%9AMapTask%E5%B9%B6%E8%A1%8C%E5%BA%A6%E5%86%B3%E5%AE%9A%E6%9C%BA%E5%88%B6/3.png">
+<meta property="article:published_time" content="2021-06-06T10:17:17.703Z">
+<meta property="article:modified_time" content="2021-06-06T10:27:29.419Z">
+<meta property="article:author" content="高乾威">
+<meta property="article:tag" content="数据研发">
+<meta property="article:tag" content="Hadoop">
+<meta property="article:tag" content="MapReduce">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/06/06/Hadoop%E4%B9%8BMapReduce%EF%BC%9AMapTask%E5%B9%B6%E8%A1%8C%E5%BA%A6%E5%86%B3%E5%AE%9A%E6%9C%BA%E5%88%B6/1.png">
+
+<link rel="canonical" href="http://example.com/2021/06/06/Hadoop%E4%B9%8BMapReduce%EF%BC%9AMapTask%E5%B9%B6%E8%A1%8C%E5%BA%A6%E5%86%B3%E5%AE%9A%E6%9C%BA%E5%88%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MapReduce并行度决定机制 | 学无止境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">学无止境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>友链</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/06/Hadoop%E4%B9%8BMapReduce%EF%BC%9AMapTask%E5%B9%B6%E8%A1%8C%E5%BA%A6%E5%86%B3%E5%AE%9A%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="高乾威">
+      <meta itemprop="description" content="报我楼成秋望月，把君诗读夜回灯">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学无止境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MapReduce并行度决定机制
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-06-06 18:17:17 / 修改时间：18:27:29" itemprop="dateCreated datePublished" datetime="2021-06-06T18:17:17+08:00">2021-06-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%A0%94%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">数据研发</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%A0%94%E5%8F%91/Hadoop/" itemprop="url" rel="index"><span itemprop="name">Hadoop</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%A0%94%E5%8F%91/Hadoop/MapReduce/" itemprop="url" rel="index"><span itemprop="name">MapReduce</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+            <span class="post-meta-divider">|</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>&ensp;&ensp;&ensp;&ensp;MapTask的并行度决定map阶段的任务处理并发度，进而影响到整个job的处理速度。那么，MapTask并行实例是否越多越好呢？其并行度又是如何决定呢？</p>
+<span id="more"></span>
+
+<h3 id="一、MapTask并行度的决定机制"><a href="#一、MapTask并行度的决定机制" class="headerlink" title="一、MapTask并行度的决定机制"></a>一、MapTask并行度的决定机制</h3><p>&ensp;&ensp;&ensp;&ensp;<strong>数据块：</strong>Block 是 HDFS 物理上把数据分成一块一块。数据块是 HDFS 存储数据单位。 </p>
+<p>&ensp;&ensp;&ensp;&ensp;<strong>数据切片：</strong>数据切片只是在逻辑上对输入进行分片，并不会在磁盘上将其切分成片进行存储。数据切片是 MapReduce 程序计算输入数据的单位，一个切片会对应启动一个 MapTask。</p>
+<p>&ensp;&ensp;&ensp;&ensp;一个job的map阶段并行度由客户端在提交job时决定，而客户端对map阶段并行度的规划的基本逻辑为：将待处理数据执行逻辑切片（即按照一个特定切片大小，将待处理数据划分成逻辑上的多个split），然后每一个split分配一个mapTask并行实例处理。</p>
+<p>&ensp;&ensp;&ensp;&ensp;这段逻辑及形成的切片规划描述文件，由FileInputFormat实现类的getSplits()方法完成，其过程如下图：</p>
+<p><img src="/2021/06/06/Hadoop%E4%B9%8BMapReduce%EF%BC%9AMapTask%E5%B9%B6%E8%A1%8C%E5%BA%A6%E5%86%B3%E5%AE%9A%E6%9C%BA%E5%88%B6/1.png" alt="img"></p>
+<p><strong>数据切片：</strong></p>
+<img src="/2021/06/06/Hadoop%E4%B9%8BMapReduce%EF%BC%9AMapTask%E5%B9%B6%E8%A1%8C%E5%BA%A6%E5%86%B3%E5%AE%9A%E6%9C%BA%E5%88%B6/2.png" alt="image-20210526010730103" style="zoom:67%;">
+
+
+
+<h3 id="二、FileInputFormat切片机制"><a href="#二、FileInputFormat切片机制" class="headerlink" title="二、FileInputFormat切片机制"></a>二、FileInputFormat切片机制</h3><p>1、切片定义在InputFormat类中的getSplit()方法</p>
+<p>2、FileInputFormat中默认的切片机制：</p>
+<ul>
+<li>  简单地按照文件的内容长度进行切片</li>
+<li>  切片大小，默认等于block大小</li>
+<li>  切片时不考虑数据集整体，而是逐个针对每一个文件单独切片</li>
+</ul>
+<p>&ensp;&ensp;&ensp;&ensp;比如待处理数据有两个文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">file1.txt   320M </span><br><span class="line">file2.txt   10M</span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;&ensp;经过FileInputFormat的切片机制运算后，形成的切片信息如下：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">file1.txt.split1--  0~128</span><br><span class="line">file1.txt.split2--  128~256</span><br><span class="line">file1.txt.split3--  256~320</span><br><span class="line">file2.txt.split1--  0~10M</span><br></pre></td></tr></table></figure>
+
+<p>3、FileInputFormat中切片的大小的参数配置</p>
+<p>&ensp;&ensp;&ensp;&ensp;通过分析源码，在FileInputFormat中，计算切片大小的逻辑：<code>Math.max(minSize, Math.min(maxSize, blockSize)); </code>切片主要由这几个值来运算决定</p>
+<table>
+<thead>
+<tr>
+<th>minsize：默认值：1   配置参数： mapreduce.input.fileinputformat.split.minsize</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>maxsize：默认值：Long.MAXValue   配置参数：mapreduce.input.fileinputformat.split.maxsize</td>
+</tr>
+<tr>
+<td>blocksize</td>
+</tr>
+</tbody></table>
+<p>&ensp;&ensp;&ensp;&ensp;因此，<strong>默认情况下，切片大小=blocksize</strong></p>
+<p>&ensp;&ensp;&ensp;&ensp;maxsize（切片最大值）：参数如果调得比blocksize小，则会让切片变小，而且就等于配置的这个参数的值</p>
+<p>&ensp;&ensp;&ensp;&ensp;minsize （切片最小值）：参数调的比blockSize大，则可以让切片变得比blocksize还大</p>
+<blockquote>
+<p>  选择并发数的影响因素：</p>
+<ol>
+<li> 运算节点的硬件配置</li>
+<li> 运算任务的类型：CPU密集型还是IO密集型</li>
+<li> 运算任务的数据量</li>
+</ol>
+</blockquote>
+<h3 id="三、TextInputFormat-切片机制"><a href="#三、TextInputFormat-切片机制" class="headerlink" title="三、TextInputFormat 切片机制"></a>三、TextInputFormat 切片机制</h3><p>1）FileInputFormat 实现类 </p>
+<p>&ensp;&ensp;&ensp;&ensp;思考：在运行 MapReduce 程序时，输入的文件格式包括：基于行的日志文件、二进制 格式文件、数据库表等。那么，针对不同的数据类型，MapReduce 是如何读取这些数据的呢？ FileInputFormat 常见的接口实现类包括：TextInputFormat、KeyValueTextInputFormat、 NLineInputFormat、CombineTextInputFormat 和自定义 InputFormat 等。</p>
+<p> 2）TextInputFormat </p>
+<p>&ensp;&ensp;&ensp;&ensp;TextInputFormat 是默认的 FileInputFormat 实现类。按行读取每条记录。键是存储该行在整个文件中的起始字节偏移量， LongWritable 类型。值是这行的内容，不包括任何行终止 符（换行符和回车符），Text 类型。 </p>
+<p>&ensp;&ensp;&ensp;&ensp;以下是一个示例，比如，一个分片包含了如下 4 条文本记录。 </p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Rich learning form </span><br><span class="line">Intelligent learning engine </span><br><span class="line">Learning more convenient </span><br><span class="line">From the real demand for more close to the enterprise </span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;&ensp;每条记录表示为以下键/值对： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(0,Rich learning form)</span><br><span class="line">(20,Intelligent learning engine)</span><br><span class="line">(49,Learning more convenient) </span><br><span class="line">(74,From the real demand for more close to the enterprise)</span><br></pre></td></tr></table></figure>
+
+<p>3）CombineTextInputFormat 切片机制 </p>
+<p>&ensp;&ensp;&ensp;&ensp;框架默认的 TextInputFormat 切片机制是对任务按文件规划切片，不管文件多小，都会 是一个单独的切片，都会交给一个 MapTask，这样如果有大量小文件，就会产生大量的 MapTask，处理效率极其低下。</p>
+<ol>
+<li> 应用场景： CombineTextInputFormat 用于小文件过多的场景，它可以将多个小文件从逻辑上规划到 一个切片中，这样，多个小文件就可以交给一个 MapTask 处理。</li>
+<li> 虚拟存储切片最大值设置： CombineTextInputFormat.setMaxInputSplitSize(job, 4194304);// 4m 注意：虚拟存储切片最大值设置最好根据实际的小文件大小情况来设置具体的值。 </li>
+<li> 切片机制： 生成切片过程包括：虚拟存储过程和切片过程两部分。</li>
+</ol>
+<p>4）</p>
+<img src="/2021/06/06/Hadoop%E4%B9%8BMapReduce%EF%BC%9AMapTask%E5%B9%B6%E8%A1%8C%E5%BA%A6%E5%86%B3%E5%AE%9A%E6%9C%BA%E5%88%B6/3.png" alt="image-20210531204532096" style="zoom: 67%;">
+
+
+
+<p>（1）虚拟存储过程：</p>
+<p> &ensp;&ensp;&ensp;&ensp;将输入目录下所有文件大小，依次和设置的 setMaxInputSplitSize 值比较，如果不 大于设置的最大值，逻辑上划分一个块。如果输入文件大于设置的最大值且大于两倍， 那么以最大值切割一块；当剩余数据大小超过设置的最大值且不大于最大值 2 倍，此时 将文件均分成 2 个虚拟存储块（防止出现太小切片）。 </p>
+<p>&ensp;&ensp;&ensp;&ensp;例如 setMaxInputSplitSize 值为 4M，输入文件大小为 8.02M，则先逻辑上分成一个 4M。剩余的大小为 4.02M，如果按照 4M 逻辑划分，就会出现 0.02M 的小的虚拟存储 文件，所以将剩余的 4.02M 文件切分成（2.01M 和 2.01M）两个文件。 </p>
+<p>（2）切片过程： </p>
+<ul>
+<li><p>  判断虚拟存储的文件大小是否大于 setMaxInputSplitSize 值，大于等于则单独 形成一个切片。 </p>
+</li>
+<li><p>  如果不大于则跟下一个虚拟存储文件进行合并，共同形成一个切片。 </p>
+</li>
+<li><p>测试举例：有 4 个小文件大小分别为 1.7M、5.1M、3.4M 以及 6.8M 这四个小文件，则虚拟存储之后形成 6 个文件块，大小分别为： </p>
+<p>  1.7M，（2.55M、2.55M），3.4M 以及（3.4M、3.4M） </p>
+<p>  最终会形成 3 个切片，大小分别为： </p>
+<p>  （1.7+2.55）M，（2.55+3.4）M，（3.4+3.4）M</p>
+</li>
+</ul>
+<h3 id="四、ReduceTask并行度的决定"><a href="#四、ReduceTask并行度的决定" class="headerlink" title="四、ReduceTask并行度的决定"></a>四、ReduceTask并行度的决定</h3><p>&ensp;&ensp;&ensp;&ensp;reducetask的并行度同样影响整个job的执行并发度和执行效率，但与maptask的并发数由切片数决定不同，Reducetask数量的决定是可以直接手动设置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;默认值是1，手动设置为4</span><br><span class="line">job.setNumReduceTasks(4);</span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;&ensp;如果数据分布不均匀，就有可能在reduce阶段产生数据倾斜</p>
+<p>&ensp;&ensp;&ensp;&ensp;注意： reducetask数量并不是任意设置，还要考虑业务逻辑需求，有些情况下，需要计算全局汇总结果，就只能有1个reducetask</p>
+<p>&ensp;&ensp;&ensp;&ensp;尽量不要运行太多的reduce task。对大多数job来说，最好rduce的个数最多和集群中的reduce持平，或者比集群的 reduce slots小。这个对于小集群而言，尤其重要。</p>
+<h3 id="五、MapReduce程序演示"><a href="#五、MapReduce程序演示" class="headerlink" title="五、MapReduce程序演示"></a>五、MapReduce程序演示</h3><p>&ensp;&ensp;&ensp;&ensp;Hadoop的发布包中内置了一个hadoop-mapreduce-example-2.4.1.jar，这个jar包中有各种MR示例程序，可以通过以下步骤运行：</p>
+<p>&ensp;&ensp;&ensp;&ensp;启动hdfs，yarn</p>
+<p>然后在集群中的任意一台服务器上启动执行程序（比如运行wordcount）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop jar hadoop-mapreduce-example-2.4.1.jar wordcount  /wordcount/data /wordcount/out</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%A0%94%E5%8F%91/" rel="tag"># 数据研发</a>
+              <a href="/tags/Hadoop/" rel="tag"># Hadoop</a>
+              <a href="/tags/MapReduce/" rel="tag"># MapReduce</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/06/06/Hadoop%E4%B9%8BMapReduce%EF%BC%9AMapTask%20%E4%B8%8EReduceTask%E5%B7%A5%E4%BD%9C%E6%9C%BA%E5%88%B6/" rel="prev" title="MapTask 与ReduceTask工作机制">
+      <i class="fa fa-chevron-left"></i> MapTask 与ReduceTask工作机制
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/06/06/Hadoop%E4%B9%8BMapReduce%EF%BC%9Ashuffle%E6%9C%BA%E5%88%B6/" rel="next" title="shuffle运行机制">
+      shuffle运行机制 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81MapTask%E5%B9%B6%E8%A1%8C%E5%BA%A6%E7%9A%84%E5%86%B3%E5%AE%9A%E6%9C%BA%E5%88%B6"><span class="nav-text">一、MapTask并行度的决定机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81FileInputFormat%E5%88%87%E7%89%87%E6%9C%BA%E5%88%B6"><span class="nav-text">二、FileInputFormat切片机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81TextInputFormat-%E5%88%87%E7%89%87%E6%9C%BA%E5%88%B6"><span class="nav-text">三、TextInputFormat 切片机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81ReduceTask%E5%B9%B6%E8%A1%8C%E5%BA%A6%E7%9A%84%E5%86%B3%E5%AE%9A"><span class="nav-text">四、ReduceTask并行度的决定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E3%80%81MapReduce%E7%A8%8B%E5%BA%8F%E6%BC%94%E7%A4%BA"><span class="nav-text">五、MapReduce程序演示</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="高乾威"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">高乾威</p>
+  <div class="site-description" itemprop="description">报我楼成秋望月，把君诗读夜回灯</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">81</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">50</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="http://github.com/GaoQianwei" title="GitHub → http:&#x2F;&#x2F;github.com&#x2F;GaoQianwei" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2966807184@qq.com" title="E-Mail → mailto:2966807184@qq.com" rel="noopener" target="_blank">E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xue-wu-zhi-jing-75-22" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xue-wu-zhi-jing-75-22" rel="noopener" target="_blank">知乎</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_45341339" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_45341339" rel="noopener" target="_blank">CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div><div>
+  <canvas id="canvasDiyBlock" style="width:60%;">当前浏览器不支持canvas，请更换浏览器后再试</canvas>
+<script src="/js/custom/clock.js"></script>
+
+</div>
+
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 到 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">高乾威</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<span class="post-meta-divider">|</span>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">全站共 105.5k 字</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

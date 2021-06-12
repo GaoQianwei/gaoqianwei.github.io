@@ -1768,7 +1768,7 @@
 </thead>
 <tbody><tr>
 <td align="center">2021.6.12</td>
-<td align="center">加了些动态规划的算法题，主要是0-1背包问题</td>
+<td align="center">加了些动态规划的算法题，主要是0-1背包问题；做了些云计算的实验，添加了两篇技术文档。</td>
 </tr>
 <tr>
 <td align="center">2021.6.6</td>
@@ -6642,7 +6642,147 @@ esac
         <tag>算法</tag>
         <tag>leetcode</tag>
         <tag>动态规划</tag>
-        <tag>矩形</tag>
+        <tag>矩阵</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>将项目部署至云服务器</title>
+    <url>/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9A%E5%B0%86%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E8%87%B3%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
+    <content><![CDATA[<p>&ensp;&ensp;&ensp;&ensp;为了将项目部署至服务器，首先需要购买一台服务器，这里采用阿里云的服务器ESC，然后对服务器的环境进行配置，主要是java环境和MySql数据库。</p>
+<span id="more"></span>
+
+<h3 id="一、购买服务器并配置环境"><a href="#一、购买服务器并配置环境" class="headerlink" title="一、购买服务器并配置环境"></a>一、购买服务器并配置环境</h3><ol>
+<li> 购买阿里云服务器 </li>
+</ol>
+<p> &ensp;&ensp;&ensp;&ensp;参与【阿里云高校计划】，可免费获得两个月的云服务器使用权。</p>
+<p>​    <img src="/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9A%E5%B0%86%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E8%87%B3%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/1.png" alt="img"></p>
+<ol start="2">
+<li> 在windows本地安装Xshell和Xftp,并连接到云服务器</li>
+</ol>
+   <img src="/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9A%E5%B0%86%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E8%87%B3%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/2.jpg" alt="img" style="zoom: 67%;">
+
+<ol start="3">
+<li> 在服务器安装java环境（1.8）</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum list java-1.8*</span><br><span class="line">yum install java-1.8.0-openjdk* -y</span><br><span class="line">java –version</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li> 安装 mysql8.0 数据库（版本密码一致）</li>
+</ol>
+<p><a href="https://blog.csdn.net/weixin_42954381/article/details/100518497">Linux服务器安装Mysql8.0数据库_Li.xh的博客-CSDN博客_linux安装数据库mysql8.0</a></p>
+<ol start="5">
+<li> 数据库远程连接</li>
+</ol>
+<p>&ensp;&ensp;&ensp;&ensp; 授权：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">use mysql;</span><br><span class="line">update user set host&#x3D;‘%’ where user&#x3D;‘root‘ host&#x3D;‘localhost’</span><br><span class="line">flush pprivileges;</span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;&ensp; 然后在本地mysql workbench新建连接</p>
+   <img src="/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9A%E5%B0%86%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E8%87%B3%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/3.png" alt="img" style="zoom:67%;">
+
+<p>&ensp;&ensp;&ensp;&ensp;便可以进入服务器的数据库，再导入数据：</p>
+   <img src="/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9A%E5%B0%86%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E8%87%B3%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/4.png" alt="img" style="zoom:67%;">
+
+<h3 id="二、打包并部署"><a href="#二、打包并部署" class="headerlink" title="二、打包并部署"></a>二、打包并部署</h3><ol>
+<li> 打包（IDEA）</li>
+</ol>
+<img src="/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9A%E5%B0%86%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E8%87%B3%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/5.png" alt="image-20210612154716135" style="zoom:67%;">
+
+<ol start="2">
+<li><p>将打包好的 .jar 文件通过 Xftp 传送到服务器 ~/ 目录下</p>
+<p> <img src="/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9A%E5%B0%86%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E8%87%B3%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/6.png" alt="image-20210612154849494"></p>
+</li>
+<li><p>运行 .jar 包</p>
+ <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> java -jar testMyBlog.jar</span>  </span><br></pre></td></tr></table></figure>
+
+<p> <img src="/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9A%E5%B0%86%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E8%87%B3%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/7.png" alt="image-20210612155001623"></p>
+</li>
+<li><p>在本地浏览器输入 <code>服务器IP：8080/xxx.html</code>，打开项目的注册登录页面并输入已有帐号</p>
+<p> <img src="/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9A%E5%B0%86%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E8%87%B3%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/8.png" alt="image-20210612155129636"></p>
+</li>
+<li><p>进入博客</p>
+<p> <img src="/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9A%E5%B0%86%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E8%87%B3%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/9.png" alt="image-20210612155159559"></p>
+</li>
+</ol>
+<p>至此，一个 javaweb 项目成功地部署到了服务器上。</p>
+]]></content>
+      <categories>
+        <category>技术文档</category>
+        <category>部署项目</category>
+      </categories>
+      <tags>
+        <tag>技术文档</tag>
+        <tag>阿里云</tag>
+        <tag>服务器</tag>
+        <tag>javaweb项目</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>实现nginx负载平衡</title>
+    <url>/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9Anginx%E8%B4%9F%E8%BD%BD%E5%B9%B3%E8%A1%A1%E8%AE%BE%E7%BD%AE/</url>
+    <content><![CDATA[<p>&ensp;&ensp;&ensp;&ensp;实现nginx负载平衡至少需要两个服务器，这里使用两个阿里云服务器ESC来实现。</p>
+<span id="more"></span>
+
+<ol>
+<li> 首先，安装相关依赖：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y gcc gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li> 安装pcre依赖，下载压缩包，移至/usr/loacl下解压，然后安装</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd pcre-8.37</span><br><span class="line">./configure</span><br><span class="line">Make &amp; make install</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li> 安装nginx</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">wget http://nginx.org/download/nginx-1.18.0.tar.gz</span><br><span class="line"> </span><br><span class="line">tar -zxvf nginx-1.18.0.tar.gz</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li> 解压完成后，进入到解压目录执行安装检查，运行如下指令：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.&#x2F;configure</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li> 配置别名：此步骤可选，目的是为了后续运行nginx操作指令方便。别名配置方式和当前使用的shell类型相关，这里使用zsh，所以在用户目录的.zshrc文件中加入如下别名 nginx 替代nginx执行文件的完整路径。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim ~&#x2F;.zshrc</span><br><span class="line">source ~&#x2F;.zshrc</span><br></pre></td></tr></table></figure>
+
+<p> <img src="/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9Anginx%E8%B4%9F%E8%BD%BD%E5%B9%B3%E8%A1%A1%E8%AE%BE%E7%BD%AE/1.png" alt="在这里插入图片描述"></p>
+<p>  可执行如下命令nginx配置检查，如果配置文件有错误会有相应提示。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx -t</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9Anginx%E8%B4%9F%E8%BD%BD%E5%B9%B3%E8%A1%A1%E8%AE%BE%E7%BD%AE/2.png" alt="img"></p>
+<ol start="6">
+<li> 开放阿里云端口，这里建立一个新的安全组用于开放nginx使用的端口，如下图，入方向开放80和443两个端口。（如果nginx使用了其他端口，可类似添加其他端口的规则）。</li>
+</ol>
+<p>  <img src="/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9Anginx%E8%B4%9F%E8%BD%BD%E5%B9%B3%E8%A1%A1%E8%AE%BE%E7%BD%AE/3.png" alt="img"> </p>
+<p> <img src="/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9Anginx%E8%B4%9F%E8%BD%BD%E5%B9%B3%E8%A1%A1%E8%AE%BE%E7%BD%AE/4.png" alt="img"></p>
+<ol start="7">
+<li> 完成上面步骤后，在浏览器中，直接输入ECS的公网IP，可成功访问，如下图：</li>
+</ol>
+<p>   <img src="/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9Anginx%E8%B4%9F%E8%BD%BD%E5%B9%B3%E8%A1%A1%E8%AE%BE%E7%BD%AE/5.png" alt="img"></p>
+<ol start="8">
+<li><p>两台服务器到按上述步骤配置好 nginx,然后打开代理服务器（第一个），配置nginx.conf文件。</p>
+<p> 注意图中标记的部分，如果代理服务器不监听自己的 8080  端口，可能会报错。</p>
+<pre><code>![image-20210612160309202](6.png)
+</code></pre>
+</li>
+<li><p> 再修改两个服务器/usr/local/nginx/html/index.html文件以作区别，再登录代理ip,不断刷新，可以看到两页面交替出现。</p>
+</li>
+</ol>
+<p>  <img src="/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9Anginx%E8%B4%9F%E8%BD%BD%E5%B9%B3%E8%A1%A1%E8%AE%BE%E7%BD%AE/7.jpg" alt="img"></p>
+<p>   <img src="/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9Anginx%E8%B4%9F%E8%BD%BD%E5%B9%B3%E8%A1%A1%E8%AE%BE%E7%BD%AE/8.jpg" alt="img"></p>
+<p>&ensp;&ensp;&ensp;&ensp;至此，nginx负载均衡任务完成。</p>
+<p><a href="https://blog.csdn.net/lxh_worldpeace/article/details/107013311">阿里云ECS（Centos）中Nginx安装及配置_Crane的博客-CSDN博客</a></p>
+]]></content>
+      <categories>
+        <category>技术文档</category>
+        <category>nginx</category>
+      </categories>
+      <tags>
+        <tag>技术文档</tag>
+        <tag>阿里云</tag>
+        <tag>nginx</tag>
       </tags>
   </entry>
 </search>

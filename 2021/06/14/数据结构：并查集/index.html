@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一、Union Find算法基础&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;Union Find算法用于处理集合的合并和查询问题，其定义了两个用于并查集的操作：    Find: 确定元素属于哪一个子集，或判断两个元素是否属于同一子集   Union: 将两个子集合并为一个子集">
+<meta property="og:type" content="article">
+<meta property="og:title" content="并查集">
+<meta property="og:url" content="http://example.com/2021/06/14/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E5%B9%B6%E6%9F%A5%E9%9B%86/index.html">
+<meta property="og:site_name" content="学无止境">
+<meta property="og:description" content="一、Union Find算法基础&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;Union Find算法用于处理集合的合并和查询问题，其定义了两个用于并查集的操作：    Find: 确定元素属于哪一个子集，或判断两个元素是否属于同一子集   Union: 将两个子集合并为一个子集">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/06/14/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E5%B9%B6%E6%9F%A5%E9%9B%86/1.jpg">
+<meta property="og:image" content="http://example.com/2021/06/14/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E5%B9%B6%E6%9F%A5%E9%9B%86/2.jpg">
+<meta property="og:image" content="http://example.com/2021/06/14/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E5%B9%B6%E6%9F%A5%E9%9B%86/3.jpg">
+<meta property="og:image" content="http://example.com/2021/06/14/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E5%B9%B6%E6%9F%A5%E9%9B%86/4.jpg">
+<meta property="og:image" content="http://example.com/2021/06/14/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E5%B9%B6%E6%9F%A5%E9%9B%86/5.jpg">
+<meta property="article:published_time" content="2021-06-14T07:55:10.000Z">
+<meta property="article:modified_time" content="2021-06-14T08:01:58.676Z">
+<meta property="article:author" content="高乾威">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="leetcode">
+<meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="并查集">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/06/14/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E5%B9%B6%E6%9F%A5%E9%9B%86/1.jpg">
+
+<link rel="canonical" href="http://example.com/2021/06/14/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E5%B9%B6%E6%9F%A5%E9%9B%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>并查集 | 学无止境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">学无止境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>友链</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/14/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E5%B9%B6%E6%9F%A5%E9%9B%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="高乾威">
+      <meta itemprop="description" content="报我楼成秋望月，把君诗读夜回灯">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="学无止境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          并查集
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-06-14 15:55:10 / 修改时间：16:01:58" itemprop="dateCreated datePublished" datetime="2021-06-14T15:55:10+08:00">2021-06-14</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">数据结构</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+            <span class="post-meta-divider">|</span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="一、Union-Find算法基础"><a href="#一、Union-Find算法基础" class="headerlink" title="一、Union Find算法基础"></a>一、Union Find算法基础</h3><p>&ensp;&ensp;&ensp;&ensp;<code>Union Find</code>算法用于处理集合的合并和查询问题，其定义了两个用于并查集的操作：</p>
+<ul>
+<li>  <strong>Find</strong>: 确定元素属于哪一个子集，或判断两个元素是否属于同一子集</li>
+<li>  <strong>Union</strong>: 将两个子集合并为一个子集</li>
+</ul>
+<span id="more"></span>
+
+<p>&ensp;&ensp;&ensp;&ensp;并查集是一种树形的数据结构，其可用数组或<code>unordered_map</code>表示：</p>
+<p><img src="/2021/06/14/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E5%B9%B6%E6%9F%A5%E9%9B%86/1.jpg" alt="img"></p>
+<p>&ensp;&ensp;&ensp;&ensp;<code>Find</code>操作即查找元素的<code>root</code>，当两元素<code>root</code>相同时判定他们属于同一个子集；<code>Union</code>操作即通过修改元素的<code>root</code>(或修改<code>parent</code>)合并子集，下面两个图展示了id[6]由6修改为9的变化：</p>
+<p><img src="/2021/06/14/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E5%B9%B6%E6%9F%A5%E9%9B%86/2.jpg" alt="img"></p>
+<p><img src="/2021/06/14/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E5%B9%B6%E6%9F%A5%E9%9B%86/3.jpg" alt="img"></p>
+<h3 id="二、设计并查集"><a href="#二、设计并查集" class="headerlink" title="二、设计并查集"></a>二、设计并查集</h3><ol>
+<li> 初始化时，每个元素的根是它自己，重量为 <code>1</code>（重量表示：weight[1] = 5，以 1 为根的元素有 5 个）；</li>
+<li> 判断两个元素是否属于一个集合时，只需判断它们的根是否相同即可</li>
+<li> 连接两个属于不同集合的元素时，重量小一些的集合接到大一些的结合下面（仍然以重量最大的根为根），这样就能避免头重脚轻，更平衡一些</li>
+<li> <code>count</code> 为集合的个数，初始化时为元素个数；<code>vector&lt;int&gt; parent</code> 储存元素的父节点（parent[1] = 2，元素 1 和 2 相连，且 2 离根更近）</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UF</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">UF</span>(<span class="keyword">int</span> n) </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;count = n;</span><br><span class="line">        parent.<span class="built_in">resize</span>(n);</span><br><span class="line">        weight.<span class="built_in">resize</span>(n);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) </span><br><span class="line">        &#123;</span><br><span class="line">            parent[i] = i;</span><br><span class="line">            weight[i] = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">//连接两个节点</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unions</span><span class="params">(<span class="keyword">int</span> p, <span class="keyword">int</span> q)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> rootP = <span class="built_in">find</span>(p);</span><br><span class="line">        <span class="keyword">int</span> rootQ = <span class="built_in">find</span>(q);</span><br><span class="line">        <span class="keyword">if</span> (rootP == rootQ)</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        <span class="comment">// 小集合到大集合下面，较平衡</span></span><br><span class="line">        <span class="keyword">if</span> (weight[rootP] &gt; weight[rootQ]) </span><br><span class="line">        &#123;</span><br><span class="line">            parent[rootQ] = rootP;</span><br><span class="line">            weight[rootP] += weight[rootQ];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> </span><br><span class="line">        &#123;</span><br><span class="line">            parent[rootP] = rootQ;</span><br><span class="line">            weight[rootQ] += weight[rootP];</span><br><span class="line">        &#125;</span><br><span class="line">        count--;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">//判断两个节点是否接通</span></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">connected</span><span class="params">(<span class="keyword">int</span> p, <span class="keyword">int</span> q)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> rootP = <span class="built_in">find</span>(p);</span><br><span class="line">        <span class="keyword">int</span> rootQ = <span class="built_in">find</span>(q);</span><br><span class="line">        <span class="keyword">return</span> rootP == rootQ;</span><br><span class="line">    &#125;</span><br><span class="line"> 	<span class="comment">//找到 x 的根</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">find</span><span class="params">(<span class="keyword">int</span> x)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (parent[x] != x) </span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 进行路径压缩</span></span><br><span class="line">            parent[x] = parent[parent[x]];</span><br><span class="line">            x = parent[x];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// 连通分量个数</span></span><br><span class="line">    <span class="keyword">int</span> count;</span><br><span class="line">    <span class="comment">// 存储父节点</span></span><br><span class="line">    vector&lt;<span class="keyword">int</span>&gt; parent;</span><br><span class="line">    <span class="comment">// 记录树的“重量”</span></span><br><span class="line">    vector&lt;<span class="keyword">int</span>&gt; weight; </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>&ensp;&ensp;&ensp;<code>&amp;ensp;Union-Find</code> 算法的复杂度可以这样分析：构造函数初始化数据结构需要 O(N) 的时间和空间复杂度；连通两个节点<code>union</code>、判断两个节点的连通性<code>connected</code>、计算连通分量<code>count</code>所需的时间复杂度均为 O(1)。</p>
+<h3 id="三、相关题目"><a href="#三、相关题目" class="headerlink" title="三、相关题目"></a>三、相关题目</h3><h4 id="3-1-等式方程的可满足性"><a href="#3-1-等式方程的可满足性" class="headerlink" title="3.1 等式方程的可满足性"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/satisfiability-of-equality-equations/">3.1 等式方程的可满足性</a></h4><p>&ensp;&ensp;&ensp;&ensp;给定一个由表示变量之间关系的字符串方程组成的数组，每个字符串方程 <code>equations[i]</code> 的长度为 <code>4</code>，并采用两种不同的形式之一：<code>&quot;a==b&quot;</code> 或 <code>&quot;a!=b&quot;</code>。在这里，a 和 b 是小写字母（不一定不同），表示单字母变量名。</p>
+<p>&ensp;&ensp;&ensp;&ensp;只有当可以将整数分配给变量名，以便满足所有给定的方程时才返回 <code>true</code>，否则返回 <code>false</code>。  </p>
+<p><strong>示例 1：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：[&quot;a&#x3D;&#x3D;b&quot;,&quot;b!&#x3D;a&quot;]</span><br><span class="line">输出：false</span><br><span class="line">解释：如果我们指定，a &#x3D; 1 且 b &#x3D; 1，那么可以满足第一个方程，但无法满足第二个方程。没有办法分配变量同时满足这两个方程。</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 2：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：[&quot;b&#x3D;&#x3D;a&quot;,&quot;a&#x3D;&#x3D;b&quot;]</span><br><span class="line">输出：true</span><br><span class="line">解释：我们可以指定 a &#x3D; 1 且 b &#x3D; 1 以满足满足这两个方程。</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 3：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：[&quot;a&#x3D;&#x3D;b&quot;,&quot;b&#x3D;&#x3D;c&quot;,&quot;a&#x3D;&#x3D;c&quot;]</span><br><span class="line">输出：true</span><br></pre></td></tr></table></figure>
+
+<p><strong>提示：</strong></p>
+<ol>
+<li> <code>1 &lt;= equations.length &lt;= 500</code></li>
+<li> <code>equations[i].length == 4</code></li>
+<li> <code>equations[i][0]</code> 和 <code>equations[i][3]</code> 是小写字母</li>
+<li> <code>equations[i][1]</code> 要么是 <code>&#39;=&#39;</code>，要么是 <code>&#39;!&#39;</code></li>
+<li> <code>equations[i][2]</code> 是 <code>&#39;=&#39;</code></li>
+</ol>
+<p>代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UF</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">UF</span>(<span class="keyword">int</span> n) &#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;count = n;</span><br><span class="line">        parent.<span class="built_in">resize</span>(n);</span><br><span class="line">        weight.<span class="built_in">resize</span>(n);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">            parent[i] = i;</span><br><span class="line">            weight[i] = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">//连接两个节点</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unions</span><span class="params">(<span class="keyword">int</span> p, <span class="keyword">int</span> q)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> rootP = <span class="built_in">find</span>(p);</span><br><span class="line">        <span class="keyword">int</span> rootQ = <span class="built_in">find</span>(q);</span><br><span class="line">        <span class="keyword">if</span> (rootP == rootQ)</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 小树接到大树下面，较平衡</span></span><br><span class="line">        <span class="keyword">if</span> (weight[rootP] &gt; weight[rootQ]) &#123;</span><br><span class="line">            parent[rootQ] = rootP;</span><br><span class="line">            weight[rootP] += weight[rootQ];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            parent[rootP] = rootQ;</span><br><span class="line">            weight[rootQ] += weight[rootP];</span><br><span class="line">        &#125;</span><br><span class="line">        count--;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">//判断两个节点是否接通</span></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">connected</span><span class="params">(<span class="keyword">int</span> p, <span class="keyword">int</span> q)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> rootP = <span class="built_in">find</span>(p);</span><br><span class="line">        <span class="keyword">int</span> rootQ = <span class="built_in">find</span>(q);</span><br><span class="line">        <span class="keyword">return</span> rootP == rootQ;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// 连通分量个数</span></span><br><span class="line">    <span class="keyword">int</span> count;</span><br><span class="line">    <span class="comment">// 存储一棵树</span></span><br><span class="line">    vector&lt;<span class="keyword">int</span>&gt; parent;</span><br><span class="line">    <span class="comment">// 记录树的“重量”</span></span><br><span class="line">    vector&lt;<span class="keyword">int</span>&gt; weight;</span><br><span class="line">   </span><br><span class="line">    <span class="comment">//找到 x 的父节点</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">find</span><span class="params">(<span class="keyword">int</span> x)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (parent[x] != x) &#123;</span><br><span class="line">            <span class="comment">// 进行路径压缩</span></span><br><span class="line">            parent[x] = parent[parent[x]];</span><br><span class="line">            x = parent[x];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">equationsPossible</span><span class="params">(vector&lt;string&gt;&amp; equations)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="function">UF <span class="title">uf</span><span class="params">(<span class="number">26</span>)</span></span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> &amp;str : equations)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(str[<span class="number">1</span>] == <span class="string">&#x27;=&#x27;</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">char</span> x = str[<span class="number">0</span>];</span><br><span class="line">                <span class="keyword">char</span> y = str[<span class="number">3</span>];</span><br><span class="line">                uf.<span class="built_in">unions</span>(x - <span class="string">&#x27;a&#x27;</span>, y - <span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span>&amp; str : equations)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(str[<span class="number">1</span>] == <span class="string">&#x27;!&#x27;</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">char</span> x = str[<span class="number">0</span>];</span><br><span class="line">                <span class="keyword">char</span> y = str[<span class="number">3</span>];</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span>(uf.<span class="built_in">connected</span>(x - <span class="string">&#x27;a&#x27;</span>, y - <span class="string">&#x27;a&#x27;</span>))</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-岛屿数量"><a href="#3-2-岛屿数量" class="headerlink" title="3.2. 岛屿数量"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/number-of-islands/">3.2. 岛屿数量</a></h4><p>&ensp;&ensp;&ensp;&ensp;给你一个由 <code>&#39;1&#39;</code>（陆地）和 <code>&#39;0&#39;</code>（水）组成的的二维网格，请你计算网格中岛屿的数量。</p>
+<p>&ensp;&ensp;&ensp;&ensp;岛屿总是被水包围，并且每座岛屿只能由水平方向和/或竖直方向上相邻的陆地连接形成。</p>
+<p>&ensp;&ensp;&ensp;&ensp;此外，你可以假设该网格的四条边均被水包围。</p>
+<p> <strong>示例 1：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">输入：grid &#x3D; [</span><br><span class="line">  [&quot;1&quot;,&quot;1&quot;,&quot;1&quot;,&quot;1&quot;,&quot;0&quot;],</span><br><span class="line">  [&quot;1&quot;,&quot;1&quot;,&quot;0&quot;,&quot;1&quot;,&quot;0&quot;],</span><br><span class="line">  [&quot;1&quot;,&quot;1&quot;,&quot;0&quot;,&quot;0&quot;,&quot;0&quot;],</span><br><span class="line">  [&quot;0&quot;,&quot;0&quot;,&quot;0&quot;,&quot;0&quot;,&quot;0&quot;]</span><br><span class="line">]</span><br><span class="line">输出：1</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 2：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">输入：grid &#x3D; [</span><br><span class="line">  [&quot;1&quot;,&quot;1&quot;,&quot;0&quot;,&quot;0&quot;,&quot;0&quot;],</span><br><span class="line">  [&quot;1&quot;,&quot;1&quot;,&quot;0&quot;,&quot;0&quot;,&quot;0&quot;],</span><br><span class="line">  [&quot;0&quot;,&quot;0&quot;,&quot;1&quot;,&quot;0&quot;,&quot;0&quot;],</span><br><span class="line">  [&quot;0&quot;,&quot;0&quot;,&quot;0&quot;,&quot;1&quot;,&quot;1&quot;]</span><br><span class="line">]</span><br><span class="line">输出：3</span><br></pre></td></tr></table></figure>
+
+<p> <strong>提示：</strong></p>
+<ul>
+<li>  <code>m == grid.length</code></li>
+<li>  <code>n == grid[i].length</code></li>
+<li>  <code>1 &lt;= m, n &lt;= 300</code></li>
+<li>  <code>grid[i][j]</code> 的值为 <code>&#39;0&#39;</code> 或 <code>&#39;1&#39;</code></li>
+</ul>
+<p>代码(leetcode答案)：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UnionFind</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">UnionFind</span>(vector&lt;vector&lt;<span class="keyword">char</span>&gt;&gt;&amp; grid) &#123;</span><br><span class="line">        count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> m = grid.<span class="built_in">size</span>();</span><br><span class="line">        <span class="keyword">int</span> n = grid[<span class="number">0</span>].<span class="built_in">size</span>();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m; ++i) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; n; ++j) &#123;</span><br><span class="line">                <span class="keyword">if</span> (grid[i][j] == <span class="string">&#x27;1&#x27;</span>) &#123;</span><br><span class="line">                    parent.<span class="built_in">push_back</span>(i * n + j);</span><br><span class="line">                    ++count;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    parent.<span class="built_in">push_back</span>(<span class="number">-1</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                rank.<span class="built_in">push_back</span>(<span class="number">0</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">find</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (parent[i] != i) &#123;</span><br><span class="line">            parent[i] = <span class="built_in">find</span>(parent[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> parent[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unite</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> rootx = <span class="built_in">find</span>(x);</span><br><span class="line">        <span class="keyword">int</span> rooty = <span class="built_in">find</span>(y);</span><br><span class="line">        <span class="keyword">if</span> (rootx != rooty) &#123;</span><br><span class="line">            <span class="keyword">if</span> (rank[rootx] &lt; rank[rooty]) &#123;</span><br><span class="line">                <span class="built_in">swap</span>(rootx, rooty);</span><br><span class="line">            &#125;</span><br><span class="line">            parent[rooty] = rootx;</span><br><span class="line">            <span class="keyword">if</span> (rank[rootx] == rank[rooty]) rank[rootx] += <span class="number">1</span>;</span><br><span class="line">            --count;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">getCount</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    vector&lt;<span class="keyword">int</span>&gt; parent;</span><br><span class="line">    vector&lt;<span class="keyword">int</span>&gt; rank;</span><br><span class="line">    <span class="keyword">int</span> count;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">numIslands</span><span class="params">(vector&lt;vector&lt;<span class="keyword">char</span>&gt;&gt;&amp; grid)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> nr = grid.<span class="built_in">size</span>();</span><br><span class="line">        <span class="keyword">if</span> (!nr) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> nc = grid[<span class="number">0</span>].<span class="built_in">size</span>();</span><br><span class="line"></span><br><span class="line">        <span class="function">UnionFind <span class="title">uf</span><span class="params">(grid)</span></span>;</span><br><span class="line">        <span class="keyword">int</span> num_islands = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> r = <span class="number">0</span>; r &lt; nr; ++r) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> c = <span class="number">0</span>; c &lt; nc; ++c) &#123;</span><br><span class="line">                <span class="keyword">if</span> (grid[r][c] == <span class="string">&#x27;1&#x27;</span>) &#123;</span><br><span class="line">                    grid[r][c] = <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">                    <span class="keyword">if</span> (r - <span class="number">1</span> &gt;= <span class="number">0</span> &amp;&amp; grid[r<span class="number">-1</span>][c] == <span class="string">&#x27;1&#x27;</span>) </span><br><span class="line">                        uf.<span class="built_in">unite</span>(r * nc + c, (r<span class="number">-1</span>) * nc + c);</span><br><span class="line">                    <span class="keyword">if</span> (r + <span class="number">1</span> &lt; nr &amp;&amp; grid[r+<span class="number">1</span>][c] == <span class="string">&#x27;1&#x27;</span>) </span><br><span class="line">                        uf.<span class="built_in">unite</span>(r * nc + c, (r+<span class="number">1</span>) * nc + c);</span><br><span class="line">                    <span class="keyword">if</span> (c - <span class="number">1</span> &gt;= <span class="number">0</span> &amp;&amp; grid[r][c<span class="number">-1</span>] == <span class="string">&#x27;1&#x27;</span>) </span><br><span class="line">                        uf.<span class="built_in">unite</span>(r * nc + c, r * nc + c - <span class="number">1</span>);</span><br><span class="line">                    <span class="keyword">if</span> (c + <span class="number">1</span> &lt; nc &amp;&amp; grid[r][c+<span class="number">1</span>] == <span class="string">&#x27;1&#x27;</span>) </span><br><span class="line">                        uf.<span class="built_in">unite</span>(r * nc + c, r * nc + c + <span class="number">1</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> uf.<span class="built_in">getCount</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-3-省份数量"><a href="#3-3-省份数量" class="headerlink" title="3.3 省份数量"></a><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/number-of-provinces/">3.3 省份数量</a></h4><p>&ensp;&ensp;&ensp;&ensp;有 <code>n</code> 个城市，其中一些彼此相连，另一些没有相连。如果城市 <code>a</code> 与城市 <code>b</code> 直接相连，且城市 <code>b</code> 与城市 <code>c</code> 直接相连，那么城市 <code>a</code> 与城市 <code>c</code> 间接相连。</p>
+<p>&ensp;&ensp;&ensp;&ensp;<strong>省份</strong> 是一组直接或间接相连的城市，组内不含其他没有相连的城市。</p>
+<p>&ensp;&ensp;&ensp;&ensp;给你一个 <code>n x n</code> 的矩阵 <code>isConnected</code> ，其中 <code>isConnected[i][j] = 1</code> 表示第 <code>i</code> 个城市和第 <code>j</code> 个城市直接相连，而 <code>isConnected[i][j] = 0</code> 表示二者不直接相连。</p>
+<p>&ensp;&ensp;&ensp;&ensp;返回矩阵中 <strong>省份</strong> 的数量。 </p>
+<p><strong>示例 1：</strong></p>
+<p><img src="/2021/06/14/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E5%B9%B6%E6%9F%A5%E9%9B%86/4.jpg" alt="img"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：isConnected &#x3D; [[1,1,0],[1,1,0],[0,0,1]]</span><br><span class="line">输出：2</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例 2：</strong></p>
+<p><img src="/2021/06/14/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A%E5%B9%B6%E6%9F%A5%E9%9B%86/5.jpg" alt="img"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：isConnected &#x3D; [[1,0,0],[0,1,0],[0,0,1]]</span><br><span class="line">输出：3</span><br></pre></td></tr></table></figure>
+
+<p><strong>提示：</strong></p>
+<ul>
+<li>  <code>1 &lt;= n &lt;= 200</code></li>
+<li>  <code>n == isConnected.length</code></li>
+<li>  <code>n == isConnected[i].length</code></li>
+<li>  <code>isConnected[i][j]</code> 为 <code>1</code> 或 <code>0</code></li>
+<li>  <code>isConnected[i][i] == 1</code></li>
+<li>  <code>isConnected[i][j] == isConnected[j][i]</code></li>
+</ul>
+<p>代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">class UnionFind &#123;</span><br><span class="line">public:</span><br><span class="line">    UnionFind(vector&lt;vector&lt;int&gt;&gt;&amp; grid)</span><br><span class="line">    &#123;</span><br><span class="line">        count &#x3D; grid.size();</span><br><span class="line">        for (int i &#x3D; 0; i &lt; count; ++i) </span><br><span class="line">        &#123; </span><br><span class="line">            parent.push_back(i);       </span><br><span class="line">            rank.push_back(0);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    int find(int i) </span><br><span class="line">    &#123;</span><br><span class="line">        if (parent[i] !&#x3D; i) </span><br><span class="line">        &#123;</span><br><span class="line">            parent[i] &#x3D; find(parent[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        return parent[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    void unite(int x, int y) </span><br><span class="line">    &#123;</span><br><span class="line">        int rootx &#x3D; find(x);</span><br><span class="line">        int rooty &#x3D; find(y);</span><br><span class="line">        if (rootx !&#x3D; rooty) &#123;</span><br><span class="line">            if (rank[rootx] &lt; rank[rooty]) </span><br><span class="line">            &#123;</span><br><span class="line">                swap(rootx, rooty);</span><br><span class="line">            &#125;</span><br><span class="line">            parent[rooty] &#x3D; rootx;</span><br><span class="line">            if (rank[rootx] &#x3D;&#x3D; rank[rooty]) rank[rootx] +&#x3D; 1;</span><br><span class="line">            --count;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    int getCount() const </span><br><span class="line">    &#123;</span><br><span class="line">        return count;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">private:</span><br><span class="line">    vector&lt;int&gt; parent;</span><br><span class="line">    vector&lt;int&gt; rank;</span><br><span class="line">    int count;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">class Solution </span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">    int findCircleNum(vector&lt;vector&lt;int&gt;&gt;&amp; isConnected) </span><br><span class="line">    &#123;</span><br><span class="line">        if (isConnected.size() &#x3D;&#x3D; 1)</span><br><span class="line">            return 1;</span><br><span class="line">        UnionFind uf(isConnected);</span><br><span class="line">        int n &#x3D; isConnected.size();</span><br><span class="line">        for (int i &#x3D; 0; i &lt; n; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            for (int j &#x3D; i + 1; j &lt; n; ++j)</span><br><span class="line">            &#123;</span><br><span class="line">                if (isConnected[i][j] &#x3D;&#x3D; 1)</span><br><span class="line">                &#123;</span><br><span class="line">                    uf.unite(i, j);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return uf.getCount();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247484751&idx=1&sn=a873c1f51d601bac17f5078c408cc3f6&chksm=9bd7fb47aca07251dd9146e745b4cc5cfdbc527abe93767691732dfba166dfc02fbb7237ddbf&scene=21#wechat_redirect">union-find算法详解</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/dm_vincent/article/details/7655764">并查集(Union-Find)算法介绍</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/b67668670bef">Union-Find algorithm-并查集算法 - 简书 (jianshu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/63123489">算法与数据结构基础 - 合并查找(Union Find) - 知乎 (zhihu.com)</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+              <a href="/tags/leetcode/" rel="tag"># leetcode</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+              <a href="/tags/%E5%B9%B6%E6%9F%A5%E9%9B%86/" rel="tag"># 并查集</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/06/12/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3%EF%BC%9A%E5%B0%86%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E8%87%B3%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="prev" title="将项目部署至云服务器">
+      <i class="fa fa-chevron-left"></i> 将项目部署至云服务器
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81Union-Find%E7%AE%97%E6%B3%95%E5%9F%BA%E7%A1%80"><span class="nav-text">一、Union Find算法基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E8%AE%BE%E8%AE%A1%E5%B9%B6%E6%9F%A5%E9%9B%86"><span class="nav-text">二、设计并查集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE"><span class="nav-text">三、相关题目</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-%E7%AD%89%E5%BC%8F%E6%96%B9%E7%A8%8B%E7%9A%84%E5%8F%AF%E6%BB%A1%E8%B6%B3%E6%80%A7"><span class="nav-text">3.1 等式方程的可满足性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-%E5%B2%9B%E5%B1%BF%E6%95%B0%E9%87%8F"><span class="nav-text">3.2. 岛屿数量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-%E7%9C%81%E4%BB%BD%E6%95%B0%E9%87%8F"><span class="nav-text">3.3 省份数量</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="高乾威"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">高乾威</p>
+  <div class="site-description" itemprop="description">报我楼成秋望月，把君诗读夜回灯</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="http://github.com/GaoQianwei" title="GitHub → http:&#x2F;&#x2F;github.com&#x2F;GaoQianwei" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2966807184@qq.com" title="E-Mail → mailto:2966807184@qq.com" rel="noopener" target="_blank">E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xue-wu-zhi-jing-75-22" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xue-wu-zhi-jing-75-22" rel="noopener" target="_blank">知乎</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_45341339" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_45341339" rel="noopener" target="_blank">CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div><div>
+  <canvas id="canvasDiyBlock" style="width:60%;">当前浏览器不支持canvas，请更换浏览器后再试</canvas>
+<script src="/js/custom/clock.js"></script>
+
+</div>
+
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 到 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">高乾威</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<span class="post-meta-divider">|</span>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">全站共 112.8k 字</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

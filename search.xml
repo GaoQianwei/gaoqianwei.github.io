@@ -395,8 +395,8 @@
         <category>数据结构</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>数据结构</tag>
         <tag>并查集</tag>
       </tags>
@@ -585,8 +585,8 @@
         <category>动态规划</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>动态规划</tag>
         <tag>矩阵</tag>
       </tags>
@@ -805,8 +805,8 @@
         <category>动态规划</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>动态规划</tag>
         <tag>背包问题</tag>
       </tags>
@@ -850,8 +850,8 @@
         <category>算法</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>排序</tag>
         <tag>lambda表达式</tag>
       </tags>
@@ -914,10 +914,10 @@
       </categories>
       <tags>
         <tag>算法</tag>
-        <tag>链表</tag>
         <tag>数据结构</tag>
         <tag>哈希图</tag>
         <tag>LFU缓存</tag>
+        <tag>链表</tag>
       </tags>
   </entry>
   <entry>
@@ -992,9 +992,9 @@
       </categories>
       <tags>
         <tag>算法</tag>
-        <tag>链表</tag>
         <tag>数据结构</tag>
         <tag>哈希图</tag>
+        <tag>链表</tag>
         <tag>LRU缓存</tag>
       </tags>
   </entry>
@@ -1594,8 +1594,8 @@
         <category>数组</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>数组</tag>
         <tag>排序</tag>
       </tags>
@@ -1628,8 +1628,8 @@
         <category>字符串</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>字符串</tag>
       </tags>
   </entry>
@@ -1655,8 +1655,8 @@
         <category>字符串</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>字符串</tag>
         <tag>双指针</tag>
       </tags>
@@ -1692,8 +1692,8 @@
         <category>字符串</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>字符串</tag>
         <tag>递归</tag>
       </tags>
@@ -1769,8 +1769,8 @@
         <category>字符串</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>动态规划</tag>
         <tag>字符串</tag>
       </tags>
@@ -1817,8 +1817,8 @@
         <category>数学</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>位运算</tag>
         <tag>数学</tag>
       </tags>
@@ -1869,10 +1869,10 @@
         <category>数学</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
-        <tag>数学</tag>
+        <tag>算法</tag>
         <tag>矩阵</tag>
+        <tag>数学</tag>
       </tags>
   </entry>
   <entry>
@@ -1963,8 +1963,8 @@
         <category>数据结构</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>数据结构</tag>
         <tag>单调栈</tag>
       </tags>
@@ -3365,8 +3365,8 @@
         <category>数学</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>数学</tag>
         <tag>回溯</tag>
         <tag>排列组合</tag>
@@ -3421,8 +3421,8 @@
         <category>数学</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>数学</tag>
         <tag>回溯</tag>
         <tag>排列组合</tag>
@@ -3479,8 +3479,8 @@
         <category>数学</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>数学</tag>
         <tag>回溯</tag>
         <tag>排列组合</tag>
@@ -5310,9 +5310,9 @@
         <category>二叉树</category>
       </categories>
       <tags>
+        <tag>leetcode</tag>
         <tag>算法</tag>
         <tag>二叉树</tag>
-        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
@@ -5337,9 +5337,9 @@
         <category>二叉树</category>
       </categories>
       <tags>
+        <tag>leetcode</tag>
         <tag>算法</tag>
         <tag>二叉树</tag>
-        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
@@ -5541,9 +5541,9 @@
         <category>二叉树</category>
       </categories>
       <tags>
+        <tag>leetcode</tag>
         <tag>算法</tag>
         <tag>二叉树</tag>
-        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
@@ -5618,9 +5618,9 @@
         <category>shell</category>
       </categories>
       <tags>
-        <tag>leetcode</tag>
         <tag>shell</tag>
         <tag>linux</tag>
+        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
@@ -5992,9 +5992,9 @@ esac
         <category>shell</category>
       </categories>
       <tags>
-        <tag>leetcode</tag>
         <tag>shell</tag>
         <tag>linux</tag>
+        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
@@ -6041,9 +6041,9 @@ esac
         <category>二叉树</category>
       </categories>
       <tags>
+        <tag>leetcode</tag>
         <tag>算法</tag>
         <tag>二叉树</tag>
-        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
@@ -6133,9 +6133,9 @@ esac
         <category>二叉树</category>
       </categories>
       <tags>
+        <tag>leetcode</tag>
         <tag>算法</tag>
         <tag>二叉树</tag>
-        <tag>leetcode</tag>
       </tags>
   </entry>
   <entry>
@@ -6217,8 +6217,8 @@ linkedList.get(1);            //返回3
         <category>链表</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>链表</tag>
       </tags>
   </entry>
@@ -6283,8 +6283,8 @@ linkedList.get(1);            //返回3
         <category>链表</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>链表</tag>
       </tags>
   </entry>
@@ -6312,8 +6312,8 @@ linkedList.get(1);            //返回3
         <category>链表</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>链表</tag>
       </tags>
   </entry>
@@ -6342,8 +6342,8 @@ linkedList.get(1);            //返回3
         <category>链表</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>链表</tag>
       </tags>
   </entry>
@@ -6370,8 +6370,8 @@ linkedList.get(1);            //返回3
         <category>链表</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>链表</tag>
       </tags>
   </entry>
@@ -6411,8 +6411,8 @@ linkedList.get(1);            //返回3
         <category>链表</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>链表</tag>
       </tags>
   </entry>
@@ -6467,8 +6467,8 @@ linkedList.get(1);            //返回3
         <category>链表</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>链表</tag>
       </tags>
   </entry>
@@ -6506,8 +6506,8 @@ linkedList.get(1);            //返回3
         <category>链表</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>链表</tag>
       </tags>
   </entry>
@@ -6536,8 +6536,8 @@ linkedList.get(1);            //返回3
         <category>链表</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>链表</tag>
       </tags>
   </entry>
@@ -6559,8 +6559,8 @@ linkedList.get(1);            //返回3
         <category>链表</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>链表</tag>
       </tags>
   </entry>
@@ -6623,8 +6623,8 @@ linkedList.get(1);            //返回3
         <category>链表</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>链表</tag>
         <tag>反转链表</tag>
       </tags>
@@ -6693,8 +6693,8 @@ linkedList.get(1);            //返回3
         <category>数学</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>数学</tag>
         <tag>模幂运算</tag>
       </tags>
@@ -6737,10 +6737,10 @@ linkedList.get(1);            //返回3
         <category>遇到的笔试（面试）题</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
-        <tag>数组</tag>
+        <tag>算法</tag>
         <tag>动态规划</tag>
+        <tag>数组</tag>
         <tag>华为笔试题</tag>
       </tags>
   </entry>
@@ -6814,8 +6814,8 @@ linkedList.get(1);            //返回3
         <category>数学</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>位运算</tag>
       </tags>
   </entry>
@@ -6888,8 +6888,8 @@ linkedList.get(1);            //返回3
         <category>算法</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>数组</tag>
       </tags>
   </entry>
@@ -6935,10 +6935,10 @@ linkedList.get(1);            //返回3
         <category>数学</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
-        <tag>数学</tag>
+        <tag>算法</tag>
         <tag>矩阵</tag>
+        <tag>数学</tag>
       </tags>
   </entry>
   <entry>
@@ -6985,8 +6985,8 @@ linkedList.get(1);            //返回3
         <category>遇到的笔试（面试）题</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>leetcode</tag>
+        <tag>算法</tag>
         <tag>数组</tag>
         <tag>拼多多实习面试</tag>
       </tags>

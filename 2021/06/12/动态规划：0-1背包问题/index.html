@@ -5,32 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
 <meta name="generator" content="Hexo 5.4.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/GaoQianwei/gaoqianwei.github.io/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/GaoQianwei/gaoqianwei.github.io/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/GaoQianwei/gaoqianwei.github.io/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/GaoQianwei/gaoqianwei.github.io/images/logo.svg" color="#222">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-<link rel="stylesheet" href="/GaoQianwei/gaoqianwei.github.io/css/main.css">
+<link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/GaoQianwei/gaoqianwei.github.io/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="/GaoQianwei/gaoqianwei.github.io/lib/pace/pace-theme-minimal.min.css">
-  <script src="/GaoQianwei/gaoqianwei.github.io/lib/pace/pace.min.js"></script>
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"github.com","root":"/GaoQianwei/gaoqianwei.github.io/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="一、问题描述：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;有 n 个物品，它们有各自的重量和价值，现有给定容量(m)的背包，如何让背包里装入的物品具有最大的价值总和？">
 <meta property="og:type" content="article">
 <meta property="og:title" content="0-1背包系列问题详解">
-<meta property="og:url" content="https://github.com/GaoQianwei/gaoqianwei.github.io/2021/06/12/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%9A0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:url" content="https://example.com/2021/06/12/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%9A0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="学无止境">
 <meta property="og:description" content="一、问题描述：&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;有 n 个物品，它们有各自的重量和价值，现有给定容量(m)的背包，如何让背包里装入的物品具有最大的价值总和？">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://github.com/GaoQianwei/gaoqianwei.github.io/2021/06/12/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%9A0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/1.png">
-<meta property="og:image" content="https://github.com/GaoQianwei/gaoqianwei.github.io/2021/06/12/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%9A0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/2.png">
+<meta property="og:image" content="https://example.com/2021/06/12/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%9A0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/1.png">
+<meta property="og:image" content="https://example.com/2021/06/12/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%9A0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/2.png">
 <meta property="article:published_time" content="2021-06-11T16:55:42.856Z">
 <meta property="article:modified_time" content="2021-06-11T17:07:21.001Z">
 <meta property="article:author" content="高乾威">
@@ -39,9 +39,9 @@
 <meta property="article:tag" content="动态规划">
 <meta property="article:tag" content="背包问题">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://github.com/GaoQianwei/gaoqianwei.github.io/2021/06/12/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%9A0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/1.png">
+<meta name="twitter:image" content="https://example.com/2021/06/12/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%9A0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/1.png">
 
-<link rel="canonical" href="https://github.com/GaoQianwei/gaoqianwei.github.io/2021/06/12/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%9A0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/">
+<link rel="canonical" href="https://example.com/2021/06/12/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%9A0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/">
 
 
 <script id="page-configurations">
@@ -103,7 +103,7 @@
 
   <div class="site-meta">
 
-    <a href="/GaoQianwei/gaoqianwei.github.io/" class="brand" rel="start">
+    <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
       <h1 class="site-title">学无止境</h1>
       <span class="logo-line-after"><i></i></span>
@@ -124,32 +124,32 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/GaoQianwei/gaoqianwei.github.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/GaoQianwei/gaoqianwei.github.io/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/GaoQianwei/gaoqianwei.github.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/GaoQianwei/gaoqianwei.github.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/GaoQianwei/gaoqianwei.github.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
 
   </li>
         <li class="menu-item menu-item-links">
 
-    <a href="/GaoQianwei/gaoqianwei.github.io/links/" rel="section"><i class="fa fa-link fa-fw"></i>友链</a>
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>友链</a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -207,10 +207,10 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://github.com/GaoQianwei/gaoqianwei.github.io/2021/06/12/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%9A0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/">
+    <link itemprop="mainEntityOfPage" href="https://example.com/2021/06/12/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%9A0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/GaoQianwei/gaoqianwei.github.io/images/avatar.png">
+      <meta itemprop="image" content="/images/avatar.png">
       <meta itemprop="name" content="高乾威">
       <meta itemprop="description" content="报我楼成秋望月，把君诗读夜回灯">
     </span>
@@ -241,11 +241,11 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/GaoQianwei/gaoqianwei.github.io/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/GaoQianwei/gaoqianwei.github.io/categories/%E7%AE%97%E6%B3%95/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" itemprop="url" rel="index"><span itemprop="name">动态规划</span></a>
+                  <a href="/categories/%E7%AE%97%E6%B3%95/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" itemprop="url" rel="index"><span itemprop="name">动态规划</span></a>
                 </span>
             </span>
 
@@ -458,14 +458,14 @@
 <p>    j - nums[i] 作为数组的下标，一定得保证大于等于 0 ，因此 nums[i] &lt;= j；</p>
 <p>    注意到一种非常特殊的情况：j 恰好等于 nums[i]，即单独 nums[j] 这个数恰好等于此时「背包的容积」 j，这也是符合题意的。</p>
 <p>因此完整的状态转移方程是：</p>
-<p><img src="/GaoQianwei/gaoqianwei.github.io/2021/06/12/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%9A0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/1.png" alt="image-20210612010526469"></p>
+<p><img src="/2021/06/12/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%9A0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/1.png" alt="image-20210612010526469"></p>
 <p>    说明：虽然写成花括号，但是它们的关系是 或者 。</p>
 <p>    初始化：dp[0][0] = false，因为候选数 nums[0] 是正整数，凑不出和为 0；</p>
 <p>    输出：dp[len][target]，这里 len 表示数组的长度，target 是数组的元素之和（必须是偶数）的一半。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">canPartition</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> maxValue = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span>&amp; i : nums)</span><br><span class="line">        &#123;</span><br><span class="line">            maxValue = maxValue &gt; i ? maxValue : i;</span><br><span class="line">            sum += i;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 排除一些特殊的情况</span></span><br><span class="line">        <span class="keyword">if</span> (sum % <span class="number">2</span> == <span class="number">1</span> || maxValue * <span class="number">2</span> &gt; sum)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> target = sum / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">int</span> numsLength = nums.<span class="built_in">size</span>();</span><br><span class="line">        vector&lt;vector&lt;<span class="keyword">bool</span>&gt;&gt; <span class="built_in">dp</span>(numsLength + <span class="number">1</span>, vector&lt;<span class="keyword">bool</span>&gt;(target + <span class="number">1</span>));</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= numsLength; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            dp[i][<span class="number">0</span>] = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= numsLength; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= target; ++j)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (nums[i - <span class="number">1</span>] &lt;= j)</span><br><span class="line">                &#123;</span><br><span class="line">                    dp[i][j] = dp[i - <span class="number">1</span>][j] || dp[i - <span class="number">1</span>][j - nums[i - <span class="number">1</span>]];</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                &#123;</span><br><span class="line">                    dp[i][j] = dp[i - <span class="number">1</span>][j];</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;        </span><br><span class="line">        <span class="keyword">return</span> dp[numsLength][target];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <p>    进一步优化：上述代码的空间复杂度是 <code>O(n*target)</code>。但是可以发现在计算 <code>dp</code> 的过程中，每一行的 <code>dp</code> 值都只与上一行的 <code>dp</code> 值有关，因此只需要一个一维数组即可将空间复杂度降到 <code>O(target)</code>。此时的转移方程为：</p>
-<p><img src="/GaoQianwei/gaoqianwei.github.io/2021/06/12/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%9A0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/2.png" alt="image-20210612010707868"></p>
+<p><img src="/2021/06/12/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%9A0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/2.png" alt="image-20210612010707868"></p>
 <p>    且需要注意的是第二层的循环我们需要从大到小计算，因为如果我们从小到大更新 <code>dp</code> 值，那么在计算 <code>dp[j]</code> 值的时候，<code>dp[j−nums[i - 1]]</code> 已经是被更新过的状态，不再是上一行的 <code>dp</code> 值。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">canPartition</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> maxValue = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span>&amp; i : nums)</span><br><span class="line">        &#123;</span><br><span class="line">            maxValue = maxValue &gt; i ? maxValue : i;</span><br><span class="line">            sum += i;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (sum % <span class="number">2</span> == <span class="number">1</span> || maxValue * <span class="number">2</span> &gt; sum)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> target = sum / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">int</span> numsLength = nums.<span class="built_in">size</span>();</span><br><span class="line">        <span class="function">vector&lt;<span class="keyword">bool</span>&gt; <span class="title">dp</span><span class="params">(target + <span class="number">1</span>)</span></span>;</span><br><span class="line">        dp[<span class="number">0</span>] = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= numsLength; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = target; j &gt;= nums[i - <span class="number">1</span>]; --j)</span><br><span class="line">            &#123;</span><br><span class="line">                dp[j] = dp[j] || dp[j - nums[i - <span class="number">1</span>]];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;        </span><br><span class="line">        <span class="keyword">return</span> dp[target];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
@@ -482,10 +482,10 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/GaoQianwei/gaoqianwei.github.io/tags/leetcode/" rel="tag"># leetcode</a>
-              <a href="/GaoQianwei/gaoqianwei.github.io/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
-              <a href="/GaoQianwei/gaoqianwei.github.io/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" rel="tag"># 动态规划</a>
-              <a href="/GaoQianwei/gaoqianwei.github.io/tags/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/" rel="tag"># 背包问题</a>
+              <a href="/tags/leetcode/" rel="tag"># leetcode</a>
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+              <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" rel="tag"># 动态规划</a>
+              <a href="/tags/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/" rel="tag"># 背包问题</a>
           </div>
 
         
@@ -494,11 +494,11 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/GaoQianwei/gaoqianwei.github.io/2021/06/12/%E7%AE%97%E6%B3%95%EF%BC%9A%E6%A0%B9%E6%8D%AE%E8%BA%AB%E9%AB%98%E9%87%8D%E5%BB%BA%E9%98%9F%E5%88%97/" rel="prev" title="根据身高重建队列">
+    <a href="/2021/06/12/%E7%AE%97%E6%B3%95%EF%BC%9A%E6%A0%B9%E6%8D%AE%E8%BA%AB%E9%AB%98%E9%87%8D%E5%BB%BA%E9%98%9F%E5%88%97/" rel="prev" title="根据身高重建队列">
       <i class="fa fa-chevron-left"></i> 根据身高重建队列
     </a></div>
       <div class="post-nav-item">
-    <a href="/GaoQianwei/gaoqianwei.github.io/2021/06/12/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%9A%E6%9C%80%E5%A4%A7%E6%AD%A3%E6%96%B9%E5%BD%A2/" rel="next" title="最大正方形">
+    <a href="/2021/06/12/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%9A%E6%9C%80%E5%A4%A7%E6%AD%A3%E6%96%B9%E5%BD%A2/" rel="next" title="最大正方形">
       最大正方形 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
@@ -566,27 +566,27 @@
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="高乾威"
-      src="/GaoQianwei/gaoqianwei.github.io/images/avatar.png">
+      src="/images/avatar.png">
   <p class="site-author-name" itemprop="name">高乾威</p>
   <div class="site-description" itemprop="description">报我楼成秋望月，把君诗读夜回灯</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
-          <a href="/GaoQianwei/gaoqianwei.github.io/archives/">
+          <a href="/archives/">
         
           <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-            <a href="/GaoQianwei/gaoqianwei.github.io/categories/">
+            <a href="/categories/">
           
         <span class="site-state-item-count">29</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-            <a href="/GaoQianwei/gaoqianwei.github.io/tags/">
+            <a href="/tags/">
           
         <span class="site-state-item-count">63</span>
         <span class="site-state-item-name">标签</span></a>
@@ -595,7 +595,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="http://github.com/GaoQianwei" title="GitHub → http:&#x2F;&#x2F;github.com&#x2F;GaoQianwei">GitHub</a>
+        <a href="http://github.com/GaoQianwei" title="GitHub → http:&#x2F;&#x2F;github.com&#x2F;GaoQianwei" rel="noopener" target="_blank">GitHub</a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:2966807184@qq.com" title="E-Mail → mailto:2966807184@qq.com" rel="noopener" target="_blank">E-Mail</a>
@@ -612,7 +612,7 @@
 
       </div><div>
   <canvas id="canvasDiyBlock" style="width:60%;">当前浏览器不支持canvas，请更换浏览器后再试</canvas>
-<script src="/GaoQianwei/gaoqianwei.github.io/js/custom/clock.js"></script>
+<script src="/js/custom/clock.js"></script>
 
 </div>
 
@@ -668,32 +668,32 @@
   </div>
 
   
-  <script src="/GaoQianwei/gaoqianwei.github.io/lib/anime.min.js"></script>
-  <script src="/GaoQianwei/gaoqianwei.github.io/lib/velocity/velocity.min.js"></script>
-  <script src="/GaoQianwei/gaoqianwei.github.io/lib/velocity/velocity.ui.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
 
-<script src="/GaoQianwei/gaoqianwei.github.io/js/utils.js"></script>
+<script src="/js/utils.js"></script>
 
-<script src="/GaoQianwei/gaoqianwei.github.io/js/motion.js"></script>
-
-
-<script src="/GaoQianwei/gaoqianwei.github.io/js/schemes/pisces.js"></script>
+<script src="/js/motion.js"></script>
 
 
-<script src="/GaoQianwei/gaoqianwei.github.io/js/next-boot.js"></script>
+<script src="/js/schemes/pisces.js"></script>
 
 
-  <script defer src="/GaoQianwei/gaoqianwei.github.io/lib/three/three.min.js"></script>
-    <script defer src="/GaoQianwei/gaoqianwei.github.io/lib/three/canvas_lines.min.js"></script>
+<script src="/js/next-boot.js"></script>
 
 
-  
-
-
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
 
 
   
-<script src="/GaoQianwei/gaoqianwei.github.io/js/local-search.js"></script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 

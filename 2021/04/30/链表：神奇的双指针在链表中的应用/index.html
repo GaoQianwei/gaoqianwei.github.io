@@ -5,33 +5,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
 <meta name="generator" content="Hexo 5.4.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="apple-touch-icon" sizes="180x180" href="/GaoQianwei/gaoqianwei.github.io.git/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/GaoQianwei/gaoqianwei.github.io.git/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/GaoQianwei/gaoqianwei.github.io.git/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/GaoQianwei/gaoqianwei.github.io.git/images/logo.svg" color="#222">
 
-<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/GaoQianwei/gaoqianwei.github.io.git/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
-  <script src="/lib/pace/pace.min.js"></script>
+<link rel="stylesheet" href="/GaoQianwei/gaoqianwei.github.io.git/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/GaoQianwei/gaoqianwei.github.io.git/lib/pace/pace-theme-minimal.min.css">
+  <script src="/GaoQianwei/gaoqianwei.github.io.git/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"github.com","root":"/GaoQianwei/gaoqianwei.github.io.git/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="双指针在链表中的应用广泛，尤其涉及到有环的链表。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="神奇的双指针在链表中的应用">
-<meta property="og:url" content="https://example.com/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/index.html">
+<meta property="og:url" content="https://github.com/GaoQianwei/gaoqianwei.github.io.git/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/index.html">
 <meta property="og:site_name" content="学无止境">
 <meta property="og:description" content="双指针在链表中的应用广泛，尤其涉及到有环的链表。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://example.com/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/1.png">
-<meta property="og:image" content="https://example.com/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/2.png">
-<meta property="og:image" content="https://example.com/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/3.png">
+<meta property="og:image" content="https://github.com/GaoQianwei/gaoqianwei.github.io.git/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/1.png">
+<meta property="og:image" content="https://github.com/GaoQianwei/gaoqianwei.github.io.git/GaoQianwei/gaoqianwei.github.io.git/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/2.png">
+<meta property="og:image" content="https://github.com/GaoQianwei/gaoqianwei.github.io.git/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/3.png">
 <meta property="article:published_time" content="2021-04-30T15:20:53.476Z">
 <meta property="article:modified_time" content="2021-04-30T15:51:07.053Z">
 <meta property="article:author" content="高乾威">
@@ -39,9 +39,9 @@
 <meta property="article:tag" content="算法">
 <meta property="article:tag" content="链表">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://example.com/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/1.png">
+<meta name="twitter:image" content="https://github.com/GaoQianwei/gaoqianwei.github.io.git/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/1.png">
 
-<link rel="canonical" href="https://example.com/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/">
+<link rel="canonical" href="https://github.com/GaoQianwei/gaoqianwei.github.io.git/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/">
 
 
 <script id="page-configurations">
@@ -103,7 +103,7 @@
 
   <div class="site-meta">
 
-    <a href="/" class="brand" rel="start">
+    <a href="/GaoQianwei/gaoqianwei.github.io.git/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
       <h1 class="site-title">学无止境</h1>
       <span class="logo-line-after"><i></i></span>
@@ -124,32 +124,32 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+    <a href="/GaoQianwei/gaoqianwei.github.io.git/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+    <a href="/GaoQianwei/gaoqianwei.github.io.git/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+    <a href="/GaoQianwei/gaoqianwei.github.io.git/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+    <a href="/GaoQianwei/gaoqianwei.github.io.git/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+    <a href="/GaoQianwei/gaoqianwei.github.io.git/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
 
   </li>
         <li class="menu-item menu-item-links">
 
-    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>友链</a>
+    <a href="/GaoQianwei/gaoqianwei.github.io.git/links/" rel="section"><i class="fa fa-link fa-fw"></i>友链</a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -207,10 +207,10 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://example.com/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/">
+    <link itemprop="mainEntityOfPage" href="https://github.com/GaoQianwei/gaoqianwei.github.io.git/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="image" content="/GaoQianwei/gaoqianwei.github.io.git/images/avatar.png">
       <meta itemprop="name" content="高乾威">
       <meta itemprop="description" content="报我楼成秋望月，把君诗读夜回灯">
     </span>
@@ -241,11 +241,11 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                  <a href="/GaoQianwei/gaoqianwei.github.io.git/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%AE%97%E6%B3%95/%E9%93%BE%E8%A1%A8/" itemprop="url" rel="index"><span itemprop="name">链表</span></a>
+                  <a href="/GaoQianwei/gaoqianwei.github.io.git/categories/%E7%AE%97%E6%B3%95/%E9%93%BE%E8%A1%A8/" itemprop="url" rel="index"><span itemprop="name">链表</span></a>
                 </span>
             </span>
 
@@ -274,15 +274,15 @@
 <h2 id="141：环形链表1"><a href="#141：环形链表1" class="headerlink" title="141：环形链表1"></a>141：环形链表1</h2><h3 id="一、题目描述"><a href="#一、题目描述" class="headerlink" title="一、题目描述"></a>一、题目描述</h3><p>&ensp;&ensp;&ensp;&ensp;给定一个链表，判断链表中是否有环。<br>&ensp;&ensp;&ensp;&ensp;如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。为了表示给定链表中的环，我们使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。如果 pos 是 -1，则在该链表中没有环。注意：pos 不作为参数进行传递，仅仅是为了标识链表的实际情况。</p>
 <p>&ensp;&ensp;&ensp;&ensp;如果链表中存在环，则返回 true 。 否则，返回 false 。<br><em>进阶</em>：<br>&ensp;&ensp;&ensp;&ensp;你能用 O(1)（即，常量）内存解决此问题吗？<br><em>提示</em>：<br>&ensp;&ensp;&ensp;&ensp;链表中节点的数目范围是 [0, 104]<br>&ensp;&ensp;&ensp;&ensp;-105 &lt;= Node.val &lt;= 105<br>&ensp;&ensp;&ensp;&ensp;pos 为 -1 或者链表中的一个 有效索引 。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">hasCycle</span><span class="params">(ListNode *head)</span> </span>&#123;</span><br><span class="line">       <span class="comment">//to do</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p><img src="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/1.png"></p>
+<p><img src="/GaoQianwei/gaoqianwei.github.io.git/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/1.png"></p>
 <h3 id="二、解题思路"><a href="#二、解题思路" class="headerlink" title="二、解题思路"></a>二、解题思路</h3><p>&ensp;&ensp;&ensp;&ensp;为了防止越界问题，每次都需提前判断指针是否为nullptr；两个指针，一快一慢，当二者相等，则有环（快指针在环中转了几圈后“追上”慢的）。</p>
 <h3 id="三、我的代码"><a href="#三、我的代码" class="headerlink" title="三、我的代码"></a>三、我的代码</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">hasCycle</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        ListNode* p1 = head;</span><br><span class="line">        <span class="keyword">if</span> (p1 == <span class="literal">nullptr</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        ListNode* p2 = head;</span><br><span class="line">        <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (p1-&gt;next == <span class="literal">nullptr</span> || p2-&gt;next == <span class="literal">nullptr</span> || p2-&gt;next-&gt;next == <span class="literal">nullptr</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            p1 = p1-&gt;next;		<span class="comment">//跑的慢</span></span><br><span class="line">            p2 = p2-&gt;next-&gt;next;<span class="comment">//跑的快</span></span><br><span class="line">            <span class="keyword">if</span> (p1 == p2)</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;            </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <h2 id="142：环形链表2"><a href="#142：环形链表2" class="headerlink" title="142：环形链表2"></a>142：环形链表2</h2><h3 id="一、题目描述-1"><a href="#一、题目描述-1" class="headerlink" title="一、题目描述"></a>一、题目描述</h3><p>给定一个链表，返回链表开始入环的第一个节点。 如果链表无环，则返回 null。</p>
-<p>为了表示给定链表中的环，我们使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 pos 是 -1，则在该链表中没有环。注意，pos 仅仅是用于标识环的情况，并不会作为参数传递到函数中。<br><em>说明：</em><br>&ensp;&ensp;&ensp;&ensp;不允许修改给定的链表。<br><em>进阶：</em><br>&ensp;&ensp;&ensp;&ensp;你是否可以使用 O(1) 空间解决此题？<br><img src="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/2.png" style="zoom:50%;"></p>
+<p>为了表示给定链表中的环，我们使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 pos 是 -1，则在该链表中没有环。注意，pos 仅仅是用于标识环的情况，并不会作为参数传递到函数中。<br><em>说明：</em><br>&ensp;&ensp;&ensp;&ensp;不允许修改给定的链表。<br><em>进阶：</em><br>&ensp;&ensp;&ensp;&ensp;你是否可以使用 O(1) 空间解决此题？<br><img src="/GaoQianwei/gaoqianwei.github.io.git/GaoQianwei/gaoqianwei.github.io.git/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/2.png" style="zoom:50%;"></p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>: </span><br><span class="line">    <span class="function">ListNode *<span class="title">detectCycle</span><span class="params">(ListNode *head)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//to do</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <h3 id="二、解题思路-1"><a href="#二、解题思路-1" class="headerlink" title="二、解题思路"></a>二、解题思路</h3><p>&ensp;&ensp;&ensp;&ensp;我们使用两个指针，fast 与 slow。它们起始都位于链表的头部。随后，slow 指针每次向后移动一个位置，而 fast 指针向后移动两个位置。如果链表中存在环，则 fast 指针最终将再次与slow 指针在环中相遇。</p>
-<p>&ensp;&ensp;&ensp;&ensp;如下图所示，设链表中环外部分的长度为 a。slow 指针进入环后，又走了b 的距离与 fast 相遇。此时fast 指针已经走完了环的 n 圈，因此它走过的总距离为 a+n(b+c)+b=a+(n+1)b+nca+n(b+c)+b=a+(n+1)b+nc。<br><img src="/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/3.png"></p>
+<p>&ensp;&ensp;&ensp;&ensp;如下图所示，设链表中环外部分的长度为 a。slow 指针进入环后，又走了b 的距离与 fast 相遇。此时fast 指针已经走完了环的 n 圈，因此它走过的总距离为 a+n(b+c)+b=a+(n+1)b+nca+n(b+c)+b=a+(n+1)b+nc。<br><img src="/GaoQianwei/gaoqianwei.github.io.git/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A5%9E%E5%A5%87%E7%9A%84%E5%8F%8C%E6%8C%87%E9%92%88%E5%9C%A8%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/3.png"></p>
 <p>&ensp;&ensp;&ensp;&ensp;根据题意，任意时刻，fast 指针走过的距离都为 slow 指针的 2 倍。因此，我们有<br>a+(n+1)b+nc=2(a+b)⟹a=c+(n−1)(b+c)<br>&ensp;&ensp;&ensp;&ensp;有了 a=c+(n-1)(b+c)a=c+(n−1)(b+c) 的等量关系，我们会发现：从相遇点到入环点的距离加上 n-1n−1 圈的环长，恰好等于从链表头部到入环点的距离。<br>&ensp;&ensp;&ensp;&ensp;因此，当发现 slow 与 fast 相遇时，我们再额外使用一个指针ptr。起始，它指向链表头部；随后，它和 slow 每次向后移动一个位置。最终，它们会在入环点相遇。<br>&ensp;&ensp;&ensp;&ensp;数学大法好！！！💀💀💀💀</p>
 <h3 id="三、我的代码-1"><a href="#三、我的代码-1" class="headerlink" title="三、我的代码"></a>三、我的代码</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode *next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) : val(x), next(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">   <span class="function">ListNode* <span class="title">detectCycle</span><span class="params">(ListNode* head)</span> </span>&#123;</span><br><span class="line">        ListNode* p1 = head;</span><br><span class="line">        <span class="keyword">if</span> (p1 == <span class="literal">nullptr</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">        ListNode* p2 = head;</span><br><span class="line">        <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (p1-&gt;next == <span class="literal">nullptr</span> || p2-&gt;next == <span class="literal">nullptr</span> || p2-&gt;next-&gt;next == <span class="literal">nullptr</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">            p1 = p1-&gt;next;</span><br><span class="line">            p2 = p2-&gt;next-&gt;next;</span><br><span class="line">            <span class="keyword">if</span> (p1 == p2) &#123;</span><br><span class="line">                ListNode* ptr = head;</span><br><span class="line">                <span class="keyword">while</span> (ptr != p1) &#123;</span><br><span class="line">                    ptr = ptr-&gt;next;</span><br><span class="line">                    p1 = p1-&gt;next;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> ptr;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <h2 id="160：相交链表"><a href="#160：相交链表" class="headerlink" title="160：相交链表"></a>160：相交链表</h2><h3 id="一、题目描述-2"><a href="#一、题目描述-2" class="headerlink" title="一、题目描述"></a>一、题目描述</h3><p>&ensp;&ensp;&ensp;&ensp;编写一个程序，找到两个单链表相交的起始节点。<br>&ensp;&ensp;&ensp;&ensp;如下面的两个链表：在节点 c1 开始相交。</p>
@@ -304,9 +304,9 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/leetcode/" rel="tag"># leetcode</a>
-              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
-              <a href="/tags/%E9%93%BE%E8%A1%A8/" rel="tag"># 链表</a>
+              <a href="/GaoQianwei/gaoqianwei.github.io.git/tags/leetcode/" rel="tag"># leetcode</a>
+              <a href="/GaoQianwei/gaoqianwei.github.io.git/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+              <a href="/GaoQianwei/gaoqianwei.github.io.git/tags/%E9%93%BE%E8%A1%A8/" rel="tag"># 链表</a>
           </div>
 
         
@@ -315,11 +315,11 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%A4%8D%E5%88%B6%E5%B8%A6%E9%9A%8F%E6%9C%BA%E6%8C%87%E9%92%88%E7%9A%84%E9%93%BE%E8%A1%A8/" rel="prev" title="复制带随机指针的链表">
+    <a href="/GaoQianwei/gaoqianwei.github.io.git/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E5%A4%8D%E5%88%B6%E5%B8%A6%E9%9A%8F%E6%9C%BA%E6%8C%87%E9%92%88%E7%9A%84%E9%93%BE%E8%A1%A8/" rel="prev" title="复制带随机指针的链表">
       <i class="fa fa-chevron-left"></i> 复制带随机指针的链表
     </a></div>
       <div class="post-nav-item">
-    <a href="/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A7%BB%E9%99%A4%E9%93%BE%E8%A1%A8%E5%85%83%E7%B4%A0/" rel="next" title="移除链表元素">
+    <a href="/GaoQianwei/gaoqianwei.github.io.git/2021/04/30/%E9%93%BE%E8%A1%A8%EF%BC%9A%E7%A7%BB%E9%99%A4%E9%93%BE%E8%A1%A8%E5%85%83%E7%B4%A0/" rel="next" title="移除链表元素">
       移除链表元素 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
@@ -387,27 +387,27 @@
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="高乾威"
-      src="/images/avatar.png">
+      src="/GaoQianwei/gaoqianwei.github.io.git/images/avatar.png">
   <p class="site-author-name" itemprop="name">高乾威</p>
   <div class="site-description" itemprop="description">报我楼成秋望月，把君诗读夜回灯</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
-          <a href="/archives/">
+          <a href="/GaoQianwei/gaoqianwei.github.io.git/archives/">
         
           <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-            <a href="/categories/">
+            <a href="/GaoQianwei/gaoqianwei.github.io.git/categories/">
           
         <span class="site-state-item-count">29</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-            <a href="/tags/">
+            <a href="/GaoQianwei/gaoqianwei.github.io.git/tags/">
           
         <span class="site-state-item-count">63</span>
         <span class="site-state-item-name">标签</span></a>
@@ -416,7 +416,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="http://github.com/GaoQianwei" title="GitHub → http:&#x2F;&#x2F;github.com&#x2F;GaoQianwei" rel="noopener" target="_blank">GitHub</a>
+        <a href="http://github.com/GaoQianwei" title="GitHub → http:&#x2F;&#x2F;github.com&#x2F;GaoQianwei">GitHub</a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:2966807184@qq.com" title="E-Mail → mailto:2966807184@qq.com" rel="noopener" target="_blank">E-Mail</a>
@@ -433,7 +433,7 @@
 
       </div><div>
   <canvas id="canvasDiyBlock" style="width:60%;">当前浏览器不支持canvas，请更换浏览器后再试</canvas>
-<script src="/js/custom/clock.js"></script>
+<script src="/GaoQianwei/gaoqianwei.github.io.git/js/custom/clock.js"></script>
 
 </div>
 
@@ -489,32 +489,32 @@
   </div>
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
+  <script src="/GaoQianwei/gaoqianwei.github.io.git/lib/anime.min.js"></script>
+  <script src="/GaoQianwei/gaoqianwei.github.io.git/lib/velocity/velocity.min.js"></script>
+  <script src="/GaoQianwei/gaoqianwei.github.io.git/lib/velocity/velocity.ui.min.js"></script>
 
-<script src="/js/utils.js"></script>
+<script src="/GaoQianwei/gaoqianwei.github.io.git/js/utils.js"></script>
 
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/pisces.js"></script>
+<script src="/GaoQianwei/gaoqianwei.github.io.git/js/motion.js"></script>
 
 
-<script src="/js/next-boot.js"></script>
+<script src="/GaoQianwei/gaoqianwei.github.io.git/js/schemes/pisces.js"></script>
 
 
-  <script defer src="/lib/three/three.min.js"></script>
-    <script defer src="/lib/three/canvas_lines.min.js"></script>
+<script src="/GaoQianwei/gaoqianwei.github.io.git/js/next-boot.js"></script>
 
 
-  
-
-
+  <script defer src="/GaoQianwei/gaoqianwei.github.io.git/lib/three/three.min.js"></script>
+    <script defer src="/GaoQianwei/gaoqianwei.github.io.git/lib/three/canvas_lines.min.js"></script>
 
 
   
-<script src="/js/local-search.js"></script>
+
+
+
+
+  
+<script src="/GaoQianwei/gaoqianwei.github.io.git/js/local-search.js"></script>
 
 
 
